@@ -110,7 +110,7 @@ npx serve .
 
 ### GitHub Pages
 
-Страница размещается из папки `/docs` ветки `main`:
+Страница размещается из папки `/docs` ветки `Stas`:
 - **URL**: https://embed-solutions-dev.github.io/HouseBoat/
 
 ### CDN версия
