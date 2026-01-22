@@ -110,7 +110,7 @@ npx serve .
 
 ### GitHub Pages
 
-Страница размещается из папки `/docs` ветки `Stas`:
+Страница размещается из папки `/docs` ветки `claude/update-github-pages-branch-Q5Ts5`:
 - **URL**: https://embed-solutions-dev.github.io/HouseBoat/
 
 ### CDN версия
