@@ -1,0 +1,24 @@
+{
+  "name": "houseboat",
+  "version": "1.0.0",
+  "description": "Современный dashboard для управления яхтой/хаусботом с премиальным дизайном в стиле Mercedes-Benz.",
+  "main": "debug-screenshot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://local_proxy@127.0.0.1:42489/git/Embed-Solutions-Dev/HouseBoat"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "framer-motion": "^10.16.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.27.2"
+  }
+}
