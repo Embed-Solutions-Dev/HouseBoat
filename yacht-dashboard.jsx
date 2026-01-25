@@ -700,8 +700,6 @@ export default function YachtDashboard() {
         { label: 'Напряжение АКБ', value: '12.6', unit: 'В', status: 'ok' },
         { label: 'Ток АКБ', value: '+15', unit: 'А', status: 'normal' },
         { label: 'Температура АКБ', value: '24', unit: '°C', status: 'normal' },
-        { label: 'Мощность генератора', value: '0', unit: 'кВт', status: 'normal' },
-        { label: 'Нагрузка генератора', value: '0', unit: '%', status: 'normal' },
         { label: 'Напряжение берега', value: '—', unit: '', status: 'off' },
         { label: 'Ток берега', value: '—', unit: '', status: 'off' },
         { label: 'Мощность солнца', value: '2.1', unit: 'кВт', status: 'ok' },
@@ -709,12 +707,12 @@ export default function YachtDashboard() {
       ]
     },
     tanks: {
-      title: 'ЁМКОСТИ',
+      title: 'БАКИ',
       containers: [
         { name: 'Пресная', subname: 'вода', level: 65, status: 'ok' },
         { name: 'Серые', subname: 'воды', level: 42, status: 'normal' },
         { name: 'Чёрные', subname: 'воды', level: 28, status: 'normal' },
-        { name: 'Септик', subname: '', level: 87, status: 'critical' },
+        { name: 'Топливо', subname: 'ген.', level: 45, status: 'normal' },
       ],
       metrics: [
         { label: 'Давление воды', value: '2.4', unit: 'бар', status: 'normal' },
@@ -1782,7 +1780,7 @@ export default function YachtDashboard() {
                         )}
                         {key === 'tanks' && (
                           <>
-                            <div style={{ fontSize: 9, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 6 }}>ЁМКОСТИ</div>
+                            <div style={{ fontSize: 9, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 6 }}>БАКИ</div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, width: '75%' }}>
                               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                                 <div style={{ fontSize: 8, color: T.textMuted, width: 28 }}>вода</div>
@@ -1792,11 +1790,11 @@ export default function YachtDashboard() {
                                 <div style={{ fontSize: 9, color: T.textSecondary, width: 24, textAlign: 'right' }}>65%</div>
                               </div>
                               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                <div style={{ fontSize: 8, color: T.textMuted, width: 28 }}>септик</div>
-                                <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'rgba(30,45,60,0.6)', border: '1px solid rgba(224,64,80,0.4)', overflow: 'hidden' }}>
-                                  <div style={{ width: '87%', height: '100%', background: 'linear-gradient(90deg, rgba(224,64,80,0.8) 0%, rgba(224,64,80,0.6) 100%)', borderRadius: 2 }} />
+                                <div style={{ fontSize: 8, color: T.textMuted, width: 28 }}>ген.</div>
+                                <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'rgba(30,45,60,0.6)', border: '1px solid rgba(80,100,120,0.3)', overflow: 'hidden' }}>
+                                  <div style={{ width: '45%', height: '100%', background: 'linear-gradient(90deg, rgba(61,200,140,0.7) 0%, rgba(61,200,140,0.5) 100%)', borderRadius: 2 }} />
                                 </div>
-                                <div style={{ fontSize: 9, color: T.textRed, width: 24, textAlign: 'right' }}>87%</div>
+                                <div style={{ fontSize: 9, color: T.textSecondary, width: 24, textAlign: 'right' }}>45%</div>
                               </div>
                             </div>
                           </>
@@ -1868,24 +1866,16 @@ export default function YachtDashboard() {
                     <div style={{ fontSize: 9, color: T.textMuted }}>солнце</div>
                   </div>
                 </div>
-                {/* Топливо генератора */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, width: '85%' }}>
-                  <div style={{ fontSize: 8, color: T.textMuted, width: 24 }}>ГЕН</div>
-                  <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'rgba(30,45,60,0.6)', border: '1px solid rgba(80,100,120,0.3)', overflow: 'hidden' }}>
-                    <div style={{ width: '45%', height: '100%', background: 'linear-gradient(90deg, rgba(220,160,60,0.7) 0%, rgba(220,160,60,0.5) 100%)', borderRadius: 2 }} />
-                  </div>
-                  <div style={{ fontSize: 9, color: T.textSecondary, width: 24, textAlign: 'right' }}>45%</div>
-                </div>
               </div>
-              
+
               <div style={{ width: 1, background: 'linear-gradient(180deg, transparent 10%, rgba(80,100,120,0.3) 50%, transparent 90%)' }} />
-              
-              {/* ЁМКОСТИ */}
+
+              {/* БАКИ */}
               <div 
                 onClick={() => setExpandedSection('tanks')}
                 style={{ flex: 1, height: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 12, cursor: 'pointer' }}
               >
-                <div style={{ fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 16 }}>ЁМКОСТИ</div>
+                <div style={{ fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 16 }}>БАКИ</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6, width: '70%' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <div style={{ fontSize: 9, color: T.textMuted, width: 36 }}>вода</div>
@@ -1895,11 +1885,11 @@ export default function YachtDashboard() {
                     <div style={{ fontSize: 11, color: T.textSecondary, width: 28, textAlign: 'right' }}>65%</div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <div style={{ fontSize: 9, color: T.textMuted, width: 36 }}>септик</div>
-                    <div style={{ flex: 1, height: 8, borderRadius: 4, background: 'rgba(30,45,60,0.6)', border: '1px solid rgba(224,64,80,0.4)', overflow: 'hidden' }}>
-                      <div style={{ width: '87%', height: '100%', background: 'linear-gradient(90deg, rgba(224,64,80,0.8) 0%, rgba(224,64,80,0.6) 100%)', borderRadius: 3 }} />
+                    <div style={{ fontSize: 9, color: T.textMuted, width: 36 }}>ген.</div>
+                    <div style={{ flex: 1, height: 8, borderRadius: 4, background: 'rgba(30,45,60,0.6)', border: '1px solid rgba(80,100,120,0.3)', overflow: 'hidden' }}>
+                      <div style={{ width: '45%', height: '100%', background: 'linear-gradient(90deg, rgba(61,200,140,0.7) 0%, rgba(61,200,140,0.5) 100%)', borderRadius: 3 }} />
                     </div>
-                    <div style={{ fontSize: 11, color: T.textRed, width: 28, textAlign: 'right' }}>87%</div>
+                    <div style={{ fontSize: 11, color: T.textSecondary, width: 28, textAlign: 'right' }}>45%</div>
                   </div>
                 </div>
               </div>
