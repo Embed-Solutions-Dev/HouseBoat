@@ -31642,7 +31642,7 @@
         /* @__PURE__ */ import_react27.default.createElement("svg", { width: "100%", height: "100%", style: { position: "absolute", top: 0, left: 0 } }, /* @__PURE__ */ import_react27.default.createElement("defs", null, /* @__PURE__ */ import_react27.default.createElement("pattern", { id: "gridPatternNav", width: "30", height: "30", patternUnits: "userSpaceOnUse" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "M 30 0 L 0 0 0 30", fill: "none", stroke: "rgba(40,70,100,0.05)", strokeWidth: "0.5" })), /* @__PURE__ */ import_react27.default.createElement("pattern", { id: "gridPatternLargeNav", width: "150", height: "150", patternUnits: "userSpaceOnUse" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "M 150 0 L 0 0 0 150", fill: "none", stroke: "rgba(40,70,100,0.08)", strokeWidth: "0.5" }))), /* @__PURE__ */ import_react27.default.createElement("rect", { width: "100%", height: "100%", fill: "url(#gridPatternNav)" }), /* @__PURE__ */ import_react27.default.createElement("rect", { width: "100%", height: "100%", fill: "url(#gridPatternLargeNav)" }), /* @__PURE__ */ import_react27.default.createElement(
           "path",
           {
-            d: "M 810 -100 C 780 50 770 150 790 300 C 810 450 760 550 770 700 C 780 850 800 1000 790 1150 C 780 1300 810 1400 800 1550",
+            d: "M 780 -100 C 750 50 740 150 760 300 C 780 450 730 550 740 700 C 750 850 770 1000 760 1150 C 750 1300 780 1400 770 1550",
             fill: "none",
             stroke: "rgba(25,45,70,0.35)",
             strokeWidth: "80",
@@ -31652,7 +31652,7 @@
         ), /* @__PURE__ */ import_react27.default.createElement(
           "path",
           {
-            d: "M 810 -100 C 780 50 770 150 790 300 C 810 450 760 550 770 700 C 780 850 800 1000 790 1150 C 780 1300 810 1400 800 1550",
+            d: "M 780 -100 C 750 50 740 150 760 300 C 780 450 730 550 740 700 C 750 850 770 1000 760 1150 C 750 1300 780 1400 770 1550",
             fill: "none",
             stroke: "rgba(20,38,60,0.5)",
             strokeWidth: "50",
@@ -31662,7 +31662,7 @@
         ), /* @__PURE__ */ import_react27.default.createElement(
           "path",
           {
-            d: "M 810 -100 C 780 50 770 150 790 300 C 810 450 760 550 770 700 C 780 850 800 1000 790 1150 C 780 1300 810 1400 800 1550",
+            d: "M 780 -100 C 750 50 740 150 760 300 C 780 450 730 550 740 700 C 750 850 770 1000 760 1150 C 750 1300 780 1400 770 1550",
             fill: "none",
             stroke: "rgba(15,30,50,0.6)",
             strokeWidth: "25",
