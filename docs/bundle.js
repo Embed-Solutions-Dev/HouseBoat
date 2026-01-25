@@ -32077,26 +32077,15 @@
       /* @__PURE__ */ import_react27.default.createElement(
         motion.div,
         {
-          layoutId: "engine-left",
-          animate: controls.navigation ? {
-            position: "fixed",
-            bottom: 144,
-            left: "calc(50% - 576px)",
-            top: "auto",
-            scale: 0.4,
-            zIndex: 50
-          } : {
-            position: "relative",
-            bottom: "auto",
-            left: "auto",
-            top: "auto",
-            scale: 1,
-            zIndex: 1
+          animate: {
+            opacity: controls.navigation ? 0 : 1,
+            scale: controls.navigation ? 0.5 : 1,
+            x: controls.navigation ? -200 : 0
           },
-          transition: { type: "spring", stiffness: 150, damping: 20 },
-          style: { marginRight: controls.navigation ? 0 : -92, paddingTop: controls.navigation ? 0 : 20, transformOrigin: "bottom left" }
+          transition: { type: "spring", stiffness: 200, damping: 25 },
+          style: { marginRight: -92, paddingTop: 20, pointerEvents: controls.navigation ? "none" : "auto" }
         },
-        controls.navigation ? /* @__PURE__ */ import_react27.default.createElement(MiniEngineCard, { side: "Left", rpm: Math.round(rpmLeft), fuelLevel: 75, hasFaults: false }) : /* @__PURE__ */ import_react27.default.createElement(EngineCard, { side: "Left", tempText: "\u0422\u0435\u043C\u043F 82\xB0C \xB7 \u041C\u0430\u0441\u043B\u043E \u041E\u041A", rpm: Math.round(rpmLeft), throttle: Math.round(throttleLeft), gear: gearLeft, motorHours: 1247, fuelLevel: 75, expanded: false, onToggleExpand: () => setExpandedEngine("Left") })
+        /* @__PURE__ */ import_react27.default.createElement(EngineCard, { side: "Left", tempText: "\u0422\u0435\u043C\u043F 82\xB0C \xB7 \u041C\u0430\u0441\u043B\u043E \u041E\u041A", rpm: Math.round(rpmLeft), throttle: Math.round(throttleLeft), gear: gearLeft, motorHours: 1247, fuelLevel: 75, expanded: false, onToggleExpand: () => setExpandedEngine("Left") })
       ),
       /* @__PURE__ */ import_react27.default.createElement("div", { style: { height: 400, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 20 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", gap: 30, marginBottom: 16 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
         width: 135,
@@ -32391,29 +32380,47 @@
       /* @__PURE__ */ import_react27.default.createElement(
         motion.div,
         {
-          layoutId: "engine-right",
-          animate: controls.navigation ? {
+          animate: {
+            opacity: controls.navigation ? 0 : 1,
+            scale: controls.navigation ? 0.5 : 1,
+            x: controls.navigation ? 200 : 0
+          },
+          transition: { type: "spring", stiffness: 200, damping: 25 },
+          style: { marginLeft: -92, paddingTop: 20, pointerEvents: controls.navigation ? "none" : "auto" }
+        },
+        /* @__PURE__ */ import_react27.default.createElement(EngineCard, { side: "Right", tempText: "\u0422\u0435\u043C\u043F 81\xB0C \xB7 \u041C\u0430\u0441\u043B\u043E \u041E\u041A", rpm: Math.round(rpmRight), throttle: Math.round(throttleRight), gear: gearRight, motorHours: 1198, fuelLevel: 18, expanded: false, onToggleExpand: () => setExpandedEngine("Right") })
+      ),
+      /* @__PURE__ */ import_react27.default.createElement(AnimatePresence, null, controls.navigation && /* @__PURE__ */ import_react27.default.createElement(import_react27.default.Fragment, null, /* @__PURE__ */ import_react27.default.createElement(
+        motion.div,
+        {
+          initial: { opacity: 0, x: -100, y: 100 },
+          animate: { opacity: 1, x: 0, y: 0 },
+          exit: { opacity: 0, x: -100, y: 100 },
+          transition: { type: "spring", stiffness: 200, damping: 25 },
+          style: {
+            position: "fixed",
+            bottom: 144,
+            left: "calc(50% - 576px)",
+            zIndex: 50
+          }
+        },
+        /* @__PURE__ */ import_react27.default.createElement(MiniEngineCard, { side: "Left", rpm: Math.round(rpmLeft), fuelLevel: 75, hasFaults: false })
+      ), /* @__PURE__ */ import_react27.default.createElement(
+        motion.div,
+        {
+          initial: { opacity: 0, x: 100, y: 100 },
+          animate: { opacity: 1, x: 0, y: 0 },
+          exit: { opacity: 0, x: 100, y: 100 },
+          transition: { type: "spring", stiffness: 200, damping: 25 },
+          style: {
             position: "fixed",
             bottom: 144,
             right: "calc(50% - 576px)",
-            top: "auto",
-            left: "auto",
-            scale: 0.4,
             zIndex: 50
-          } : {
-            position: "relative",
-            bottom: "auto",
-            right: "auto",
-            top: "auto",
-            left: "auto",
-            scale: 1,
-            zIndex: 1
-          },
-          transition: { type: "spring", stiffness: 150, damping: 20 },
-          style: { marginLeft: controls.navigation ? 0 : -92, paddingTop: controls.navigation ? 0 : 20, transformOrigin: "bottom right" }
+          }
         },
-        controls.navigation ? /* @__PURE__ */ import_react27.default.createElement(MiniEngineCard, { side: "Right", rpm: Math.round(rpmRight), fuelLevel: 18, hasFaults: true }) : /* @__PURE__ */ import_react27.default.createElement(EngineCard, { side: "Right", tempText: "\u0422\u0435\u043C\u043F 81\xB0C \xB7 \u041C\u0430\u0441\u043B\u043E \u041E\u041A", rpm: Math.round(rpmRight), throttle: Math.round(throttleRight), gear: gearRight, motorHours: 1198, fuelLevel: 18, expanded: false, onToggleExpand: () => setExpandedEngine("Right") })
-      )
+        /* @__PURE__ */ import_react27.default.createElement(MiniEngineCard, { side: "Right", rpm: Math.round(rpmRight), fuelLevel: 18, hasFaults: true })
+      )))
     ), /* @__PURE__ */ import_react27.default.createElement(
       motion.div,
       {
