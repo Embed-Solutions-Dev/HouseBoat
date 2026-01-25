@@ -196,13 +196,13 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
   const arcR = r - 5;
   const needleLength = r - 40;
 
-  // Fuel arc parameters (bottom arc, closing the circle - trimmed on edges)
+  // Fuel arc parameters (bottom arc - 0% left, 100% right)
   const fuelArcR = r - 5;
-  const fuelStartAngle = -55; // degrees (trimmed from -45)
-  const fuelEndAngle = -125; // degrees (trimmed from -135)
-  const fuelSweep = 70; // total sweep for fuel arc (was 90)
+  const fuelStartAngle = -125; // degrees (left side, 0%)
+  const fuelEndAngle = -55; // degrees (right side, 100%)
+  const fuelSweep = 70; // total sweep for fuel arc
   const fuelRatio = clamp(fuelLevel, 0, 100) / 100;
-  const fuelFilledAngle = fuelStartAngle - fuelRatio * fuelSweep;
+  const fuelFilledAngle = fuelStartAngle + fuelRatio * fuelSweep;
   const fuelColor = lowFuel ? T.textAmber : T.gaugeActive;
 
   return (
@@ -281,17 +281,17 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
 
           {/* Fuel arc background (bottom, closing the circle) */}
           <path
-            d={`M ${cx + fuelArcR * Math.cos(fuelStartAngle * Math.PI / 180)} ${cy - fuelArcR * Math.sin(fuelStartAngle * Math.PI / 180)} A ${fuelArcR} ${fuelArcR} 0 0 1 ${cx + fuelArcR * Math.cos(fuelEndAngle * Math.PI / 180)} ${cy - fuelArcR * Math.sin(fuelEndAngle * Math.PI / 180)}`}
+            d={`M ${cx + fuelArcR * Math.cos(fuelStartAngle * Math.PI / 180)} ${cy - fuelArcR * Math.sin(fuelStartAngle * Math.PI / 180)} A ${fuelArcR} ${fuelArcR} 0 0 0 ${cx + fuelArcR * Math.cos(fuelEndAngle * Math.PI / 180)} ${cy - fuelArcR * Math.sin(fuelEndAngle * Math.PI / 180)}`}
             fill="none"
             stroke={T.gaugeBg}
             strokeWidth="6"
             strokeLinecap="round"
           />
 
-          {/* Fuel arc filled */}
+          {/* Fuel arc filled (0% left, 100% right) */}
           {fuelRatio > 0 && (
             <path
-              d={`M ${cx + fuelArcR * Math.cos(fuelStartAngle * Math.PI / 180)} ${cy - fuelArcR * Math.sin(fuelStartAngle * Math.PI / 180)} A ${fuelArcR} ${fuelArcR} 0 0 1 ${cx + fuelArcR * Math.cos(fuelFilledAngle * Math.PI / 180)} ${cy - fuelArcR * Math.sin(fuelFilledAngle * Math.PI / 180)}`}
+              d={`M ${cx + fuelArcR * Math.cos(fuelStartAngle * Math.PI / 180)} ${cy - fuelArcR * Math.sin(fuelStartAngle * Math.PI / 180)} A ${fuelArcR} ${fuelArcR} 0 0 0 ${cx + fuelArcR * Math.cos(fuelFilledAngle * Math.PI / 180)} ${cy - fuelArcR * Math.sin(fuelFilledAngle * Math.PI / 180)}`}
               fill="none"
               stroke={fuelColor}
               strokeWidth="6"
@@ -414,15 +414,15 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
           <div style={{ fontSize: 9, color: T.textMuted, letterSpacing: 0.5, marginTop: 0 }}>МОТОЧАСЫ</div>
         </div>
 
-        {/* Throttle left of center (-30px), Error right of center (+30px) */}
-        <div style={{ position: 'absolute', bottom: 55, left: cx - 30, transform: 'translateX(-50%)', textAlign: 'center' }}>
+        {/* Throttle on horizontal center line, 24px left of center */}
+        <div style={{ position: 'absolute', top: cy, left: cx - 24, transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
           <div style={{ fontSize: 9, color: T.textMuted }}>ГАЗ</div>
           <div style={{ fontSize: 16, fontWeight: 600, color: T.textPrimary }}>{throttle}%</div>
         </div>
 
-        {/* Error indicator - right of center (+30px) */}
+        {/* Error indicator - 24px right of center, on horizontal center line */}
         {hasFaults && (
-          <div style={{ position: 'absolute', bottom: 55, left: cx + 30, transform: 'translateX(-50%)', filter: 'drop-shadow(0 0 8px rgba(255,60,60,0.8))' }}>
+          <div style={{ position: 'absolute', top: cy, left: cx + 24, transform: 'translate(-50%, -50%)', filter: 'drop-shadow(0 0 8px rgba(255,60,60,0.8))' }}>
             <svg style={{ width: 28, height: 28 }} viewBox="0 0 24 24" fill="none" stroke={T.textRed} strokeWidth="2">
               <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
               <line x1="12" y1="9" x2="12" y2="13"/>
