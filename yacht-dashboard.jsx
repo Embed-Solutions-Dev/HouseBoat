@@ -972,7 +972,7 @@ export default function YachtDashboard() {
   ];
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, background: T.pageBg }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, background: T.pageBg, overflow: 'hidden' }}>
       
       {/* Экран загрузки */}
       <AnimatePresence>
