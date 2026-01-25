@@ -168,7 +168,7 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
   const cy = size / 2;
   const r = size / 2 - 8;
 
-  const majorStep = 500;
+  const majorStep = 1000;
   const minorStep = 100;
   const ticks = [];
 
@@ -314,8 +314,8 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
                 <text
                   x={tick.labelX}
                   y={tick.labelY}
-                  fill={tick.isRedZone ? T.gaugeRed : T.textSecondary}
-                  fontSize="13"
+                  fill={tick.isRedZone ? T.gaugeRed : T.textPrimary}
+                  fontSize="16"
                   fontWeight="600"
                   textAnchor="middle"
                   dominantBaseline="middle"
@@ -417,7 +417,7 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
         {/* Throttle on horizontal center line, 66px left of center */}
         <div style={{ position: 'absolute', top: cy, left: cx - 66, transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
           <div style={{ fontSize: 9, color: T.textMuted }}>ГАЗ</div>
-          <div style={{ fontSize: 16, fontWeight: 600, color: T.textPrimary }}>{throttle}%</div>
+          <div style={{ fontSize: 16, fontWeight: 600, color: T.textSecondary }}>{throttle}%</div>
         </div>
 
         {/* Error indicator - 66px right of center, 4px below horizontal center line */}
