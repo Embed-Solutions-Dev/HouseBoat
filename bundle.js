@@ -31597,7 +31597,7 @@
           pointerEvents: "none"
         }
       },
-      /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "100%", maxWidth: 1152, position: "relative", marginTop: 950 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+      /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "100%", maxWidth: 1152, position: "relative", marginTop: 700 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
         overflow: "visible",
         height: 500,
         position: "relative",
@@ -32289,7 +32289,7 @@
               width: expandedEngine ? expandedWidth : collapsedWidth,
               height: expandedEngine ? expandedHeight : collapsedHeight,
               x: expandedEngine ? -expandedWidth / 2 : -collapsedWidth / 2,
-              y: expandedEngine ? -expandedHeight / 2 : isNavMode ? 242 : -collapsedHeight / 2,
+              y: expandedEngine ? -expandedHeight / 2 : isNavMode ? 42 : -collapsedHeight / 2,
               scale: isNavMode ? 0.6 : 1
             },
             transition: { type: "spring", stiffness: 300, damping: 30 },
@@ -32441,7 +32441,7 @@
           transition: { type: "spring", stiffness: 200, damping: 25 },
           style: {
             position: "fixed",
-            bottom: -44,
+            bottom: 156,
             left: "calc(50% - 576px)",
             zIndex: 50
           }
@@ -32456,7 +32456,7 @@
           transition: { type: "spring", stiffness: 200, damping: 25 },
           style: {
             position: "fixed",
-            bottom: -44,
+            bottom: 156,
             right: "calc(50% - 576px)",
             zIndex: 50
           }
@@ -32469,7 +32469,7 @@
         initial: { opacity: 0, y: 30 },
         animate: { opacity: loadingPhase === "done" ? 1 : 0, y: loadingPhase === "done" ? 0 : 30 },
         transition: { duration: 0.6, delay: 0.5 },
-        style: { width: "100%", maxWidth: 1152, marginTop: 220 }
+        style: { width: "100%", maxWidth: 1152, marginTop: 20 }
       },
       /* @__PURE__ */ import_react27.default.createElement("div", { style: {
         background: "linear-gradient(180deg, rgba(12,18,28,0.95) 0%, rgba(6,10,18,0.98) 100%)",

@@ -1143,7 +1143,7 @@ export default function YachtDashboard() {
               pointerEvents: 'none',
             }}
           >
-            <div style={{ width: '100%', maxWidth: 1152, position: 'relative', marginTop: 950 }}>
+            <div style={{ width: '100%', maxWidth: 1152, position: 'relative', marginTop: 700 }}>
               <div style={{
                 overflow: 'visible',
                 height: 500,
@@ -2106,7 +2106,7 @@ export default function YachtDashboard() {
                 width: expandedEngine ? expandedWidth : collapsedWidth,
                 height: expandedEngine ? expandedHeight : collapsedHeight,
                 x: expandedEngine ? -expandedWidth / 2 : -collapsedWidth / 2,
-                y: expandedEngine ? -expandedHeight / 2 : isNavMode ? 242 : -collapsedHeight / 2,
+                y: expandedEngine ? -expandedHeight / 2 : isNavMode ? 42 : -collapsedHeight / 2,
                 scale: isNavMode ? 0.6 : 1,
               }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
@@ -2334,7 +2334,7 @@ export default function YachtDashboard() {
                 transition={{ type: "spring", stiffness: 200, damping: 25 }}
                 style={{
                   position: 'fixed',
-                  bottom: -44,
+                  bottom: 156,
                   left: 'calc(50% - 576px)',
                   zIndex: 50,
                 }}
@@ -2350,7 +2350,7 @@ export default function YachtDashboard() {
                 transition={{ type: "spring", stiffness: 200, damping: 25 }}
                 style={{
                   position: 'fixed',
-                  bottom: -44,
+                  bottom: 156,
                   right: 'calc(50% - 576px)',
                   zIndex: 50,
                 }}
@@ -2366,7 +2366,7 @@ export default function YachtDashboard() {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: loadingPhase === 'done' ? 1 : 0, y: loadingPhase === 'done' ? 0 : 30 }}
         transition={{ duration: 0.6, delay: 0.5 }}
-        style={{ width: '100%', maxWidth: 1152, marginTop: 220 }}
+        style={{ width: '100%', maxWidth: 1152, marginTop: 20 }}
       >
         {/* Глубокая стеклянная панель в стиле Mercedes */}
         <div style={{
