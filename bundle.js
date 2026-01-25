@@ -31586,7 +31586,7 @@
         transition: { duration: 0.3 },
         style: {
           position: "absolute",
-          top: 810,
+          top: 860,
           left: "50%",
           transform: "translateX(-50%)",
           width: "100%",
