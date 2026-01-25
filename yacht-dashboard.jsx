@@ -553,7 +553,7 @@ export default function YachtDashboard() {
     },
   };
 
-  const sectionKeys = ['fuel', 'weather', 'electric', 'tanks', 'safety'];
+  const sectionKeys = ['weather', 'electric', 'tanks', 'safety'];
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -1333,152 +1333,8 @@ export default function YachtDashboard() {
                   </button>
                 </div>
                 
-                {/* Кастомное отображение для топлива */}
-                {expandedSection === 'fuel' ? (
-                  <div style={{ display: 'flex', gap: 32, flex: 1, alignItems: 'stretch' }}>
-                    {/* Баки слева - flex: 1.5 */}
-                    <div style={{ flex: 1.5, display: 'flex', gap: 24, alignItems: 'flex-start', justifyContent: 'center', paddingTop: 8 }}>
-                      {sectionData.fuel.tanks.map((tank, idx) => (
-                        <motion.div
-                          key={idx}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.05 * idx }}
-                          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}
-                        >
-                          {/* Название над баком */}
-                          <div style={{ textAlign: 'center', marginBottom: 2 }}>
-                            <div style={{ fontSize: 11, fontWeight: 500, color: T.textSecondary }}>{tank.name}</div>
-                            <div style={{ fontSize: 9, color: T.textMuted }}>{tank.subname}</div>
-                          </div>
-                          {/* Бак */}
-                          <div style={{
-                            width: 64,
-                            height: 160,
-                            borderRadius: 12,
-                            background: 'rgba(20,30,45,0.8)',
-                            border: `1px solid ${
-                              tank.status === 'warn' ? 'rgba(220,160,60,0.4)' :
-                              tank.status === 'critical' ? 'rgba(224,64,80,0.4)' :
-                              'rgba(80,100,120,0.3)'
-                            }`,
-                            position: 'relative',
-                            overflow: 'hidden',
-                            boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.3)',
-                          }}>
-                            {/* Уровень топлива */}
-                            <motion.div 
-                              initial={{ height: 0 }}
-                              animate={{ height: `${tank.level}%` }}
-                              transition={{ delay: 0.1 + idx * 0.1, duration: 0.8, ease: "easeOut" }}
-                              style={{
-                                position: 'absolute',
-                                bottom: 0,
-                                left: 0,
-                                right: 0,
-                                background: tank.status === 'warn' 
-                                  ? 'linear-gradient(180deg, rgba(220,160,60,0.7) 0%, rgba(180,120,40,0.5) 100%)'
-                                  : tank.status === 'critical'
-                                  ? 'linear-gradient(180deg, rgba(224,64,80,0.7) 0%, rgba(180,40,60,0.5) 100%)'
-                                  : 'linear-gradient(180deg, rgba(61,200,140,0.6) 0%, rgba(40,160,110,0.4) 100%)',
-                                borderRadius: '0 0 11px 11px',
-                              }}
-                            />
-                            {/* Блик */}
-                            <div style={{
-                              position: 'absolute',
-                              top: 0,
-                              left: 0,
-                              right: '60%',
-                              bottom: 0,
-                              background: 'linear-gradient(90deg, rgba(255,255,255,0.05) 0%, transparent 100%)',
-                              borderRadius: '12px 0 0 12px',
-                            }} />
-                          </div>
-                          {/* Процент под шкалой */}
-                          <div style={{ 
-                            fontSize: 18, 
-                            fontWeight: 600, 
-                            color: tank.status === 'warn' ? 'rgba(220,160,60,0.9)' :
-                                   tank.status === 'critical' ? T.textRed :
-                                   T.textPrimary,
-                          }}>
-                            {tank.level}%
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
-                    
-                    {/* Вертикальный разделитель */}
-                    <div style={{ width: 1, background: 'linear-gradient(180deg, transparent 5%, rgba(80,100,120,0.3) 50%, transparent 95%)' }} />
-                    
-                    {/* Метрики справа - выровнены по шкалам */}
-                    <div style={{ 
-                      display: 'flex',
-                      flexDirection: 'column',
-                      flex: 1,
-                      paddingTop: 8, /* такой же как у контейнера баков */
-                    }}>
-                      {/* Пустое место под названия баков */}
-                      <div style={{ height: 34 }} />
-                      
-                      {/* Контейнер метрик - высота как у шкал */}
-                      <div style={{ 
-                        height: 160, 
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
-                      }}>
-                        {/* Верхний ряд - Расход */}
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
-                          {sectionData.fuel.metrics.slice(0, 2).map((metric, idx) => (
-                            <motion.div
-                              key={idx}
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: 0.15 + 0.05 * idx }}
-                              style={{
-                                padding: '12px 14px',
-                                background: 'rgba(30,45,60,0.4)',
-                                border: '1px solid rgba(80,100,120,0.3)',
-                                borderRadius: 12,
-                              }}
-                            >
-                              <div style={{ fontSize: 10, color: T.textMuted, marginBottom: 4 }}>{metric.label}</div>
-                              <div style={{ fontSize: 18, fontWeight: 600, color: T.textPrimary }}>
-                                {metric.value}
-                                <span style={{ fontSize: 11, fontWeight: 400, marginLeft: 4, color: T.textMuted }}>{metric.unit}</span>
-                              </div>
-                            </motion.div>
-                          ))}
-                        </div>
-                        {/* Нижний ряд - Израсходовано */}
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
-                          {sectionData.fuel.metrics.slice(2, 4).map((metric, idx) => (
-                            <motion.div
-                              key={idx}
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: 0.25 + 0.05 * idx }}
-                              style={{
-                                padding: '12px 14px',
-                                background: 'rgba(30,45,60,0.4)',
-                                border: '1px solid rgba(80,100,120,0.3)',
-                                borderRadius: 12,
-                              }}
-                            >
-                              <div style={{ fontSize: 10, color: T.textMuted, marginBottom: 4 }}>{metric.label}</div>
-                              <div style={{ fontSize: 18, fontWeight: 600, color: T.textPrimary }}>
-                                {metric.value}
-                                <span style={{ fontSize: 11, fontWeight: 400, marginLeft: 4, color: T.textMuted }}>{metric.unit}</span>
-                              </div>
-                            </motion.div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ) : expandedSection === 'tanks' ? (
+                {/* Кастомное отображение для ёмкостей */}
+                {expandedSection === 'tanks' ? (
                   /* Кастомное отображение для ёмкостей */
                   <div style={{ display: 'flex', gap: 32, flex: 1, alignItems: 'stretch' }}>
                     {/* Баки слева - flex: 1.5 */}
@@ -1762,39 +1618,6 @@ export default function YachtDashboard() {
           ) : (
             /* Свёрнутый вид */
             <div style={{ display: 'flex', alignItems: 'stretch' }}>
-              {/* ТОПЛИВО */}
-              <div 
-                onClick={() => setExpandedSection('fuel')}
-                style={{ flex: 1, height: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 12, cursor: 'pointer' }}
-              >
-                <div style={{ fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 8 }}>ТОПЛИВО</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 5, width: '80%' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <div style={{ fontSize: 8, color: T.textMuted, width: 32 }}>ЛЕВ.</div>
-                    <div style={{ flex: 1, height: 7, borderRadius: 4, background: 'rgba(30,45,60,0.6)', border: '1px solid rgba(80,100,120,0.3)', overflow: 'hidden' }}>
-                      <div style={{ width: '78%', height: '100%', background: 'linear-gradient(90deg, rgba(61,200,140,0.7) 0%, rgba(61,200,140,0.5) 100%)', borderRadius: 3 }} />
-                    </div>
-                    <div style={{ fontSize: 10, color: T.textSecondary, width: 28, textAlign: 'right' }}>78%</div>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <div style={{ fontSize: 8, color: T.textMuted, width: 32 }}>ПРАВ.</div>
-                    <div style={{ flex: 1, height: 7, borderRadius: 4, background: 'rgba(30,45,60,0.6)', border: '1px solid rgba(80,100,120,0.3)', overflow: 'hidden' }}>
-                      <div style={{ width: '72%', height: '100%', background: 'linear-gradient(90deg, rgba(61,200,140,0.7) 0%, rgba(61,200,140,0.5) 100%)', borderRadius: 3 }} />
-                    </div>
-                    <div style={{ fontSize: 10, color: T.textSecondary, width: 28, textAlign: 'right' }}>72%</div>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <div style={{ fontSize: 8, color: T.textMuted, width: 32 }}>ГЕН.</div>
-                    <div style={{ flex: 1, height: 7, borderRadius: 4, background: 'rgba(30,45,60,0.6)', border: '1px solid rgba(80,100,120,0.3)', overflow: 'hidden' }}>
-                      <div style={{ width: '45%', height: '100%', background: 'linear-gradient(90deg, rgba(220,160,60,0.7) 0%, rgba(220,160,60,0.5) 100%)', borderRadius: 3 }} />
-                    </div>
-                    <div style={{ fontSize: 10, color: T.textSecondary, width: 28, textAlign: 'right' }}>45%</div>
-                  </div>
-                </div>
-              </div>
-              
-              <div style={{ width: 1, background: 'linear-gradient(180deg, transparent 10%, rgba(80,100,120,0.3) 50%, transparent 90%)' }} />
-              
               {/* ПОГОДА */}
               <div 
                 onClick={() => setExpandedSection('weather')}
@@ -1820,12 +1643,12 @@ export default function YachtDashboard() {
               <div style={{ width: 1, background: 'linear-gradient(180deg, transparent 10%, rgba(80,100,120,0.3) 50%, transparent 90%)' }} />
               
               {/* ЭЛЕКТРИКА */}
-              <div 
+              <div
                 onClick={() => setExpandedSection('electric')}
                 style={{ flex: 1, height: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 12, cursor: 'pointer' }}
               >
-                <div style={{ fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 16 }}>ЭЛЕКТРИКА</div>
-                <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
+                <div style={{ fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 10 }}>ЭЛЕКТРИКА</div>
+                <div style={{ display: 'flex', gap: 20, alignItems: 'center', marginBottom: 10 }}>
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: 16, fontWeight: 500, color: T.textSecondary }}>12.8 В</div>
                     <div style={{ fontSize: 9, color: T.textMuted }}>АКБ</div>
@@ -1834,6 +1657,14 @@ export default function YachtDashboard() {
                     <div style={{ fontSize: 16, fontWeight: 500, color: T.textSecondary }}>2.1 кВт</div>
                     <div style={{ fontSize: 9, color: T.textMuted }}>солнце</div>
                   </div>
+                </div>
+                {/* Топливо генератора */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, width: '85%' }}>
+                  <div style={{ fontSize: 8, color: T.textMuted, width: 24 }}>ГЕН</div>
+                  <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'rgba(30,45,60,0.6)', border: '1px solid rgba(80,100,120,0.3)', overflow: 'hidden' }}>
+                    <div style={{ width: '45%', height: '100%', background: 'linear-gradient(90deg, rgba(220,160,60,0.7) 0%, rgba(220,160,60,0.5) 100%)', borderRadius: 2 }} />
+                  </div>
+                  <div style={{ fontSize: 9, color: T.textSecondary, width: 24, textAlign: 'right' }}>45%</div>
                 </div>
               </div>
               

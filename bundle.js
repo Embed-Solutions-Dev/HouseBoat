@@ -31136,7 +31136,7 @@
         ]
       }
     };
-    const sectionKeys = ["fuel", "weather", "electric", "tanks", "safety"];
+    const sectionKeys = ["weather", "electric", "tanks", "safety"];
     (0, import_react27.useEffect)(() => {
       const id3 = setInterval(() => {
         setHeading((h) => normDeg(h + 0.4));
@@ -31782,98 +31782,7 @@
               },
               "\u0417\u0430\u043A\u0440\u044B\u0442\u044C"
             )),
-            expandedSection === "fuel" ? /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", gap: 32, flex: 1, alignItems: "stretch" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1.5, display: "flex", gap: 24, alignItems: "flex-start", justifyContent: "center", paddingTop: 8 } }, sectionData.fuel.tanks.map((tank, idx) => /* @__PURE__ */ import_react27.default.createElement(
-              motion.div,
-              {
-                key: idx,
-                initial: { opacity: 0, y: 20 },
-                animate: { opacity: 1, y: 0 },
-                transition: { delay: 0.05 * idx },
-                style: { display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }
-              },
-              /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center", marginBottom: 2 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, fontWeight: 500, color: T.textSecondary } }, tank.name), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted } }, tank.subname)),
-              /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-                width: 64,
-                height: 160,
-                borderRadius: 12,
-                background: "rgba(20,30,45,0.8)",
-                border: `1px solid ${tank.status === "warn" ? "rgba(220,160,60,0.4)" : tank.status === "critical" ? "rgba(224,64,80,0.4)" : "rgba(80,100,120,0.3)"}`,
-                position: "relative",
-                overflow: "hidden",
-                boxShadow: "inset 0 2px 8px rgba(0,0,0,0.3)"
-              } }, /* @__PURE__ */ import_react27.default.createElement(
-                motion.div,
-                {
-                  initial: { height: 0 },
-                  animate: { height: `${tank.level}%` },
-                  transition: { delay: 0.1 + idx * 0.1, duration: 0.8, ease: "easeOut" },
-                  style: {
-                    position: "absolute",
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    background: tank.status === "warn" ? "linear-gradient(180deg, rgba(220,160,60,0.7) 0%, rgba(180,120,40,0.5) 100%)" : tank.status === "critical" ? "linear-gradient(180deg, rgba(224,64,80,0.7) 0%, rgba(180,40,60,0.5) 100%)" : "linear-gradient(180deg, rgba(61,200,140,0.6) 0%, rgba(40,160,110,0.4) 100%)",
-                    borderRadius: "0 0 11px 11px"
-                  }
-                }
-              ), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: "60%",
-                bottom: 0,
-                background: "linear-gradient(90deg, rgba(255,255,255,0.05) 0%, transparent 100%)",
-                borderRadius: "12px 0 0 12px"
-              } })),
-              /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-                fontSize: 18,
-                fontWeight: 600,
-                color: tank.status === "warn" ? "rgba(220,160,60,0.9)" : tank.status === "critical" ? T.textRed : T.textPrimary
-              } }, tank.level, "%")
-            ))), /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: 1, background: "linear-gradient(180deg, transparent 5%, rgba(80,100,120,0.3) 50%, transparent 95%)" } }), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-              display: "flex",
-              flexDirection: "column",
-              flex: 1,
-              paddingTop: 8
-              /* такой же как у контейнера баков */
-            } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { height: 34 } }), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-              height: 160,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between"
-            } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12 } }, sectionData.fuel.metrics.slice(0, 2).map((metric, idx) => /* @__PURE__ */ import_react27.default.createElement(
-              motion.div,
-              {
-                key: idx,
-                initial: { opacity: 0, y: 10 },
-                animate: { opacity: 1, y: 0 },
-                transition: { delay: 0.15 + 0.05 * idx },
-                style: {
-                  padding: "12px 14px",
-                  background: "rgba(30,45,60,0.4)",
-                  border: "1px solid rgba(80,100,120,0.3)",
-                  borderRadius: 12
-                }
-              },
-              /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textMuted, marginBottom: 4 } }, metric.label),
-              /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 18, fontWeight: 600, color: T.textPrimary } }, metric.value, /* @__PURE__ */ import_react27.default.createElement("span", { style: { fontSize: 11, fontWeight: 400, marginLeft: 4, color: T.textMuted } }, metric.unit))
-            ))), /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12 } }, sectionData.fuel.metrics.slice(2, 4).map((metric, idx) => /* @__PURE__ */ import_react27.default.createElement(
-              motion.div,
-              {
-                key: idx,
-                initial: { opacity: 0, y: 10 },
-                animate: { opacity: 1, y: 0 },
-                transition: { delay: 0.25 + 0.05 * idx },
-                style: {
-                  padding: "12px 14px",
-                  background: "rgba(30,45,60,0.4)",
-                  border: "1px solid rgba(80,100,120,0.3)",
-                  borderRadius: 12
-                }
-              },
-              /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textMuted, marginBottom: 4 } }, metric.label),
-              /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 18, fontWeight: 600, color: T.textPrimary } }, metric.value, /* @__PURE__ */ import_react27.default.createElement("span", { style: { fontSize: 11, fontWeight: 400, marginLeft: 4, color: T.textMuted } }, metric.unit))
-            )))))) : expandedSection === "tanks" ? (
+            expandedSection === "tanks" ? (
               /* Кастомное отображение для ёмкостей */
               /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", gap: 32, flex: 1, alignItems: "stretch" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1.5, display: "flex", gap: 20, alignItems: "flex-start", justifyContent: "center", paddingTop: 8 } }, sectionData.tanks.containers.map((container, idx) => /* @__PURE__ */ import_react27.default.createElement(
                 motion.div,
@@ -32016,14 +31925,6 @@
           /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "stretch" } }, /* @__PURE__ */ import_react27.default.createElement(
             "div",
             {
-              onClick: () => setExpandedSection("fuel"),
-              style: { flex: 1, height: 100, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 12, cursor: "pointer" }
-            },
-            /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 8 } }, "\u0422\u041E\u041F\u041B\u0418\u0412\u041E"),
-            /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 5, width: "80%" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 8, color: T.textMuted, width: 32 } }, "\u041B\u0415\u0412."), /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1, height: 7, borderRadius: 4, background: "rgba(30,45,60,0.6)", border: "1px solid rgba(80,100,120,0.3)", overflow: "hidden" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "78%", height: "100%", background: "linear-gradient(90deg, rgba(61,200,140,0.7) 0%, rgba(61,200,140,0.5) 100%)", borderRadius: 3 } })), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textSecondary, width: 28, textAlign: "right" } }, "78%")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 8, color: T.textMuted, width: 32 } }, "\u041F\u0420\u0410\u0412."), /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1, height: 7, borderRadius: 4, background: "rgba(30,45,60,0.6)", border: "1px solid rgba(80,100,120,0.3)", overflow: "hidden" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "72%", height: "100%", background: "linear-gradient(90deg, rgba(61,200,140,0.7) 0%, rgba(61,200,140,0.5) 100%)", borderRadius: 3 } })), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textSecondary, width: 28, textAlign: "right" } }, "72%")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 8, color: T.textMuted, width: 32 } }, "\u0413\u0415\u041D."), /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1, height: 7, borderRadius: 4, background: "rgba(30,45,60,0.6)", border: "1px solid rgba(80,100,120,0.3)", overflow: "hidden" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "45%", height: "100%", background: "linear-gradient(90deg, rgba(220,160,60,0.7) 0%, rgba(220,160,60,0.5) 100%)", borderRadius: 3 } })), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textSecondary, width: 28, textAlign: "right" } }, "45%")))
-          ), /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: 1, background: "linear-gradient(180deg, transparent 10%, rgba(80,100,120,0.3) 50%, transparent 90%)" } }), /* @__PURE__ */ import_react27.default.createElement(
-            "div",
-            {
               onClick: () => setExpandedSection("weather"),
               style: { flex: 1, height: 100, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 12, cursor: "pointer" }
             },
@@ -32035,8 +31936,9 @@
               onClick: () => setExpandedSection("electric"),
               style: { flex: 1, height: 100, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 12, cursor: "pointer" }
             },
-            /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 16 } }, "\u042D\u041B\u0415\u041A\u0422\u0420\u0418\u041A\u0410"),
-            /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", gap: 20, alignItems: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 16, fontWeight: 500, color: T.textSecondary } }, "12.8 \u0412"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted } }, "\u0410\u041A\u0411")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 16, fontWeight: 500, color: T.textSecondary } }, "2.1 \u043A\u0412\u0442"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted } }, "\u0441\u043E\u043B\u043D\u0446\u0435")))
+            /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 10 } }, "\u042D\u041B\u0415\u041A\u0422\u0420\u0418\u041A\u0410"),
+            /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", gap: 20, alignItems: "center", marginBottom: 10 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 16, fontWeight: 500, color: T.textSecondary } }, "12.8 \u0412"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted } }, "\u0410\u041A\u0411")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 16, fontWeight: 500, color: T.textSecondary } }, "2.1 \u043A\u0412\u0442"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted } }, "\u0441\u043E\u043B\u043D\u0446\u0435"))),
+            /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6, width: "85%" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 8, color: T.textMuted, width: 24 } }, "\u0413\u0415\u041D"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1, height: 6, borderRadius: 3, background: "rgba(30,45,60,0.6)", border: "1px solid rgba(80,100,120,0.3)", overflow: "hidden" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "45%", height: "100%", background: "linear-gradient(90deg, rgba(220,160,60,0.7) 0%, rgba(220,160,60,0.5) 100%)", borderRadius: 2 } })), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textSecondary, width: 24, textAlign: "right" } }, "45%"))
           ), /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: 1, background: "linear-gradient(180deg, transparent 10%, rgba(80,100,120,0.3) 50%, transparent 90%)" } }), /* @__PURE__ */ import_react27.default.createElement(
             "div",
             {
