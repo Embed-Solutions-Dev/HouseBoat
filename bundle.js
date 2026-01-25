@@ -30858,7 +30858,7 @@
     }
     const redZoneStartAngle = startAngle - 0.8 * sweep;
     const arcR = r - 5;
-    const needleLength = r - 40;
+    const needleLength = r - 20;
     const fuelArcR = r - 5;
     const fuelStartAngle = -125;
     const fuelEndAngle = -55;
@@ -32129,7 +32129,7 @@
         motion.div,
         {
           animate: {
-            x: controls.navigation ? -360 : 0
+            x: controls.navigation ? -374 : 0
           },
           transition: { type: "spring", stiffness: 200, damping: 25 },
           style: {
@@ -32197,7 +32197,7 @@
         motion.div,
         {
           animate: {
-            x: controls.navigation ? 360 : 0
+            x: controls.navigation ? 374 : 0
           },
           transition: { type: "spring", stiffness: 200, damping: 25 },
           style: {
@@ -32317,7 +32317,7 @@
               width: expandedEngine ? expandedWidth : collapsedWidth,
               height: expandedEngine ? expandedHeight : collapsedHeight,
               x: expandedEngine ? -expandedWidth / 2 : -collapsedWidth / 2,
-              y: expandedEngine ? -expandedHeight / 2 : isNavMode ? 42 : -collapsedHeight / 2,
+              y: expandedEngine ? -expandedHeight / 2 : isNavMode ? 22 : -collapsedHeight / 2,
               scale: isNavMode ? 0.6 : 1
             },
             transition: { type: "spring", stiffness: 300, damping: 30 },
@@ -32455,7 +32455,7 @@
           transition: { type: "spring", stiffness: 300, damping: 30 },
           style: {
             position: "absolute",
-            top: 130,
+            top: 110,
             left: "calc(50% + 85px)",
             width: 138,
             height: 76,
@@ -32562,7 +32562,7 @@
           style: {
             position: "absolute",
             bottom: 4,
-            left: 24,
+            left: 0,
             zIndex: 50
           }
         },
@@ -32577,7 +32577,7 @@
           style: {
             position: "absolute",
             bottom: 4,
-            right: 24,
+            right: 0,
             zIndex: 50
           }
         },

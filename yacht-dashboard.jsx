@@ -195,7 +195,7 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
 
   const redZoneStartAngle = startAngle - 0.8 * sweep;
   const arcR = r - 5;
-  const needleLength = r - 40;
+  const needleLength = r - 20;
 
   // Fuel arc parameters (bottom arc - 0% left, 100% right)
   const fuelArcR = r - 5;
@@ -1948,7 +1948,7 @@ export default function YachtDashboard() {
             {/* Компас */}
             <motion.div
               animate={{
-                x: controls.navigation ? -360 : 0,
+                x: controls.navigation ? -374 : 0,
               }}
               transition={{ type: "spring", stiffness: 200, damping: 25 }}
               style={{
@@ -2022,7 +2022,7 @@ export default function YachtDashboard() {
             {/* Киль */}
             <motion.div
               animate={{
-                x: controls.navigation ? 360 : 0,
+                x: controls.navigation ? 374 : 0,
               }}
               transition={{ type: "spring", stiffness: 200, damping: 25 }}
               style={{
@@ -2144,7 +2144,7 @@ export default function YachtDashboard() {
                 width: expandedEngine ? expandedWidth : collapsedWidth,
                 height: expandedEngine ? expandedHeight : collapsedHeight,
                 x: expandedEngine ? -expandedWidth / 2 : -collapsedWidth / 2,
-                y: expandedEngine ? -expandedHeight / 2 : isNavMode ? 42 : -collapsedHeight / 2,
+                y: expandedEngine ? -expandedHeight / 2 : isNavMode ? 22 : -collapsedHeight / 2,
                 scale: isNavMode ? 0.6 : 1,
               }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
@@ -2355,7 +2355,7 @@ export default function YachtDashboard() {
                   transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   style={{
                     position: 'absolute',
-                    top: 130,
+                    top: 110,
                     left: 'calc(50% + 85px)',
                     width: 138,
                     height: 76,
@@ -2490,7 +2490,7 @@ export default function YachtDashboard() {
                 style={{
                   position: 'absolute',
                   bottom: 4,
-                  left: 24,
+                  left: 0,
                   zIndex: 50,
                 }}
               >
@@ -2506,7 +2506,7 @@ export default function YachtDashboard() {
                 style={{
                   position: 'absolute',
                   bottom: 4,
-                  right: 24,
+                  right: 0,
                   zIndex: 50,
                 }}
               >
