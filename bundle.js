@@ -32399,7 +32399,7 @@
           transition: { type: "spring", stiffness: 200, damping: 25 },
           style: {
             position: "fixed",
-            bottom: 120,
+            bottom: 144,
             left: "calc(50% - 576px)",
             zIndex: 50
           }
@@ -32414,7 +32414,7 @@
           transition: { type: "spring", stiffness: 200, damping: 25 },
           style: {
             position: "fixed",
-            bottom: 120,
+            bottom: 144,
             right: "calc(50% - 576px)",
             zIndex: 50
           }
