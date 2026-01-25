@@ -1498,11 +1498,12 @@ export default function YachtDashboard() {
             height: expandedSection ? 380 : 88,
           }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          onClick={() => expandedSection && setExpandedSection(null)}
           style={{
             background: 'linear-gradient(180deg, rgba(12,18,28,0.95) 0%, rgba(6,10,18,0.98) 100%)',
             borderRadius: 20,
             border: '1px solid rgba(60,80,100,0.2)',
-            boxShadow: expandedSection 
+            boxShadow: expandedSection
               ? '0 16px 64px rgba(0,0,0,0.6), inset 0 1px 0 rgba(100,130,160,0.08)'
               : '0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(100,130,160,0.08)',
             overflow: 'hidden',
@@ -1511,6 +1512,7 @@ export default function YachtDashboard() {
             left: 0,
             right: 0,
             zIndex: expandedSection ? 100 : 1,
+            cursor: expandedSection ? 'pointer' : 'default',
           }}
         >
           {/* Тонкий блик сверху */}

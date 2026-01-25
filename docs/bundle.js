@@ -31882,6 +31882,7 @@
             height: expandedSection ? 380 : 88
           },
           transition: { type: "spring", stiffness: 300, damping: 30 },
+          onClick: () => expandedSection && setExpandedSection(null),
           style: {
             background: "linear-gradient(180deg, rgba(12,18,28,0.95) 0%, rgba(6,10,18,0.98) 100%)",
             borderRadius: 20,
@@ -31892,7 +31893,8 @@
             top: 0,
             left: 0,
             right: 0,
-            zIndex: expandedSection ? 100 : 1
+            zIndex: expandedSection ? 100 : 1,
+            cursor: expandedSection ? "pointer" : "default"
           }
         },
         /* @__PURE__ */ import_react27.default.createElement("div", { style: {
