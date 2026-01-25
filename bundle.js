@@ -31063,7 +31063,6 @@
     const [anchorModal, setAnchorModal] = (0, import_react27.useState)(false);
     const [anchorPosition, setAnchorPosition] = (0, import_react27.useState)(0);
     const [anchorMoving, setAnchorMoving] = (0, import_react27.useState)(null);
-    const [navMode, setNavMode] = (0, import_react27.useState)(false);
     (0, import_react27.useEffect)(() => {
       const timer1 = setTimeout(() => setLoadingPhase("transition"), 2800);
       const timer2 = setTimeout(() => setLoadingPhase("done"), 3400);
@@ -31420,23 +31419,55 @@
           }
         )))
       )
+    )), /* @__PURE__ */ import_react27.default.createElement(AnimatePresence, null, expandedCamera !== null && /* @__PURE__ */ import_react27.default.createElement(
+      motion.div,
+      {
+        initial: { opacity: 0 },
+        animate: { opacity: 1 },
+        exit: { opacity: 0 },
+        transition: { duration: 0.3 },
+        style: {
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "rgba(0,0,0,0.9)",
+          zIndex: 1e3,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 40
+        },
+        onClick: () => setExpandedCamera(null)
+      },
+      /* @__PURE__ */ import_react27.default.createElement(
+        motion.div,
+        {
+          initial: { scale: 0.8, opacity: 0 },
+          animate: { scale: 1, opacity: 1 },
+          exit: { scale: 0.8, opacity: 0 },
+          transition: { type: "spring", stiffness: 300, damping: 30 },
+          style: { width: "100%", maxWidth: 1400 },
+          onClick: (e) => e.stopPropagation()
+        },
+        /* @__PURE__ */ import_react27.default.createElement(
+          CameraView,
+          {
+            cam: cameras[expandedCamera],
+            isExpanded: true,
+            onClick: () => setExpandedCamera(null)
+          }
+        )
+      )
     )), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
       width: "100%",
       maxWidth: 1152,
       marginBottom: 20,
       display: "grid",
-      gridTemplateColumns: expandedCamera !== null ? "1fr" : "repeat(2, 1fr)",
-      gridTemplateRows: expandedCamera !== null ? "1fr" : "repeat(2, 1fr)",
-      gap: 16,
-      height: 420
-    } }, expandedCamera !== null ? /* @__PURE__ */ import_react27.default.createElement(
-      CameraView,
-      {
-        cam: cameras[expandedCamera],
-        isExpanded: true,
-        onClick: () => setExpandedCamera(null)
-      }
-    ) : cameras.map((cam, idx) => /* @__PURE__ */ import_react27.default.createElement(
+      gridTemplateColumns: "repeat(4, 1fr)",
+      gap: 16
+    } }, cameras.map((cam, idx) => /* @__PURE__ */ import_react27.default.createElement(
       CameraView,
       {
         key: idx,
@@ -31444,13 +31475,12 @@
         isExpanded: false,
         onClick: () => setExpandedCamera(idx)
       }
-    ))), /* @__PURE__ */ import_react27.default.createElement(AnimatePresence, null, navMode && /* @__PURE__ */ import_react27.default.createElement(
+    ))), /* @__PURE__ */ import_react27.default.createElement(
       motion.div,
       {
-        initial: { opacity: 0, scale: 0.9 },
-        animate: { opacity: 1, scale: 1 },
-        exit: { opacity: 0, scale: 0.9 },
-        transition: { duration: 0.4 },
+        initial: { opacity: 0, y: 30 },
+        animate: { opacity: loadingPhase === "done" ? 1 : 0, y: loadingPhase === "done" ? 0 : 30 },
+        transition: { duration: 0.6, delay: 0.1 },
         style: { width: "100%", maxWidth: 1152, marginBottom: -60, position: "relative", zIndex: 0 }
       },
       /* @__PURE__ */ import_react27.default.createElement("div", { style: {
@@ -31688,7 +31718,7 @@
         fontWeight: 500,
         lineHeight: 1.4
       } }, /* @__PURE__ */ import_react27.default.createElement("div", null, `52\xB022'14.3"N`), /* @__PURE__ */ import_react27.default.createElement("div", null, `4\xB053'28.7"E`)))
-    )), /* @__PURE__ */ import_react27.default.createElement(
+    ), /* @__PURE__ */ import_react27.default.createElement(
       motion.div,
       {
         initial: { opacity: 0, y: 30 },
@@ -31912,36 +31942,6 @@
           ), /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: 1, background: "linear-gradient(180deg, transparent 10%, rgba(80,100,120,0.3) 50%, transparent 90%)" } }), /* @__PURE__ */ import_react27.default.createElement(
             "div",
             {
-              onClick: () => setNavMode(!navMode),
-              style: {
-                flex: 1,
-                height: 100,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                background: navMode ? "rgba(61,200,140,0.1)" : "transparent",
-                transition: "background 0.3s ease"
-              }
-            },
-            /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-              width: 40,
-              height: 40,
-              borderRadius: "50%",
-              background: navMode ? "linear-gradient(145deg, rgba(61,200,140,0.3) 0%, rgba(61,200,140,0.15) 100%)" : "linear-gradient(145deg, rgba(40,60,80,0.4) 0%, rgba(30,45,60,0.3) 100%)",
-              border: navMode ? "1px solid rgba(61,200,140,0.4)" : "1px solid rgba(80,100,120,0.3)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              marginBottom: 8,
-              boxShadow: navMode ? "0 0 12px rgba(61,200,140,0.3)" : "none",
-              transition: "all 0.3s ease"
-            } }, /* @__PURE__ */ import_react27.default.createElement("svg", { style: { width: 20, height: 20 }, viewBox: "0 0 24 24", fill: "none", stroke: navMode ? T.textGreen : T.textMuted, strokeWidth: "2" }, /* @__PURE__ */ import_react27.default.createElement("polygon", { points: "3 11 22 2 13 21 11 13 3 11" }))),
-            /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: navMode ? T.textGreen : T.textMuted, letterSpacing: 0.5, fontWeight: 500 } }, "\u041D\u0410\u0412\u0418\u0413\u0410\u0426\u0418\u042F")
-          ), /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: 1, background: "linear-gradient(180deg, transparent 10%, rgba(80,100,120,0.3) 50%, transparent 90%)" } }), /* @__PURE__ */ import_react27.default.createElement(
-            "div",
-            {
               onClick: () => setExpandedSection("tanks"),
               style: { flex: 1, height: 100, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 12, cursor: "pointer" }
             },
@@ -31970,433 +31970,300 @@
         initial: { opacity: 0, y: 30 },
         animate: { opacity: loadingPhase === "done" ? 1 : 0, y: loadingPhase === "done" ? 0 : 30 },
         transition: { duration: 0.6, delay: 0.3 },
-        style: { width: "100%", maxWidth: 1200, position: "relative", overflow: "visible", height: navMode ? 500 : 400 }
+        style: { width: "100%", maxWidth: 1200, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, overflow: "visible" }
       },
-      /* @__PURE__ */ import_react27.default.createElement(
+      /* @__PURE__ */ import_react27.default.createElement("div", { style: { marginRight: -92, paddingTop: 20 } }, /* @__PURE__ */ import_react27.default.createElement(EngineCard, { side: "Left", tempText: "\u0422\u0435\u043C\u043F 82\xB0C \xB7 \u041C\u0430\u0441\u043B\u043E \u041E\u041A", rpm: Math.round(rpmLeft), throttle: Math.round(throttleLeft), gear: gearLeft, motorHours: 1247, fuelLevel: 75, expanded: false, onToggleExpand: () => setExpandedEngine("Left") })),
+      /* @__PURE__ */ import_react27.default.createElement("div", { style: { height: 400, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 20 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", gap: 30, marginBottom: 16 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+        width: 135,
+        height: 135,
+        borderRadius: "50%",
+        background: "linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)",
+        boxShadow: "0 4px 16px rgba(0,0,0,0.5)",
+        padding: 5,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center"
+      } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+        width: "100%",
+        height: "100%",
+        borderRadius: "50%",
+        background: "linear-gradient(145deg, rgba(10,15,25,0.98) 0%, rgba(5,8,15,1) 100%)",
+        position: "relative"
+      } }, /* @__PURE__ */ import_react27.default.createElement(
         motion.div,
         {
-          animate: {
-            x: navMode ? -80 : 0,
-            scale: navMode ? 0.55 : 1
-          },
-          transition: { type: "spring", stiffness: 200, damping: 25 },
           style: {
             position: "absolute",
-            left: navMode ? 0 : 108,
-            top: 20,
-            transformOrigin: "left top",
-            zIndex: 10
-          }
-        },
-        navMode ? /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 12, alignItems: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-          width: 135,
-          height: 135,
-          borderRadius: "50%",
-          background: "linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)",
-          boxShadow: "0 4px 16px rgba(0,0,0,0.5)",
-          padding: 5,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center"
-        } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-          width: "100%",
-          height: "100%",
-          borderRadius: "50%",
-          background: "linear-gradient(145deg, rgba(10,15,25,0.98) 0%, rgba(5,8,15,1) 100%)",
-          position: "relative"
-        } }, /* @__PURE__ */ import_react27.default.createElement(
-          motion.div,
-          {
-            style: { position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" },
-            animate: { rotate: -heading },
-            transition: { type: "spring", stiffness: 120, damping: 18 }
-          },
-          /* @__PURE__ */ import_react27.default.createElement("svg", { viewBox: "0 0 100 100", style: { width: "100%", height: "100%" } }, Array.from({ length: 36 }).map((_, i) => {
-            const angle = i * 10 * Math.PI / 180;
-            const isMajor = i % 9 === 0;
-            return /* @__PURE__ */ import_react27.default.createElement("line", { key: i, x1: 50 + (isMajor ? 38 : 42) * Math.sin(angle), y1: 50 - (isMajor ? 38 : 42) * Math.cos(angle), x2: 50 + 48 * Math.sin(angle), y2: 50 - 48 * Math.cos(angle), stroke: isMajor ? "rgba(200,210,230,0.8)" : "rgba(150,160,180,0.4)", strokeWidth: isMajor ? 2 : 1 });
-          }), /* @__PURE__ */ import_react27.default.createElement("text", { x: "50", y: "20", fill: "rgba(200,210,230,0.6)", fontSize: "9", fontWeight: "500", textAnchor: "middle" }, "\u0421"), /* @__PURE__ */ import_react27.default.createElement("text", { x: "50", y: "80", fill: "rgba(200,210,230,0.6)", fontSize: "9", fontWeight: "500", textAnchor: "middle", transform: "rotate(180 50 80)" }, "\u042E"), /* @__PURE__ */ import_react27.default.createElement("text", { x: "80", y: "50", fill: "rgba(200,210,230,0.6)", fontSize: "9", fontWeight: "500", textAnchor: "middle", transform: "rotate(90 80 50)" }, "\u0412"), /* @__PURE__ */ import_react27.default.createElement("text", { x: "20", y: "50", fill: "rgba(200,210,230,0.6)", fontSize: "9", fontWeight: "500", textAnchor: "middle", transform: "rotate(-90 20 50)" }, "\u0417"))
-        ), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", top: -18, left: "50%", transform: "translateX(-50%)", width: 0, height: 0, borderLeft: "7px solid transparent", borderRight: "7px solid transparent", borderTop: "11px solid #d44050", filter: "drop-shadow(0 0 4px rgba(212,64,80,0.6))" } }))), /* @__PURE__ */ import_react27.default.createElement(EngineCard, { side: "Left", tempText: "\u0422\u0435\u043C\u043F 82\xB0C \xB7 \u041C\u0430\u0441\u043B\u043E \u041E\u041A", rpm: Math.round(rpmLeft), throttle: Math.round(throttleLeft), gear: gearLeft, motorHours: 1247, fuelLevel: 75, expanded: false, onToggleExpand: () => setExpandedEngine("Left") })) : /* @__PURE__ */ import_react27.default.createElement(EngineCard, { side: "Left", tempText: "\u0422\u0435\u043C\u043F 82\xB0C \xB7 \u041C\u0430\u0441\u043B\u043E \u041E\u041A", rpm: Math.round(rpmLeft), throttle: Math.round(throttleLeft), gear: gearLeft, motorHours: 1247, fuelLevel: 75, expanded: false, onToggleExpand: () => setExpandedEngine("Left") })
-      ),
-      /* @__PURE__ */ import_react27.default.createElement(
-        motion.div,
-        {
-          animate: { opacity: navMode ? 0 : 1 },
-          transition: { duration: 0.3 },
-          style: {
-            position: "absolute",
-            left: "50%",
-            transform: "translateX(-50%)",
-            top: 20,
-            display: navMode ? "none" : "flex",
-            flexDirection: "column",
+            inset: 0,
+            display: "flex",
             alignItems: "center",
-            height: 400
-          }
-        },
-        /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", gap: 30, marginBottom: 16 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-          width: 135,
-          height: 135,
-          borderRadius: "50%",
-          background: "linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)",
-          boxShadow: "0 4px 16px rgba(0,0,0,0.5)",
-          padding: 5,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center"
-        } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-          width: "100%",
-          height: "100%",
-          borderRadius: "50%",
-          background: "linear-gradient(145deg, rgba(10,15,25,0.98) 0%, rgba(5,8,15,1) 100%)",
-          position: "relative"
-        } }, /* @__PURE__ */ import_react27.default.createElement(
-          motion.div,
-          {
-            style: {
-              position: "absolute",
-              inset: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center"
-            },
-            animate: { rotate: -heading },
-            transition: { type: "spring", stiffness: 120, damping: 18 }
+            justifyContent: "center"
           },
-          /* @__PURE__ */ import_react27.default.createElement("svg", { viewBox: "0 0 100 100", style: { width: "100%", height: "100%" } }, Array.from({ length: 36 }).map((_, i) => {
-            const angle = i * 10 * Math.PI / 180;
-            const isMajor = i % 9 === 0;
-            const r1 = isMajor ? 38 : 42;
-            const r2 = 48;
-            return /* @__PURE__ */ import_react27.default.createElement(
-              "line",
-              {
-                key: i,
-                x1: 50 + r1 * Math.sin(angle),
-                y1: 50 - r1 * Math.cos(angle),
-                x2: 50 + r2 * Math.sin(angle),
-                y2: 50 - r2 * Math.cos(angle),
-                stroke: isMajor ? "rgba(200,210,230,0.8)" : "rgba(150,160,180,0.4)",
-                strokeWidth: isMajor ? 2 : 1
-              }
-            );
-          }), /* @__PURE__ */ import_react27.default.createElement("text", { x: "50", y: "20", fill: "rgba(200,210,230,0.6)", fontSize: "9", fontWeight: "500", textAnchor: "middle", dominantBaseline: "middle" }, "\u0421"), /* @__PURE__ */ import_react27.default.createElement("text", { x: "50", y: "80", fill: "rgba(200,210,230,0.6)", fontSize: "9", fontWeight: "500", textAnchor: "middle", dominantBaseline: "middle", transform: "rotate(180 50 80)" }, "\u042E"), /* @__PURE__ */ import_react27.default.createElement("text", { x: "80", y: "50", fill: "rgba(200,210,230,0.6)", fontSize: "9", fontWeight: "500", textAnchor: "middle", dominantBaseline: "middle", transform: "rotate(90 80 50)" }, "\u0412"), /* @__PURE__ */ import_react27.default.createElement("text", { x: "20", y: "50", fill: "rgba(200,210,230,0.6)", fontSize: "9", fontWeight: "500", textAnchor: "middle", dominantBaseline: "middle", transform: "rotate(-90 20 50)" }, "\u0417"))
-        ), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-          position: "absolute",
-          top: -18,
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: 0,
-          height: 0,
-          borderLeft: "7px solid transparent",
-          borderRight: "7px solid transparent",
-          borderTop: "11px solid #d44050",
-          filter: "drop-shadow(0 0 4px rgba(212,64,80,0.6))"
-        } }))), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-          width: 135,
-          height: 135,
-          borderRadius: "50%",
-          background: "linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)",
-          boxShadow: "0 4px 16px rgba(0,0,0,0.5)",
-          padding: 5,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center"
-        } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-          width: "100%",
-          height: "100%",
-          borderRadius: "50%",
-          background: "linear-gradient(145deg, rgba(10,15,25,0.98) 0%, rgba(5,8,15,1) 100%)",
-          position: "relative",
-          overflow: "hidden"
-        } }, /* @__PURE__ */ import_react27.default.createElement("svg", { viewBox: "0 0 100 100", style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%" } }, Array.from({ length: 19 }).map((_, i) => {
-          const deg = -45 + i * 5;
-          const angle = (deg + 90) * Math.PI / 180;
-          const isMajor = deg % 15 === 0;
-          const r1 = isMajor ? 38 : 40;
-          const r2 = 46;
+          animate: { rotate: -heading },
+          transition: { type: "spring", stiffness: 120, damping: 18 }
+        },
+        /* @__PURE__ */ import_react27.default.createElement("svg", { viewBox: "0 0 100 100", style: { width: "100%", height: "100%" } }, Array.from({ length: 36 }).map((_, i) => {
+          const angle = i * 10 * Math.PI / 180;
+          const isMajor = i % 9 === 0;
+          const r1 = isMajor ? 38 : 42;
+          const r2 = 48;
           return /* @__PURE__ */ import_react27.default.createElement(
             "line",
             {
               key: i,
-              x1: 50 + r1 * Math.cos(angle),
-              y1: 50 + r1 * Math.sin(angle),
-              x2: 50 + r2 * Math.cos(angle),
-              y2: 50 + r2 * Math.sin(angle),
+              x1: 50 + r1 * Math.sin(angle),
+              y1: 50 - r1 * Math.cos(angle),
+              x2: 50 + r2 * Math.sin(angle),
+              y2: 50 - r2 * Math.cos(angle),
               stroke: isMajor ? "rgba(200,210,230,0.8)" : "rgba(150,160,180,0.4)",
-              strokeWidth: isMajor ? 2 : 1,
-              strokeLinecap: "round"
+              strokeWidth: isMajor ? 2 : 1
             }
           );
-        })), /* @__PURE__ */ import_react27.default.createElement(
-          "svg",
+        }), /* @__PURE__ */ import_react27.default.createElement("text", { x: "50", y: "20", fill: "rgba(200,210,230,0.6)", fontSize: "9", fontWeight: "500", textAnchor: "middle", dominantBaseline: "middle" }, "\u0421"), /* @__PURE__ */ import_react27.default.createElement("text", { x: "50", y: "80", fill: "rgba(200,210,230,0.6)", fontSize: "9", fontWeight: "500", textAnchor: "middle", dominantBaseline: "middle", transform: "rotate(180 50 80)" }, "\u042E"), /* @__PURE__ */ import_react27.default.createElement("text", { x: "80", y: "50", fill: "rgba(200,210,230,0.6)", fontSize: "9", fontWeight: "500", textAnchor: "middle", dominantBaseline: "middle", transform: "rotate(90 80 50)" }, "\u0412"), /* @__PURE__ */ import_react27.default.createElement("text", { x: "20", y: "50", fill: "rgba(200,210,230,0.6)", fontSize: "9", fontWeight: "500", textAnchor: "middle", dominantBaseline: "middle", transform: "rotate(-90 20 50)" }, "\u0417"))
+      ), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+        position: "absolute",
+        top: -18,
+        left: "50%",
+        transform: "translateX(-50%)",
+        width: 0,
+        height: 0,
+        borderLeft: "7px solid transparent",
+        borderRight: "7px solid transparent",
+        borderTop: "11px solid #d44050",
+        filter: "drop-shadow(0 0 4px rgba(212,64,80,0.6))"
+      } }))), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+        width: 135,
+        height: 135,
+        borderRadius: "50%",
+        background: "linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)",
+        boxShadow: "0 4px 16px rgba(0,0,0,0.5)",
+        padding: 5,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center"
+      } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+        width: "100%",
+        height: "100%",
+        borderRadius: "50%",
+        background: "linear-gradient(145deg, rgba(10,15,25,0.98) 0%, rgba(5,8,15,1) 100%)",
+        position: "relative",
+        overflow: "hidden"
+      } }, /* @__PURE__ */ import_react27.default.createElement("svg", { viewBox: "0 0 100 100", style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%" } }, Array.from({ length: 19 }).map((_, i) => {
+        const deg = -45 + i * 5;
+        const angle = (deg + 90) * Math.PI / 180;
+        const isMajor = deg % 15 === 0;
+        const r1 = isMajor ? 38 : 40;
+        const r2 = 46;
+        return /* @__PURE__ */ import_react27.default.createElement(
+          "line",
           {
-            viewBox: "0 0 24 32",
-            style: {
-              position: "absolute",
-              top: 22,
-              left: "50%",
-              transform: "translateX(-50%)",
-              width: 33,
-              height: 45,
-              opacity: 0.35
-            }
-          },
-          /* @__PURE__ */ import_react27.default.createElement(
-            "path",
-            {
-              d: "M12 1 L18 8 L19 22 Q12 30 5 22 L6 8 Z",
-              fill: "rgba(150,180,210,0.6)",
-              stroke: "rgba(150,180,210,0.8)",
-              strokeWidth: "0.5"
-            }
-          ),
-          /* @__PURE__ */ import_react27.default.createElement(
-            "ellipse",
-            {
-              cx: "12",
-              cy: "14",
-              rx: "4",
-              ry: "6",
-              fill: "rgba(100,130,160,0.5)"
-            }
-          )
-        ), /* @__PURE__ */ import_react27.default.createElement(
-          motion.div,
-          {
-            style: {
-              position: "absolute",
-              top: 57,
-              left: "50%",
-              width: 4,
-              height: 48,
-              marginLeft: -2,
-              background: "linear-gradient(90deg, #a03040 0%, #d04050 25%, #e85060 50%, #d04050 75%, #a03040 100%)",
-              borderRadius: 2,
-              transformOrigin: "center top",
-              boxShadow: "0 0 8px rgba(224,80,96,0.5)"
-            },
-            animate: { rotate: rudderDeg },
-            transition: { type: "spring", stiffness: 100, damping: 15 }
+            key: i,
+            x1: 50 + r1 * Math.cos(angle),
+            y1: 50 + r1 * Math.sin(angle),
+            x2: 50 + r2 * Math.cos(angle),
+            y2: 50 + r2 * Math.sin(angle),
+            stroke: isMajor ? "rgba(200,210,230,0.8)" : "rgba(150,160,180,0.4)",
+            strokeWidth: isMajor ? 2 : 1,
+            strokeLinecap: "round"
           }
-        ), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: 14,
-          height: 14,
-          borderRadius: "50%",
-          background: "radial-gradient(circle at 35% 35%, #ffffff 0%, #d0d0d0 30%, #909090 70%, #606060 100%)",
-          boxShadow: "0 2px 6px rgba(0,0,0,0.4)"
-        } })))),
-        /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "relative", width: 230, height: 127, marginTop: 22 } }, (() => {
-          const expandedFaults = expandedEngine === "Left" ? [] : ["E102 - \u0414\u0430\u0442\u0447\u0438\u043A \u0442\u0435\u043C\u043F\u0435\u0440\u0430\u0442\u0443\u0440\u044B", "E045 - \u041D\u0438\u0437\u043A\u043E\u0435 \u0434\u0430\u0432\u043B\u0435\u043D\u0438\u0435 \u043C\u0430\u0441\u043B\u0430"];
-          const hasExpandedFaults = expandedFaults.length > 0;
-          const expandedWidth = hasExpandedFaults ? 580 : 380;
-          const expandedHeight = 380;
-          const collapsedWidth = 230;
-          const collapsedHeight = 127;
-          return /* @__PURE__ */ import_react27.default.createElement(
-            motion.div,
-            {
-              animate: {
-                width: expandedEngine ? expandedWidth : collapsedWidth,
-                height: expandedEngine ? expandedHeight : collapsedHeight,
-                x: expandedEngine ? -expandedWidth / 2 : -collapsedWidth / 2,
-                y: expandedEngine ? -expandedHeight / 2 : -collapsedHeight / 2
-              },
-              transition: { type: "spring", stiffness: 300, damping: 30 },
-              style: {
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                width: collapsedWidth,
-                height: collapsedHeight,
-                borderRadius: 28,
-                background: "linear-gradient(145deg, rgba(15,22,35,0.97) 0%, rgba(8,12,22,0.98) 50%, rgba(5,8,15,1) 100%)",
-                boxShadow: "0 12px 40px rgba(0,0,0,0.6), 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 1px rgba(100,140,200,0.1), inset 0 -2px 10px rgba(0,0,0,0.5)",
-                border: "1px solid rgba(80,100,130,0.2)",
-                overflow: "hidden",
-                zIndex: expandedEngine ? 30 : 2
-              }
-            },
-            /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-              position: "absolute",
-              inset: 4,
-              borderRadius: 24,
-              boxShadow: "inset 0 6px 20px rgba(0,0,0,0.8), inset 0 2px 8px rgba(0,5,15,0.5)",
-              pointerEvents: "none"
-            } }),
-            /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-              position: "absolute",
-              top: 0,
-              left: 12,
-              right: 12,
-              height: 40,
-              borderRadius: "0 0 50% 50%",
-              background: "linear-gradient(180deg, rgba(180,210,255,0.12) 0%, rgba(150,180,220,0.05) 40%, transparent 100%)",
-              pointerEvents: "none"
-            } }),
-            /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-              position: "absolute",
-              inset: 0,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: expandedEngine ? "flex-start" : "center",
-              padding: expandedEngine ? "28px 32px 24px" : 0
-            } }, expandedEngine ? /* @__PURE__ */ import_react27.default.createElement(import_react27.default.Fragment, null, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 16, fontWeight: 600, color: hasExpandedFaults ? T.textRed : T.textSecondary, marginBottom: 20 } }, expandedEngine === "Left" ? "\u041B\u0435\u0432\u044B\u0439" : "\u041F\u0440\u0430\u0432\u044B\u0439", " \u0434\u0432\u0438\u0433\u0430\u0442\u0435\u043B\u044C"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", width: "100%", flex: 1, position: "relative", alignItems: "flex-start" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-              flex: 1,
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "16px 24px",
-              alignContent: "start",
-              paddingRight: hasExpandedFaults ? 24 : 0
-            } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center", minWidth: 80 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textMuted, marginBottom: 4 } }, "\u041E\u0411/\u041C\u0418\u041D"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 26, fontWeight: 600, color: "#d4af65", textShadow: "0 0 20px rgba(212,175,101,0.3)", fontVariantNumeric: "tabular-nums", minWidth: 70 } }, expandedEngine === "Left" ? Math.round(rpmLeft).toLocaleString() : Math.round(rpmRight).toLocaleString())), /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center", minWidth: 80 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textMuted, marginBottom: 4 } }, "\u0413\u0410\u0417"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 26, fontWeight: 600, color: T.textPrimary, fontVariantNumeric: "tabular-nums", minWidth: 50 } }, (expandedEngine === "Left" ? Math.round(throttleLeft) : Math.round(throttleRight)).toString().padStart(2, "\u2007"), "%")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center", minWidth: 80 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textMuted, marginBottom: 4 } }, "\u0422\u0415\u041C\u041F."), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 26, fontWeight: 600, color: T.textGreen } }, expandedEngine === "Left" ? "82\xB0C" : "81\xB0C")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center", minWidth: 80 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textMuted, marginBottom: 4 } }, "\u041C\u0410\u0421\u041B\u041E"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 26, fontWeight: 600, color: T.textGreen } }, "\u041E\u041A")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center", minWidth: 80 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textMuted, marginBottom: 4 } }, "\u041F\u0415\u0420."), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 26, fontWeight: 600, color: T.textPrimary } }, expandedEngine === "Left" ? gearLeft : gearRight)), /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center", minWidth: 80 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textMuted, marginBottom: 4 } }, "\u0414\u0410\u0412\u041B."), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 26, fontWeight: 600, color: T.textGreen } }, "4.2"))), hasExpandedFaults && /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              gap: 8,
-              paddingLeft: 24,
-              justifyContent: "flex-start"
-            } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textRed, fontWeight: 600, marginBottom: 4 } }, "\u041E\u0428\u0418\u0411\u041A\u0418 (", expandedFaults.length, ")"), expandedFaults.map((fault, idx) => /* @__PURE__ */ import_react27.default.createElement(
-              "div",
-              {
-                key: idx,
-                style: {
-                  padding: "10px 14px",
-                  background: "rgba(224,64,80,0.12)",
-                  border: "1px solid rgba(224,64,80,0.25)",
-                  borderRadius: 10,
-                  fontSize: 12,
-                  color: T.textRed,
-                  lineHeight: 1.4
-                }
-              },
-              fault
-            )))), /* @__PURE__ */ import_react27.default.createElement(
-              "button",
-              {
-                onClick: () => setExpandedEngine(null),
-                style: {
-                  marginTop: 16,
-                  padding: "10px 28px",
-                  background: "rgba(80,110,140,0.2)",
-                  border: "1px solid rgba(100,130,160,0.3)",
-                  borderRadius: 20,
-                  color: "rgba(150,180,210,0.7)",
-                  fontSize: 12,
-                  cursor: "pointer"
-                }
-              },
-              "\u0417\u0430\u043A\u0440\u044B\u0442\u044C"
-            )) : /* @__PURE__ */ import_react27.default.createElement(import_react27.default.Fragment, null, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-              fontSize: 56,
-              fontWeight: 400,
-              color: "#d4af65",
-              textShadow: "0 0 30px rgba(212,175,101,0.4), 0 0 60px rgba(212,175,101,0.2)",
-              letterSpacing: -2,
-              fontVariantNumeric: "tabular-nums"
-            } }, speed.toFixed(1)), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-              fontSize: 12,
-              color: "rgba(212,175,101,0.5)",
-              letterSpacing: 3,
-              marginTop: 2
-            } }, "\u043A\u043C/\u0447"))),
-            /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-              position: "absolute",
-              inset: 0,
-              borderRadius: 28,
-              border: "1px solid rgba(150,180,220,0.08)",
-              pointerEvents: "none"
-            } })
-          );
-        })(), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-          position: "absolute",
-          bottom: -82,
-          left: "50%",
-          transform: "translateX(-50%)",
-          zIndex: 5
-        } }, /* @__PURE__ */ import_react27.default.createElement("svg", { width: "75", height: "48", viewBox: "600 -100 1620 750", style: { opacity: 0.6 } }, /* @__PURE__ */ import_react27.default.createElement(
-          "path",
-          {
-            fill: "#2a3a4a",
-            d: "M1798.09 319.87c-4.35,-12.65 -31.56,-22.61 -26.42,-5.52 2.53,29.43 7.74,74.72 -23.19,131.9 -34.39,29.27 5.18,34.93 43.53,16.19 64.03,-24.99 12.21,-119.88 6.08,-142.57zm-498.41 -195.06l0 0 -0.42 0 0 54.51 47.15 0c-0.78,-30.15 -21.5,-54.51 -46.73,-54.51zm-17.11 0.05l0 0c-24.28,1.3 -43.89,25.15 -44.65,54.46l44.65 0 0 -54.46zm-44.67 74.57l0 0 0 51 44.67 0 0 -51 -44.67 0zm61.36 51l0 0 47.17 0 0 -51 -47.17 0 0 51zm488.43 -118.7l0 0c-75.64,39.65 -105.96,79.31 -167.43,107.06 -14.5,6.53 -30.65,12.67 -48.33,18.34l0 -102.15c0,-34.71 -28.38,-63.1 -63.09,-63.1 -34.71,0 -63.1,28.39 -63.1,63.1l0 130.53c-114.9,17.14 -260.31,19.42 -421.05,-2.18 209.11,99.93 576.41,33.58 705.24,-76.57 38.48,-32.89 101.67,-75.25 149.43,-91.4 151.13,-55.09 221.23,-5.03 260.55,84.96 -7.9,31.59 -71.1,31.12 -109.89,46.44 -109.8,30.41 -134.33,31.14 -244.26,11.66 -12.86,-0.26 -32.74,10.03 -27.17,24.4 10.58,216.03 -71.36,208.7 -255.45,232.26 -61.99,2.97 -1.08,-78.65 13.4,-87.72 46.13,-48.5 75.84,-52.86 86.21,-69.64 14.88,-26.72 3.03,-38.46 -31.76,-15.84 -142.22,60.11 -308.64,63.74 -496.17,18.12 -193.15,147.77 -382.49,16.88 -304.72,-13.59 67.62,-23.73 138.17,-42.34 211.83,-55.51l-26.05 -41.91c50.95,-25.54 95,-62.9 135.37,-106.56 212.3,-195.78 446.39,-180.44 696.44,-10.7z"
-          }
-        ))))
-      ),
-      /* @__PURE__ */ import_react27.default.createElement(
-        motion.div,
+        );
+      })), /* @__PURE__ */ import_react27.default.createElement(
+        "svg",
         {
-          animate: {
-            x: navMode ? 80 : 0,
-            scale: navMode ? 0.55 : 1
-          },
-          transition: { type: "spring", stiffness: 200, damping: 25 },
+          viewBox: "0 0 24 32",
           style: {
             position: "absolute",
-            right: navMode ? 0 : 108,
-            top: 20,
-            transformOrigin: "right top",
-            zIndex: 10
-          }
-        },
-        navMode ? /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 12, alignItems: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-          width: 135,
-          height: 135,
-          borderRadius: "50%",
-          background: "linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)",
-          boxShadow: "0 4px 16px rgba(0,0,0,0.5)",
-          padding: 5,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center"
-        } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-          width: "100%",
-          height: "100%",
-          borderRadius: "50%",
-          background: "linear-gradient(145deg, rgba(10,15,25,0.98) 0%, rgba(5,8,15,1) 100%)",
-          position: "relative",
-          overflow: "hidden"
-        } }, /* @__PURE__ */ import_react27.default.createElement("svg", { viewBox: "0 0 100 100", style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%" } }, Array.from({ length: 19 }).map((_, i) => {
-          const deg = -45 + i * 5;
-          const angle = (deg + 90) * Math.PI / 180;
-          const isMajor = deg % 15 === 0;
-          return /* @__PURE__ */ import_react27.default.createElement("line", { key: i, x1: 50 + (isMajor ? 38 : 40) * Math.cos(angle), y1: 50 + (isMajor ? 38 : 40) * Math.sin(angle), x2: 50 + 46 * Math.cos(angle), y2: 50 + 46 * Math.sin(angle), stroke: isMajor ? "rgba(200,210,230,0.8)" : "rgba(150,160,180,0.4)", strokeWidth: isMajor ? 2 : 1, strokeLinecap: "round" });
-        })), /* @__PURE__ */ import_react27.default.createElement("svg", { viewBox: "0 0 24 32", style: { position: "absolute", top: 22, left: "50%", transform: "translateX(-50%)", width: 33, height: 45, opacity: 0.35 } }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "M12 1 L18 8 L19 22 Q12 30 5 22 L6 8 Z", fill: "rgba(150,180,210,0.6)", stroke: "rgba(150,180,210,0.8)", strokeWidth: "0.5" }), /* @__PURE__ */ import_react27.default.createElement("ellipse", { cx: "12", cy: "14", rx: "4", ry: "6", fill: "rgba(100,130,160,0.5)" })), /* @__PURE__ */ import_react27.default.createElement(
-          motion.div,
-          {
-            style: { position: "absolute", top: 57, left: "50%", width: 4, height: 48, marginLeft: -2, background: "linear-gradient(90deg, #a03040 0%, #d04050 25%, #e85060 50%, #d04050 75%, #a03040 100%)", borderRadius: 2, transformOrigin: "center top", boxShadow: "0 0 8px rgba(224,80,96,0.5)" },
-            animate: { rotate: rudderDeg },
-            transition: { type: "spring", stiffness: 100, damping: 15 }
-          }
-        ), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 14, height: 14, borderRadius: "50%", background: "radial-gradient(circle at 35% 35%, #ffffff 0%, #d0d0d0 30%, #909090 70%, #606060 100%)", boxShadow: "0 2px 6px rgba(0,0,0,0.4)" } }))), /* @__PURE__ */ import_react27.default.createElement(EngineCard, { side: "Right", tempText: "\u0422\u0435\u043C\u043F 81\xB0C \xB7 \u041C\u0430\u0441\u043B\u043E \u041E\u041A", rpm: Math.round(rpmRight), throttle: Math.round(throttleRight), gear: gearRight, motorHours: 1198, fuelLevel: 18, expanded: false, onToggleExpand: () => setExpandedEngine("Right") })) : /* @__PURE__ */ import_react27.default.createElement(EngineCard, { side: "Right", tempText: "\u0422\u0435\u043C\u043F 81\xB0C \xB7 \u041C\u0430\u0441\u043B\u043E \u041E\u041A", rpm: Math.round(rpmRight), throttle: Math.round(throttleRight), gear: gearRight, motorHours: 1198, fuelLevel: 18, expanded: false, onToggleExpand: () => setExpandedEngine("Right") })
-      ),
-      /* @__PURE__ */ import_react27.default.createElement(AnimatePresence, null, navMode && /* @__PURE__ */ import_react27.default.createElement(
-        motion.div,
-        {
-          initial: { opacity: 0, y: 20 },
-          animate: { opacity: 1, y: 0 },
-          exit: { opacity: 0, y: 20 },
-          transition: { duration: 0.3 },
-          style: {
-            position: "absolute",
-            bottom: 20,
+            top: 22,
             left: "50%",
             transform: "translateX(-50%)",
-            zIndex: 20,
-            textAlign: "center"
+            width: 33,
+            height: 45,
+            opacity: 0.35
           }
         },
-        /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-          fontSize: 32,
-          fontWeight: 600,
-          color: "rgba(212,175,101,0.8)",
-          textShadow: "0 0 20px rgba(212,175,101,0.3)"
-        } }, speed.toFixed(1)),
-        /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: "rgba(212,175,101,0.4)", letterSpacing: 2 } }, "\u043A\u043C/\u0447")
-      ))
+        /* @__PURE__ */ import_react27.default.createElement(
+          "path",
+          {
+            d: "M12 1 L18 8 L19 22 Q12 30 5 22 L6 8 Z",
+            fill: "rgba(150,180,210,0.6)",
+            stroke: "rgba(150,180,210,0.8)",
+            strokeWidth: "0.5"
+          }
+        ),
+        /* @__PURE__ */ import_react27.default.createElement(
+          "ellipse",
+          {
+            cx: "12",
+            cy: "14",
+            rx: "4",
+            ry: "6",
+            fill: "rgba(100,130,160,0.5)"
+          }
+        )
+      ), /* @__PURE__ */ import_react27.default.createElement(
+        motion.div,
+        {
+          style: {
+            position: "absolute",
+            top: 57,
+            left: "50%",
+            width: 4,
+            height: 48,
+            marginLeft: -2,
+            background: "linear-gradient(90deg, #a03040 0%, #d04050 25%, #e85060 50%, #d04050 75%, #a03040 100%)",
+            borderRadius: 2,
+            transformOrigin: "center top",
+            boxShadow: "0 0 8px rgba(224,80,96,0.5)"
+          },
+          animate: { rotate: rudderDeg },
+          transition: { type: "spring", stiffness: 100, damping: 15 }
+        }
+      ), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        width: 14,
+        height: 14,
+        borderRadius: "50%",
+        background: "radial-gradient(circle at 35% 35%, #ffffff 0%, #d0d0d0 30%, #909090 70%, #606060 100%)",
+        boxShadow: "0 2px 6px rgba(0,0,0,0.4)"
+      } })))), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "relative", width: 230, height: 127, marginTop: 22 } }, (() => {
+        const expandedFaults = expandedEngine === "Left" ? [] : ["E102 - \u0414\u0430\u0442\u0447\u0438\u043A \u0442\u0435\u043C\u043F\u0435\u0440\u0430\u0442\u0443\u0440\u044B", "E045 - \u041D\u0438\u0437\u043A\u043E\u0435 \u0434\u0430\u0432\u043B\u0435\u043D\u0438\u0435 \u043C\u0430\u0441\u043B\u0430"];
+        const hasExpandedFaults = expandedFaults.length > 0;
+        const expandedWidth = hasExpandedFaults ? 580 : 380;
+        const expandedHeight = 380;
+        const collapsedWidth = 230;
+        const collapsedHeight = 127;
+        return /* @__PURE__ */ import_react27.default.createElement(
+          motion.div,
+          {
+            animate: {
+              width: expandedEngine ? expandedWidth : collapsedWidth,
+              height: expandedEngine ? expandedHeight : collapsedHeight,
+              x: expandedEngine ? -expandedWidth / 2 : -collapsedWidth / 2,
+              y: expandedEngine ? -expandedHeight / 2 : -collapsedHeight / 2
+            },
+            transition: { type: "spring", stiffness: 300, damping: 30 },
+            style: {
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              width: collapsedWidth,
+              height: collapsedHeight,
+              borderRadius: 28,
+              background: "linear-gradient(145deg, rgba(15,22,35,0.97) 0%, rgba(8,12,22,0.98) 50%, rgba(5,8,15,1) 100%)",
+              boxShadow: "0 12px 40px rgba(0,0,0,0.6), 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 1px rgba(100,140,200,0.1), inset 0 -2px 10px rgba(0,0,0,0.5)",
+              border: "1px solid rgba(80,100,130,0.2)",
+              overflow: "hidden",
+              zIndex: expandedEngine ? 30 : 2
+            }
+          },
+          /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+            position: "absolute",
+            inset: 4,
+            borderRadius: 24,
+            boxShadow: "inset 0 6px 20px rgba(0,0,0,0.8), inset 0 2px 8px rgba(0,5,15,0.5)",
+            pointerEvents: "none"
+          } }),
+          /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+            position: "absolute",
+            top: 0,
+            left: 12,
+            right: 12,
+            height: 40,
+            borderRadius: "0 0 50% 50%",
+            background: "linear-gradient(180deg, rgba(180,210,255,0.12) 0%, rgba(150,180,220,0.05) 40%, transparent 100%)",
+            pointerEvents: "none"
+          } }),
+          /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: expandedEngine ? "flex-start" : "center",
+            padding: expandedEngine ? "28px 32px 24px" : 0
+          } }, expandedEngine ? /* @__PURE__ */ import_react27.default.createElement(import_react27.default.Fragment, null, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 16, fontWeight: 600, color: hasExpandedFaults ? T.textRed : T.textSecondary, marginBottom: 20 } }, expandedEngine === "Left" ? "\u041B\u0435\u0432\u044B\u0439" : "\u041F\u0440\u0430\u0432\u044B\u0439", " \u0434\u0432\u0438\u0433\u0430\u0442\u0435\u043B\u044C"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", width: "100%", flex: 1, position: "relative", alignItems: "flex-start" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+            flex: 1,
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "16px 24px",
+            alignContent: "start",
+            paddingRight: hasExpandedFaults ? 24 : 0
+          } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center", minWidth: 80 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textMuted, marginBottom: 4 } }, "\u041E\u0411/\u041C\u0418\u041D"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 26, fontWeight: 600, color: "#d4af65", textShadow: "0 0 20px rgba(212,175,101,0.3)", fontVariantNumeric: "tabular-nums", minWidth: 70 } }, expandedEngine === "Left" ? Math.round(rpmLeft).toLocaleString() : Math.round(rpmRight).toLocaleString())), /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center", minWidth: 80 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textMuted, marginBottom: 4 } }, "\u0413\u0410\u0417"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 26, fontWeight: 600, color: T.textPrimary, fontVariantNumeric: "tabular-nums", minWidth: 50 } }, (expandedEngine === "Left" ? Math.round(throttleLeft) : Math.round(throttleRight)).toString().padStart(2, "\u2007"), "%")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center", minWidth: 80 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textMuted, marginBottom: 4 } }, "\u0422\u0415\u041C\u041F."), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 26, fontWeight: 600, color: T.textGreen } }, expandedEngine === "Left" ? "82\xB0C" : "81\xB0C")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center", minWidth: 80 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textMuted, marginBottom: 4 } }, "\u041C\u0410\u0421\u041B\u041E"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 26, fontWeight: 600, color: T.textGreen } }, "\u041E\u041A")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center", minWidth: 80 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textMuted, marginBottom: 4 } }, "\u041F\u0415\u0420."), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 26, fontWeight: 600, color: T.textPrimary } }, expandedEngine === "Left" ? gearLeft : gearRight)), /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center", minWidth: 80 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textMuted, marginBottom: 4 } }, "\u0414\u0410\u0412\u041B."), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 26, fontWeight: 600, color: T.textGreen } }, "4.2"))), hasExpandedFaults && /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            gap: 8,
+            paddingLeft: 24,
+            justifyContent: "flex-start"
+          } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textRed, fontWeight: 600, marginBottom: 4 } }, "\u041E\u0428\u0418\u0411\u041A\u0418 (", expandedFaults.length, ")"), expandedFaults.map((fault, idx) => /* @__PURE__ */ import_react27.default.createElement(
+            "div",
+            {
+              key: idx,
+              style: {
+                padding: "10px 14px",
+                background: "rgba(224,64,80,0.12)",
+                border: "1px solid rgba(224,64,80,0.25)",
+                borderRadius: 10,
+                fontSize: 12,
+                color: T.textRed,
+                lineHeight: 1.4
+              }
+            },
+            fault
+          )))), /* @__PURE__ */ import_react27.default.createElement(
+            "button",
+            {
+              onClick: () => setExpandedEngine(null),
+              style: {
+                marginTop: 16,
+                padding: "10px 28px",
+                background: "rgba(80,110,140,0.2)",
+                border: "1px solid rgba(100,130,160,0.3)",
+                borderRadius: 20,
+                color: "rgba(150,180,210,0.7)",
+                fontSize: 12,
+                cursor: "pointer"
+              }
+            },
+            "\u0417\u0430\u043A\u0440\u044B\u0442\u044C"
+          )) : /* @__PURE__ */ import_react27.default.createElement(import_react27.default.Fragment, null, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+            fontSize: 56,
+            fontWeight: 400,
+            color: "#d4af65",
+            textShadow: "0 0 30px rgba(212,175,101,0.4), 0 0 60px rgba(212,175,101,0.2)",
+            letterSpacing: -2,
+            fontVariantNumeric: "tabular-nums"
+          } }, speed.toFixed(1)), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+            fontSize: 12,
+            color: "rgba(212,175,101,0.5)",
+            letterSpacing: 3,
+            marginTop: 2
+          } }, "\u043A\u043C/\u0447"))),
+          /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+            position: "absolute",
+            inset: 0,
+            borderRadius: 28,
+            border: "1px solid rgba(150,180,220,0.08)",
+            pointerEvents: "none"
+          } })
+        );
+      })(), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+        position: "absolute",
+        bottom: -82,
+        left: "50%",
+        transform: "translateX(-50%)",
+        zIndex: 5
+      } }, /* @__PURE__ */ import_react27.default.createElement("svg", { width: "75", height: "48", viewBox: "600 -100 1620 750", style: { opacity: 0.6 } }, /* @__PURE__ */ import_react27.default.createElement(
+        "path",
+        {
+          fill: "#2a3a4a",
+          d: "M1798.09 319.87c-4.35,-12.65 -31.56,-22.61 -26.42,-5.52 2.53,29.43 7.74,74.72 -23.19,131.9 -34.39,29.27 5.18,34.93 43.53,16.19 64.03,-24.99 12.21,-119.88 6.08,-142.57zm-498.41 -195.06l0 0 -0.42 0 0 54.51 47.15 0c-0.78,-30.15 -21.5,-54.51 -46.73,-54.51zm-17.11 0.05l0 0c-24.28,1.3 -43.89,25.15 -44.65,54.46l44.65 0 0 -54.46zm-44.67 74.57l0 0 0 51 44.67 0 0 -51 -44.67 0zm61.36 51l0 0 47.17 0 0 -51 -47.17 0 0 51zm488.43 -118.7l0 0c-75.64,39.65 -105.96,79.31 -167.43,107.06 -14.5,6.53 -30.65,12.67 -48.33,18.34l0 -102.15c0,-34.71 -28.38,-63.1 -63.09,-63.1 -34.71,0 -63.1,28.39 -63.1,63.1l0 130.53c-114.9,17.14 -260.31,19.42 -421.05,-2.18 209.11,99.93 576.41,33.58 705.24,-76.57 38.48,-32.89 101.67,-75.25 149.43,-91.4 151.13,-55.09 221.23,-5.03 260.55,84.96 -7.9,31.59 -71.1,31.12 -109.89,46.44 -109.8,30.41 -134.33,31.14 -244.26,11.66 -12.86,-0.26 -32.74,10.03 -27.17,24.4 10.58,216.03 -71.36,208.7 -255.45,232.26 -61.99,2.97 -1.08,-78.65 13.4,-87.72 46.13,-48.5 75.84,-52.86 86.21,-69.64 14.88,-26.72 3.03,-38.46 -31.76,-15.84 -142.22,60.11 -308.64,63.74 -496.17,18.12 -193.15,147.77 -382.49,16.88 -304.72,-13.59 67.62,-23.73 138.17,-42.34 211.83,-55.51l-26.05 -41.91c50.95,-25.54 95,-62.9 135.37,-106.56 212.3,-195.78 446.39,-180.44 696.44,-10.7z"
+        }
+      ))))),
+      /* @__PURE__ */ import_react27.default.createElement("div", { style: { marginLeft: -92, paddingTop: 20 } }, /* @__PURE__ */ import_react27.default.createElement(EngineCard, { side: "Right", tempText: "\u0422\u0435\u043C\u043F 81\xB0C \xB7 \u041C\u0430\u0441\u043B\u043E \u041E\u041A", rpm: Math.round(rpmRight), throttle: Math.round(throttleRight), gear: gearRight, motorHours: 1198, fuelLevel: 18, expanded: false, onToggleExpand: () => setExpandedEngine("Right") }))
     ), /* @__PURE__ */ import_react27.default.createElement(
       motion.div,
       {
