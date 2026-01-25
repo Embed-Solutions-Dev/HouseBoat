@@ -31577,15 +31577,27 @@
         isExpanded: false,
         onClick: () => setExpandedCamera(idx)
       }
-    ))), /* @__PURE__ */ import_react27.default.createElement(
+    ))), /* @__PURE__ */ import_react27.default.createElement(AnimatePresence, null, controls.navigation && /* @__PURE__ */ import_react27.default.createElement(
       motion.div,
       {
-        initial: { opacity: 0, y: 30 },
-        animate: { opacity: loadingPhase === "done" ? 1 : 0, y: loadingPhase === "done" ? 0 : 30 },
-        transition: { duration: 0.6, delay: 0.1 },
-        style: { width: "100%", maxWidth: 1152, marginBottom: -60, position: "relative", zIndex: 0 }
+        initial: { opacity: 0 },
+        animate: { opacity: 1 },
+        exit: { opacity: 0 },
+        transition: { duration: 0.3 },
+        style: {
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          pointerEvents: "none"
+        }
       },
-      /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+      /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "100%", maxWidth: 1152, position: "relative" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
         overflow: "visible",
         height: 500,
         position: "relative",
@@ -31604,7 +31616,7 @@
             height: "calc(100% + 700px)"
           }
         },
-        /* @__PURE__ */ import_react27.default.createElement("svg", { width: "100%", height: "100%", style: { position: "absolute", top: 0, left: 0 } }, /* @__PURE__ */ import_react27.default.createElement("defs", null, /* @__PURE__ */ import_react27.default.createElement("pattern", { id: "gridPattern", width: "30", height: "30", patternUnits: "userSpaceOnUse" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "M 30 0 L 0 0 0 30", fill: "none", stroke: "rgba(40,70,100,0.05)", strokeWidth: "0.5" })), /* @__PURE__ */ import_react27.default.createElement("pattern", { id: "gridPatternLarge", width: "150", height: "150", patternUnits: "userSpaceOnUse" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "M 150 0 L 0 0 0 150", fill: "none", stroke: "rgba(40,70,100,0.08)", strokeWidth: "0.5" }))), /* @__PURE__ */ import_react27.default.createElement("rect", { width: "100%", height: "100%", fill: "url(#gridPattern)" }), /* @__PURE__ */ import_react27.default.createElement("rect", { width: "100%", height: "100%", fill: "url(#gridPatternLarge)" }), /* @__PURE__ */ import_react27.default.createElement(
+        /* @__PURE__ */ import_react27.default.createElement("svg", { width: "100%", height: "100%", style: { position: "absolute", top: 0, left: 0 } }, /* @__PURE__ */ import_react27.default.createElement("defs", null, /* @__PURE__ */ import_react27.default.createElement("pattern", { id: "gridPatternNav", width: "30", height: "30", patternUnits: "userSpaceOnUse" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "M 30 0 L 0 0 0 30", fill: "none", stroke: "rgba(40,70,100,0.05)", strokeWidth: "0.5" })), /* @__PURE__ */ import_react27.default.createElement("pattern", { id: "gridPatternLargeNav", width: "150", height: "150", patternUnits: "userSpaceOnUse" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "M 150 0 L 0 0 0 150", fill: "none", stroke: "rgba(40,70,100,0.08)", strokeWidth: "0.5" }))), /* @__PURE__ */ import_react27.default.createElement("rect", { width: "100%", height: "100%", fill: "url(#gridPatternNav)" }), /* @__PURE__ */ import_react27.default.createElement("rect", { width: "100%", height: "100%", fill: "url(#gridPatternLargeNav)" }), /* @__PURE__ */ import_react27.default.createElement(
           "path",
           {
             d: "M 810 -100 C 780 50 770 150 790 300 C 810 450 760 550 770 700 C 780 850 800 1000 790 1150 C 780 1300 810 1400 800 1550",
@@ -31758,11 +31770,11 @@
             pointerEvents: "none"
           }
         }
-      )), /* @__PURE__ */ import_react27.default.createElement("div", { style: { filter: "drop-shadow(0 0 20px rgba(80,160,255,0.5))" } }, /* @__PURE__ */ import_react27.default.createElement("svg", { width: "32", height: "40", viewBox: "0 0 32 40" }, /* @__PURE__ */ import_react27.default.createElement("defs", null, /* @__PURE__ */ import_react27.default.createElement("linearGradient", { id: "glassGrad", x1: "0%", y1: "0%", x2: "100%", y2: "100%" }, /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "0%", stopColor: "rgba(120,180,255,0.85)" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "50%", stopColor: "rgba(80,140,220,0.65)" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "100%", stopColor: "rgba(60,120,200,0.75)" }))), /* @__PURE__ */ import_react27.default.createElement(
+      )), /* @__PURE__ */ import_react27.default.createElement("div", { style: { filter: "drop-shadow(0 0 20px rgba(80,160,255,0.5))" } }, /* @__PURE__ */ import_react27.default.createElement("svg", { width: "32", height: "40", viewBox: "0 0 32 40" }, /* @__PURE__ */ import_react27.default.createElement("defs", null, /* @__PURE__ */ import_react27.default.createElement("linearGradient", { id: "glassGradNav", x1: "0%", y1: "0%", x2: "100%", y2: "100%" }, /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "0%", stopColor: "rgba(120,180,255,0.85)" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "50%", stopColor: "rgba(80,140,220,0.65)" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "100%", stopColor: "rgba(60,120,200,0.75)" }))), /* @__PURE__ */ import_react27.default.createElement(
         "path",
         {
           d: "M 16 2 L 30 36 L 16 30 L 2 36 Z",
-          fill: "url(#glassGrad)",
+          fill: "url(#glassGradNav)",
           stroke: "rgba(150,200,255,0.7)",
           strokeWidth: "1"
         }
@@ -31772,8 +31784,7 @@
           d: "M 16 6 L 12 28 L 16 26 Z",
           fill: "rgba(200,230,255,0.25)"
         }
-      ))))),
-      /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+      ))))), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
         position: "absolute",
         bottom: 80,
         left: 20,
@@ -31806,8 +31817,7 @@
         fontSize: 9,
         color: "rgba(150,180,210,0.7)",
         fontWeight: 500
-      } }, "500 \u043C"))),
-      /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+      } }, "500 \u043C"))), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
         position: "absolute",
         bottom: 80,
         right: 20,
@@ -31819,8 +31829,8 @@
         color: "rgba(150,180,210,0.7)",
         fontWeight: 500,
         lineHeight: 1.4
-      } }, /* @__PURE__ */ import_react27.default.createElement("div", null, `52\xB022'14.3"N`), /* @__PURE__ */ import_react27.default.createElement("div", null, `4\xB053'28.7"E`)))
-    ), /* @__PURE__ */ import_react27.default.createElement(
+      } }, /* @__PURE__ */ import_react27.default.createElement("div", null, `52\xB022'14.3"N`), /* @__PURE__ */ import_react27.default.createElement("div", null, `4\xB053'28.7"E`))))
+    )), /* @__PURE__ */ import_react27.default.createElement(
       motion.div,
       {
         initial: { opacity: 0, y: 30 },

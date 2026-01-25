@@ -1122,296 +1122,314 @@ export default function YachtDashboard() {
         ))}
       </div>
 
-      {/* Виджет карты */}
-      <motion.div 
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: loadingPhase === 'done' ? 1 : 0, y: loadingPhase === 'done' ? 0 : 30 }}
-        transition={{ duration: 0.6, delay: 0.1 }}
-        style={{ width: '100%', maxWidth: 1152, marginBottom: -60, position: 'relative', zIndex: 0 }}
-      >
-        <div style={{
-          overflow: 'visible',
-          height: 500,
-          position: 'relative',
-          WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 70%)',
-          maskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 70%)',
-        }}>
-          {/* Анимированная карта */}
+      {/* Навигация - фоновый слой, появляется при нажатии кнопки Навигация */}
+      <AnimatePresence>
+        {controls.navigation && (
           <motion.div
-            animate={{ y: [0, 200] }}
-            transition={{ duration: 80, repeat: Infinity, ease: "linear" }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
             style={{
-              position: 'absolute',
-              top: -300,
-              left: -200,
-              width: 'calc(100% + 400px)',
-              height: 'calc(100% + 700px)',
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 1,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              pointerEvents: 'none',
             }}
           >
-            <svg width="100%" height="100%" style={{ position: 'absolute', top: 0, left: 0 }}>
-              <defs>
-                {/* Сетка мелкая */}
-                <pattern id="gridPattern" width="30" height="30" patternUnits="userSpaceOnUse">
-                  <path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(40,70,100,0.05)" strokeWidth="0.5"/>
-                </pattern>
-                {/* Сетка крупная */}
-                <pattern id="gridPatternLarge" width="150" height="150" patternUnits="userSpaceOnUse">
-                  <path d="M 150 0 L 0 0 0 150" fill="none" stroke="rgba(40,70,100,0.08)" strokeWidth="0.5"/>
-                </pattern>
-              </defs>
-              
-              {/* Сетка координат */}
-              <rect width="100%" height="100%" fill="url(#gridPattern)" />
-              <rect width="100%" height="100%" fill="url(#gridPatternLarge)" />
-              
-              {/* Главная река - вертикально, плавные кривые */}
-              <path 
-                d="M 810 -100 C 780 50 770 150 790 300 C 810 450 760 550 770 700 C 780 850 800 1000 790 1150 C 780 1300 810 1400 800 1550" 
-                fill="none" 
-                stroke="rgba(25,45,70,0.35)" 
-                strokeWidth="80"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path 
-                d="M 810 -100 C 780 50 770 150 790 300 C 810 450 760 550 770 700 C 780 850 800 1000 790 1150 C 780 1300 810 1400 800 1550" 
-                fill="none" 
-                stroke="rgba(20,38,60,0.5)" 
-                strokeWidth="50"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path 
-                d="M 810 -100 C 780 50 770 150 790 300 C 810 450 760 550 770 700 C 780 850 800 1000 790 1150 C 780 1300 810 1400 800 1550" 
-                fill="none" 
-                stroke="rgba(15,30,50,0.6)" 
-                strokeWidth="25"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              
-              {/* Приток слева - плавный */}
-              <path 
-                d="M 150 280 C 250 290 350 320 450 330 C 550 340 650 370 730 410" 
-                fill="none" 
-                stroke="rgba(25,45,70,0.3)" 
-                strokeWidth="45"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path 
-                d="M 150 280 C 250 290 350 320 450 330 C 550 340 650 370 730 410" 
-                fill="none" 
-                stroke="rgba(20,38,60,0.45)" 
-                strokeWidth="28"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              
-              {/* Приток справа сверху - плавный */}
-              <path 
-                d="M 1250 80 C 1150 120 1050 160 950 200 C 850 240 820 300 780 360" 
-                fill="none" 
-                stroke="rgba(25,45,70,0.3)" 
-                strokeWidth="40"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path 
-                d="M 1250 80 C 1150 120 1050 160 950 200 C 850 240 820 300 780 360" 
-                fill="none" 
-                stroke="rgba(20,38,60,0.45)" 
-                strokeWidth="24"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              
-              {/* Озеро слева */}
-              <ellipse cx="300" cy="650" rx="120" ry="80" fill="rgba(20,38,60,0.4)" />
-              <ellipse cx="300" cy="650" rx="90" ry="55" fill="rgba(15,30,50,0.5)" />
-              
-              {/* Малое озеро */}
-              <ellipse cx="1100" cy="500" rx="70" ry="50" fill="rgba(20,38,60,0.35)" />
-              <ellipse cx="1100" cy="500" rx="50" ry="32" fill="rgba(15,30,50,0.45)" />
-              
-              {/* Приток к озеру - плавный */}
-              <path 
-                d="M 380 640 C 450 620 530 610 600 630 C 670 650 720 710 760 780" 
-                fill="none" 
-                stroke="rgba(25,45,70,0.25)" 
-                strokeWidth="30"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path 
-                d="M 380 640 C 450 620 530 610 600 630 C 670 650 720 710 760 780" 
-                fill="none" 
-                stroke="rgba(20,38,60,0.4)" 
-                strokeWidth="18"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              
-              {/* Ещё один приток справа снизу - плавный */}
-              <path 
-                d="M 1200 780 C 1100 790 1000 800 900 830 C 800 860 790 920 780 990" 
-                fill="none" 
-                stroke="rgba(25,45,70,0.28)" 
-                strokeWidth="35"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path 
-                d="M 1200 780 C 1100 790 1000 800 900 830 C 800 860 790 920 780 990" 
-                fill="none" 
-                stroke="rgba(20,38,60,0.42)" 
-                strokeWidth="20"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              
-              {/* Маленький пруд */}
-              <ellipse cx="500" cy="900" rx="45" ry="35" fill="rgba(20,38,60,0.35)" />
-              
-              {/* Маршрут - пунктир, плавный - по центру */}
-              <path 
-                d="M 780 -50 C 760 100 770 250 775 400 C 780 550 765 700 770 850 C 775 1000 780 1150 772 1300 C 765 1450 778 1500 775 1600" 
-                fill="none" 
-                stroke="rgba(100,160,220,0.3)" 
-                strokeWidth="2"
-                strokeDasharray="12 8"
-                strokeLinecap="round"
-              />
-            </svg>
-          </motion.div>
-          
-          {/* Хаусбот - стеклянный синий треугольник */}
-          <div style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            zIndex: 5,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-            {/* Расходящиеся круги - от центра треугольника */}
-            {[0, 1, 2, 3].map((i) => (
-              <motion.div
-                key={i}
-                animate={{ 
-                  scale: [0.5, 4], 
-                  opacity: [0, 0.5, 0.3, 0]
-                }}
-                transition={{ 
-                  duration: 4, 
-                  repeat: Infinity, 
-                  ease: "linear",
-                  delay: i * 1,
-                  times: [0, 0.1, 0.5, 1]
-                }}
-                style={{
-                  position: 'absolute',
-                  width: 30,
-                  height: 30,
-                  borderRadius: '50%',
-                  border: '1px solid rgba(80,160,255,0.6)',
-                  pointerEvents: 'none',
-                }}
-              />
-            ))}
-            
-            {/* Треугольник - направлен вверх */}
-            <div style={{ filter: 'drop-shadow(0 0 20px rgba(80,160,255,0.5))' }}>
-              <svg width="32" height="40" viewBox="0 0 32 40">
-                <defs>
-                  <linearGradient id="glassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="rgba(120,180,255,0.85)" />
-                    <stop offset="50%" stopColor="rgba(80,140,220,0.65)" />
-                    <stop offset="100%" stopColor="rgba(60,120,200,0.75)" />
-                  </linearGradient>
-                </defs>
-                <path 
-                  d="M 16 2 L 30 36 L 16 30 L 2 36 Z" 
-                  fill="url(#glassGrad)"
-                  stroke="rgba(150,200,255,0.7)"
-                  strokeWidth="1"
-                />
-                {/* Блик */}
-                <path 
-                  d="M 16 6 L 12 28 L 16 26 Z" 
-                  fill="rgba(200,230,255,0.25)"
-                />
-              </svg>
-            </div>
-          </div>
-        </div>
+            <div style={{ width: '100%', maxWidth: 1152, position: 'relative' }}>
+              <div style={{
+                overflow: 'visible',
+                height: 500,
+                position: 'relative',
+                WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 70%)',
+                maskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 70%)',
+              }}>
+                {/* Анимированная карта */}
+                <motion.div
+                  animate={{ y: [0, 200] }}
+                  transition={{ duration: 80, repeat: Infinity, ease: "linear" }}
+                  style={{
+                    position: 'absolute',
+                    top: -300,
+                    left: -200,
+                    width: 'calc(100% + 400px)',
+                    height: 'calc(100% + 700px)',
+                  }}
+                >
+                  <svg width="100%" height="100%" style={{ position: 'absolute', top: 0, left: 0 }}>
+                    <defs>
+                      {/* Сетка мелкая */}
+                      <pattern id="gridPatternNav" width="30" height="30" patternUnits="userSpaceOnUse">
+                        <path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(40,70,100,0.05)" strokeWidth="0.5"/>
+                      </pattern>
+                      {/* Сетка крупная */}
+                      <pattern id="gridPatternLargeNav" width="150" height="150" patternUnits="userSpaceOnUse">
+                        <path d="M 150 0 L 0 0 0 150" fill="none" stroke="rgba(40,70,100,0.08)" strokeWidth="0.5"/>
+                      </pattern>
+                    </defs>
 
-        {/* Масштаб - слева внизу */}
-        <div style={{
-          position: 'absolute',
-          bottom: 80,
-          left: 20,
-          zIndex: 10,
-        }}>
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 4,
-          }}>
-            <div style={{
-              width: 80,
-              height: 4,
-              background: 'rgba(150,180,210,0.6)',
-              borderRadius: 2,
-              position: 'relative',
-            }}>
+                    {/* Сетка координат */}
+                    <rect width="100%" height="100%" fill="url(#gridPatternNav)" />
+                    <rect width="100%" height="100%" fill="url(#gridPatternLargeNav)" />
+
+                    {/* Главная река - вертикально, плавные кривые */}
+                    <path
+                      d="M 810 -100 C 780 50 770 150 790 300 C 810 450 760 550 770 700 C 780 850 800 1000 790 1150 C 780 1300 810 1400 800 1550"
+                      fill="none"
+                      stroke="rgba(25,45,70,0.35)"
+                      strokeWidth="80"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M 810 -100 C 780 50 770 150 790 300 C 810 450 760 550 770 700 C 780 850 800 1000 790 1150 C 780 1300 810 1400 800 1550"
+                      fill="none"
+                      stroke="rgba(20,38,60,0.5)"
+                      strokeWidth="50"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M 810 -100 C 780 50 770 150 790 300 C 810 450 760 550 770 700 C 780 850 800 1000 790 1150 C 780 1300 810 1400 800 1550"
+                      fill="none"
+                      stroke="rgba(15,30,50,0.6)"
+                      strokeWidth="25"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+
+                    {/* Приток слева - плавный */}
+                    <path
+                      d="M 150 280 C 250 290 350 320 450 330 C 550 340 650 370 730 410"
+                      fill="none"
+                      stroke="rgba(25,45,70,0.3)"
+                      strokeWidth="45"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M 150 280 C 250 290 350 320 450 330 C 550 340 650 370 730 410"
+                      fill="none"
+                      stroke="rgba(20,38,60,0.45)"
+                      strokeWidth="28"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+
+                    {/* Приток справа сверху - плавный */}
+                    <path
+                      d="M 1250 80 C 1150 120 1050 160 950 200 C 850 240 820 300 780 360"
+                      fill="none"
+                      stroke="rgba(25,45,70,0.3)"
+                      strokeWidth="40"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M 1250 80 C 1150 120 1050 160 950 200 C 850 240 820 300 780 360"
+                      fill="none"
+                      stroke="rgba(20,38,60,0.45)"
+                      strokeWidth="24"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+
+                    {/* Озеро слева */}
+                    <ellipse cx="300" cy="650" rx="120" ry="80" fill="rgba(20,38,60,0.4)" />
+                    <ellipse cx="300" cy="650" rx="90" ry="55" fill="rgba(15,30,50,0.5)" />
+
+                    {/* Малое озеро */}
+                    <ellipse cx="1100" cy="500" rx="70" ry="50" fill="rgba(20,38,60,0.35)" />
+                    <ellipse cx="1100" cy="500" rx="50" ry="32" fill="rgba(15,30,50,0.45)" />
+
+                    {/* Приток к озеру - плавный */}
+                    <path
+                      d="M 380 640 C 450 620 530 610 600 630 C 670 650 720 710 760 780"
+                      fill="none"
+                      stroke="rgba(25,45,70,0.25)"
+                      strokeWidth="30"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M 380 640 C 450 620 530 610 600 630 C 670 650 720 710 760 780"
+                      fill="none"
+                      stroke="rgba(20,38,60,0.4)"
+                      strokeWidth="18"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+
+                    {/* Ещё один приток справа снизу - плавный */}
+                    <path
+                      d="M 1200 780 C 1100 790 1000 800 900 830 C 800 860 790 920 780 990"
+                      fill="none"
+                      stroke="rgba(25,45,70,0.28)"
+                      strokeWidth="35"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M 1200 780 C 1100 790 1000 800 900 830 C 800 860 790 920 780 990"
+                      fill="none"
+                      stroke="rgba(20,38,60,0.42)"
+                      strokeWidth="20"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+
+                    {/* Маленький пруд */}
+                    <ellipse cx="500" cy="900" rx="45" ry="35" fill="rgba(20,38,60,0.35)" />
+
+                    {/* Маршрут - пунктир, плавный - по центру */}
+                    <path
+                      d="M 780 -50 C 760 100 770 250 775 400 C 780 550 765 700 770 850 C 775 1000 780 1150 772 1300 C 765 1450 778 1500 775 1600"
+                      fill="none"
+                      stroke="rgba(100,160,220,0.3)"
+                      strokeWidth="2"
+                      strokeDasharray="12 8"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </motion.div>
+
+                {/* Хаусбот - стеклянный синий треугольник */}
+                <div style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  zIndex: 5,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  {/* Расходящиеся круги - от центра треугольника */}
+                  {[0, 1, 2, 3].map((i) => (
+                    <motion.div
+                      key={i}
+                      animate={{
+                        scale: [0.5, 4],
+                        opacity: [0, 0.5, 0.3, 0]
+                      }}
+                      transition={{
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: "linear",
+                        delay: i * 1,
+                        times: [0, 0.1, 0.5, 1]
+                      }}
+                      style={{
+                        position: 'absolute',
+                        width: 30,
+                        height: 30,
+                        borderRadius: '50%',
+                        border: '1px solid rgba(80,160,255,0.6)',
+                        pointerEvents: 'none',
+                      }}
+                    />
+                  ))}
+
+                  {/* Треугольник - направлен вверх */}
+                  <div style={{ filter: 'drop-shadow(0 0 20px rgba(80,160,255,0.5))' }}>
+                    <svg width="32" height="40" viewBox="0 0 32 40">
+                      <defs>
+                        <linearGradient id="glassGradNav" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="rgba(120,180,255,0.85)" />
+                          <stop offset="50%" stopColor="rgba(80,140,220,0.65)" />
+                          <stop offset="100%" stopColor="rgba(60,120,200,0.75)" />
+                        </linearGradient>
+                      </defs>
+                      <path
+                        d="M 16 2 L 30 36 L 16 30 L 2 36 Z"
+                        fill="url(#glassGradNav)"
+                        stroke="rgba(150,200,255,0.7)"
+                        strokeWidth="1"
+                      />
+                      {/* Блик */}
+                      <path
+                        d="M 16 6 L 12 28 L 16 26 Z"
+                        fill="rgba(200,230,255,0.25)"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              {/* Масштаб - слева внизу */}
               <div style={{
                 position: 'absolute',
-                left: 0,
-                top: -2,
-                width: 2,
-                height: 8,
-                background: 'rgba(150,180,210,0.6)',
-              }} />
+                bottom: 80,
+                left: 20,
+                zIndex: 10,
+              }}>
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 4,
+                }}>
+                  <div style={{
+                    width: 80,
+                    height: 4,
+                    background: 'rgba(150,180,210,0.6)',
+                    borderRadius: 2,
+                    position: 'relative',
+                  }}>
+                    <div style={{
+                      position: 'absolute',
+                      left: 0,
+                      top: -2,
+                      width: 2,
+                      height: 8,
+                      background: 'rgba(150,180,210,0.6)',
+                    }} />
+                    <div style={{
+                      position: 'absolute',
+                      right: 0,
+                      top: -2,
+                      width: 2,
+                      height: 8,
+                      background: 'rgba(150,180,210,0.6)',
+                    }} />
+                  </div>
+                  <span style={{
+                    fontSize: 9,
+                    color: 'rgba(150,180,210,0.7)',
+                    fontWeight: 500,
+                  }}>500 м</span>
+                </div>
+              </div>
+
+              {/* Координаты - справа внизу */}
               <div style={{
                 position: 'absolute',
-                right: 0,
-                top: -2,
-                width: 2,
-                height: 8,
-                background: 'rgba(150,180,210,0.6)',
-              }} />
+                bottom: 80,
+                right: 20,
+                zIndex: 10,
+                textAlign: 'right',
+              }}>
+                <div style={{
+                  fontSize: 10,
+                  fontFamily: 'monospace',
+                  color: 'rgba(150,180,210,0.7)',
+                  fontWeight: 500,
+                  lineHeight: 1.4,
+                }}>
+                  <div>52°22'14.3"N</div>
+                  <div>4°53'28.7"E</div>
+                </div>
+              </div>
             </div>
-            <span style={{
-              fontSize: 9,
-              color: 'rgba(150,180,210,0.7)',
-              fontWeight: 500,
-            }}>500 м</span>
-          </div>
-        </div>
-        
-        {/* Координаты - справа внизу */}
-        <div style={{
-          position: 'absolute',
-          bottom: 80,
-          right: 20,
-          zIndex: 10,
-          textAlign: 'right',
-        }}>
-          <div style={{
-            fontSize: 10,
-            fontFamily: 'monospace',
-            color: 'rgba(150,180,210,0.7)',
-            fontWeight: 500,
-            lineHeight: 1.4,
-          }}>
-            <div>52°22'14.3"N</div>
-            <div>4°53'28.7"E</div>
-          </div>
-        </div>
-      </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <motion.div 
         initial={{ opacity: 0, y: 30 }}
