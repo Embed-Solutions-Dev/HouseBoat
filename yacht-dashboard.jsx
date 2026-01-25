@@ -2385,9 +2385,11 @@ export default function YachtDashboard() {
               const Icon = it.icon;
               const on = controls[it.key];
               const isAnchor = it.key === 'anchor';
+              const isNavigation = it.key === 'navigation';
               const anchorDeployed = isAnchor && anchorPosition > 0;
               const buttonOn = isAnchor ? anchorDeployed : on;
-              const buttonColor = isAnchor && anchorDeployed ? T.textRed : T.textGreen;
+              const navBlue = '#50a0ff';
+              const buttonColor = isAnchor && anchorDeployed ? T.textRed : isNavigation ? navBlue : T.textGreen;
               return (
                 <React.Fragment key={it.key}>
                   <button
@@ -2401,10 +2403,12 @@ export default function YachtDashboard() {
                       justifyContent: 'center',
                       gap: 6,
                       border: 'none',
-                      background: buttonOn 
+                      background: buttonOn
                         ? isAnchor && anchorDeployed
                           ? 'linear-gradient(180deg, rgba(100,40,50,0.3) 0%, rgba(60,20,30,0.2) 100%)'
-                          : 'linear-gradient(180deg, rgba(40,100,80,0.3) 0%, rgba(20,60,50,0.2) 100%)'
+                          : isNavigation
+                            ? 'linear-gradient(180deg, rgba(40,80,140,0.3) 0%, rgba(20,50,100,0.2) 100%)'
+                            : 'linear-gradient(180deg, rgba(40,100,80,0.3) 0%, rgba(20,60,50,0.2) 100%)'
                         : 'transparent',
                       cursor: 'pointer',
                       position: 'relative',
@@ -2418,7 +2422,7 @@ export default function YachtDashboard() {
                         right: '20%',
                         height: 2,
                         background: buttonColor,
-                        boxShadow: `0 0 12px ${isAnchor && anchorDeployed ? 'rgba(224,64,80,0.8)' : 'rgba(61,200,140,0.8)'}`,
+                        boxShadow: `0 0 12px ${isAnchor && anchorDeployed ? 'rgba(224,64,80,0.8)' : isNavigation ? 'rgba(80,160,255,0.8)' : 'rgba(61,200,140,0.8)'}`,
                         borderRadius: 1,
                       }} />
                     )}

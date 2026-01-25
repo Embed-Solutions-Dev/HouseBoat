@@ -32482,9 +32482,11 @@
         const Icon = it.icon;
         const on = controls[it.key];
         const isAnchor = it.key === "anchor";
+        const isNavigation = it.key === "navigation";
         const anchorDeployed = isAnchor && anchorPosition > 0;
         const buttonOn = isAnchor ? anchorDeployed : on;
-        const buttonColor = isAnchor && anchorDeployed ? T.textRed : T.textGreen;
+        const navBlue = "#50a0ff";
+        const buttonColor = isAnchor && anchorDeployed ? T.textRed : isNavigation ? navBlue : T.textGreen;
         return /* @__PURE__ */ import_react27.default.createElement(import_react27.default.Fragment, { key: it.key }, /* @__PURE__ */ import_react27.default.createElement(
           "button",
           {
@@ -32498,7 +32500,7 @@
               justifyContent: "center",
               gap: 6,
               border: "none",
-              background: buttonOn ? isAnchor && anchorDeployed ? "linear-gradient(180deg, rgba(100,40,50,0.3) 0%, rgba(60,20,30,0.2) 100%)" : "linear-gradient(180deg, rgba(40,100,80,0.3) 0%, rgba(20,60,50,0.2) 100%)" : "transparent",
+              background: buttonOn ? isAnchor && anchorDeployed ? "linear-gradient(180deg, rgba(100,40,50,0.3) 0%, rgba(60,20,30,0.2) 100%)" : isNavigation ? "linear-gradient(180deg, rgba(40,80,140,0.3) 0%, rgba(20,50,100,0.2) 100%)" : "linear-gradient(180deg, rgba(40,100,80,0.3) 0%, rgba(20,60,50,0.2) 100%)" : "transparent",
               cursor: "pointer",
               position: "relative"
             }
@@ -32510,7 +32512,7 @@
             right: "20%",
             height: 2,
             background: buttonColor,
-            boxShadow: `0 0 12px ${isAnchor && anchorDeployed ? "rgba(224,64,80,0.8)" : "rgba(61,200,140,0.8)"}`,
+            boxShadow: `0 0 12px ${isAnchor && anchorDeployed ? "rgba(224,64,80,0.8)" : isNavigation ? "rgba(80,160,255,0.8)" : "rgba(61,200,140,0.8)"}`,
             borderRadius: 1
           } }),
           /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "relative", display: "flex", alignItems: "center", justifyContent: "center" } }, /* @__PURE__ */ import_react27.default.createElement(Icon, { style: { width: 24, height: 24, color: buttonOn ? buttonColor : T.textSecondary } }), isAnchor && anchorDeployed && /* @__PURE__ */ import_react27.default.createElement("span", { style: {
