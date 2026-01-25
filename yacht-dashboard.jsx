@@ -816,6 +816,7 @@ export default function YachtDashboard() {
         right: 0,
         bottom: 0,
         background: 'linear-gradient(135deg, rgba(20,30,45,1) 0%, rgba(15,22,35,1) 100%)',
+        pointerEvents: 'none',
       }}>
         {/* Горизонт воды */}
         <div style={{
@@ -826,7 +827,7 @@ export default function YachtDashboard() {
           bottom: 0,
           background: 'linear-gradient(180deg, rgba(25,40,60,0.8) 0%, rgba(15,25,40,0.9) 100%)',
         }} />
-        
+
         {/* Волны на воде */}
         <motion.div
           animate={{ x: [0, -30, 0], opacity: [0.3, 0.5, 0.3] }}
@@ -867,7 +868,7 @@ export default function YachtDashboard() {
             filter: 'blur(1px)',
           }}
         />
-        
+
         {/* Блики на воде */}
         <motion.div
           animate={{ opacity: [0.1, 0.3, 0.1], scale: [1, 1.2, 1] }}
@@ -895,7 +896,7 @@ export default function YachtDashboard() {
             filter: 'blur(2px)',
           }}
         />
-        
+
         {/* Шум камеры */}
         <div style={{
           position: 'absolute',
@@ -907,7 +908,7 @@ export default function YachtDashboard() {
           background: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E")`,
         }} />
       </div>
-      
+
       {/* Метка камеры */}
       <div style={{
         position: 'absolute',
@@ -916,6 +917,7 @@ export default function YachtDashboard() {
         display: 'flex',
         alignItems: 'center',
         gap: isExpanded ? 10 : 6,
+        pointerEvents: 'none',
       }}>
         <div style={{
           width: isExpanded ? 10 : 6,
@@ -956,10 +958,11 @@ export default function YachtDashboard() {
         color: 'rgba(255,255,255,0.6)',
         textShadow: '0 1px 3px rgba(0,0,0,0.9)',
         letterSpacing: '0.5px',
+        pointerEvents: 'none',
       }}>
         {cam.label}
       </div>
-      
+
       {/* Временная метка */}
       <div style={{
         position: 'absolute',
@@ -969,10 +972,11 @@ export default function YachtDashboard() {
         fontFamily: 'monospace',
         color: 'rgba(255,255,255,0.5)',
         textShadow: '0 1px 3px rgba(0,0,0,0.9)',
+        pointerEvents: 'none',
       }}>
         {new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
       </div>
-      
+
       {/* Рамка фокуса */}
       <div style={{
         position: 'absolute',
@@ -983,34 +987,13 @@ export default function YachtDashboard() {
         height: isExpanded ? 120 : 50,
         border: '1px solid rgba(255,255,255,0.15)',
         borderRadius: 2,
+        pointerEvents: 'none',
       }}>
         <div style={{ position: 'absolute', top: -1, left: -1, width: isExpanded ? 16 : 8, height: isExpanded ? 16 : 8, borderTop: '2px solid rgba(255,255,255,0.4)', borderLeft: '2px solid rgba(255,255,255,0.4)' }} />
         <div style={{ position: 'absolute', top: -1, right: -1, width: isExpanded ? 16 : 8, height: isExpanded ? 16 : 8, borderTop: '2px solid rgba(255,255,255,0.4)', borderRight: '2px solid rgba(255,255,255,0.4)' }} />
         <div style={{ position: 'absolute', bottom: -1, left: -1, width: isExpanded ? 16 : 8, height: isExpanded ? 16 : 8, borderBottom: '2px solid rgba(255,255,255,0.4)', borderLeft: '2px solid rgba(255,255,255,0.4)' }} />
         <div style={{ position: 'absolute', bottom: -1, right: -1, width: isExpanded ? 16 : 8, height: isExpanded ? 16 : 8, borderBottom: '2px solid rgba(255,255,255,0.4)', borderRight: '2px solid rgba(255,255,255,0.4)' }} />
       </div>
-      
-      {/* Кнопка закрытия для развёрнутого вида */}
-      {isExpanded && (
-        <div style={{
-          position: 'absolute',
-          top: 16,
-          right: 20,
-          width: 36,
-          height: 36,
-          borderRadius: '50%',
-          background: 'rgba(0,0,0,0.5)',
-          border: '1px solid rgba(255,255,255,0.2)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-        }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" strokeWidth="2">
-            <path d="M18 6L6 18M6 6l12 12" />
-          </svg>
-        </div>
-      )}
     </div>
   );
 
