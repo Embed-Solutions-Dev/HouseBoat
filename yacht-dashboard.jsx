@@ -443,6 +443,158 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
   );
 });
 
+// Мини-версия виджета двигателя (как компас/киль)
+const MiniEngineCard = memo(function MiniEngineCard({ side, rpm, fuelLevel, hasFaults }) {
+  const lowFuel = fuelLevel < 25;
+  const fuelColor = lowFuel ? T.textAmber : T.gaugeActive;
+
+  const v = clamp(rpm, 0, 4000);
+  const max = 4000;
+  const ratio = v / max;
+
+  const startAngle = 225;
+  const sweep = 270;
+
+  const mv = useMotionValue(-startAngle);
+  const spring = useSpring(mv, { stiffness: 80, damping: 15 });
+
+  useEffect(() => {
+    const targetAngle = -startAngle + ratio * sweep;
+    mv.set(targetAngle);
+  }, [ratio, mv]);
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+      {/* Полоска топлива над виджетом */}
+      <div style={{ width: 100, display: 'flex', alignItems: 'center', gap: 6 }}>
+        <svg style={{ width: 12, height: 12, flexShrink: 0 }} viewBox="0 0 24 24" fill={fuelColor} stroke="none">
+          <path d="M19.77 7.23l.01-.01-3.72-3.72L15 4.56l2.11 2.11c-.94.36-1.61 1.26-1.61 2.33 0 1.38 1.12 2.5 2.5 2.5.36 0 .69-.08 1-.21v7.21c0 .55-.45 1-1 1s-1-.45-1-1V14c0-1.1-.9-2-2-2h-1V5c0-1.1-.9-2-2-2H6c-1.1 0-2 .9-2 2v16h10v-7.5h1.5v5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V9c0-.69-.28-1.32-.73-1.77zM12 10H6V5h6v5z"/>
+        </svg>
+        <div style={{ flex: 1, height: 5, borderRadius: 3, background: 'rgba(30,45,60,0.6)', border: '1px solid rgba(80,100,120,0.3)', overflow: 'hidden' }}>
+          <div style={{ width: `${fuelLevel}%`, height: '100%', background: `linear-gradient(90deg, ${fuelColor} 0%, ${fuelColor}88 100%)`, borderRadius: 2 }} />
+        </div>
+        <div style={{ fontSize: 9, color: fuelColor, width: 24, textAlign: 'right' }}>{fuelLevel}%</div>
+      </div>
+
+      {/* Мини тахометр */}
+      <div style={{
+        width: 135,
+        height: 135,
+        borderRadius: '50%',
+        background: 'linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)',
+        boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
+        padding: 5,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <div style={{
+          width: '100%',
+          height: '100%',
+          borderRadius: '50%',
+          background: 'linear-gradient(145deg, rgba(10,15,25,0.98) 0%, rgba(5,8,15,1) 100%)',
+          position: 'relative',
+          overflow: 'hidden',
+        }}>
+          {/* Шкала */}
+          <svg viewBox="0 0 100 100" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
+            {Array.from({ length: 9 }).map((_, i) => {
+              const val = i * 500;
+              const t = val / max;
+              const angle = (startAngle - t * sweep) * Math.PI / 180;
+              const isMajor = val % 1000 === 0;
+              const r1 = isMajor ? 38 : 40;
+              const r2 = 46;
+              const isRedZone = val >= max * 0.8;
+              return (
+                <line
+                  key={i}
+                  x1={50 + r1 * Math.cos(angle)}
+                  y1={50 - r1 * Math.sin(angle)}
+                  x2={50 + r2 * Math.cos(angle)}
+                  y2={50 - r2 * Math.sin(angle)}
+                  stroke={isRedZone ? 'rgba(224,80,96,0.8)' : isMajor ? 'rgba(200,210,230,0.8)' : 'rgba(150,160,180,0.4)'}
+                  strokeWidth={isMajor ? 2 : 1}
+                  strokeLinecap="round"
+                />
+              );
+            })}
+            {/* Цифры 0-4 */}
+            {[0, 1, 2, 3, 4].map((num) => {
+              const t = (num * 1000) / max;
+              const angle = (startAngle - t * sweep) * Math.PI / 180;
+              const isRedZone = num >= 4 * 0.8;
+              return (
+                <text
+                  key={num}
+                  x={50 + 30 * Math.cos(angle)}
+                  y={50 - 30 * Math.sin(angle)}
+                  fill={isRedZone ? 'rgba(224,80,96,0.9)' : 'rgba(200,210,230,0.9)'}
+                  fontSize="10"
+                  fontWeight="600"
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                >
+                  {num}
+                </text>
+              );
+            })}
+          </svg>
+
+          {/* Стрелка */}
+          <motion.div
+            style={{
+              position: 'absolute',
+              top: 50,
+              left: 50,
+              width: 3,
+              height: 35,
+              marginLeft: -1.5,
+              marginTop: -35,
+              background: 'linear-gradient(180deg, #e04050 0%, #c03040 100%)',
+              borderRadius: 2,
+              transformOrigin: 'center bottom',
+              boxShadow: '0 0 6px rgba(224,64,80,0.6)',
+              rotate: spring,
+            }}
+          />
+
+          {/* Центральная пипка */}
+          <div style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 12,
+            height: 12,
+            borderRadius: '50%',
+            background: 'radial-gradient(circle at 35% 35%, #ffffff 0%, #d0d0d0 30%, #909090 70%, #606060 100%)',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.4)',
+          }} />
+
+          {/* Статус внизу: ОК или ошибка */}
+          <div style={{ position: 'absolute', bottom: 18, left: '50%', transform: 'translateX(-50%)' }}>
+            {hasFaults ? (
+              <svg style={{ width: 20, height: 20 }} viewBox="0 0 24 24" fill="none" stroke={T.textRed} strokeWidth="2">
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <circle cx="12" cy="17" r="0.6" fill={T.textRed}/>
+              </svg>
+            ) : (
+              <div style={{ fontSize: 11, fontWeight: 600, color: T.textGreen }}>ОК</div>
+            )}
+          </div>
+
+          {/* Подпись двигателя */}
+          <div style={{ position: 'absolute', top: 16, left: '50%', transform: 'translateX(-50%)', fontSize: 8, color: T.textMuted, letterSpacing: 0.5 }}>
+            {side === 'Left' ? 'ЛЕВ' : 'ПРАВ'}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+});
+
 const controlItems = [
   { key: "power", label: "Питание", icon: Power },
   { key: "runLight", label: "Ходовые", icon: LightRunning },
@@ -1719,15 +1871,24 @@ export default function YachtDashboard() {
         </motion.div>
       </motion.div>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: loadingPhase === 'done' ? 1 : 0, y: loadingPhase === 'done' ? 0 : 30 }}
         transition={{ duration: 0.6, delay: 0.3 }}
-        style={{ width: '100%', maxWidth: 1200, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, overflow: 'visible' }}
+        style={{ width: '100%', maxWidth: 1200, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, overflow: 'visible', position: 'relative' }}
       >
-        <div style={{ marginRight: -92, paddingTop: 20 }}>
+        {/* Левый двигатель - обычный */}
+        <motion.div
+          animate={{
+            opacity: controls.navigation ? 0 : 1,
+            scale: controls.navigation ? 0.5 : 1,
+            x: controls.navigation ? -200 : 0,
+          }}
+          transition={{ type: "spring", stiffness: 200, damping: 25 }}
+          style={{ marginRight: -92, paddingTop: 20, pointerEvents: controls.navigation ? 'none' : 'auto' }}
+        >
           <EngineCard side="Left" tempText="Темп 82°C · Масло ОК" rpm={Math.round(rpmLeft)} throttle={Math.round(throttleLeft)} gear={gearLeft} motorHours={1247} fuelLevel={75} expanded={false} onToggleExpand={() => setExpandedEngine("Left")} />
-        </div>
+        </motion.div>
 
         <div style={{ height: 400, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 20 }}>
           {/* Компас и Киль над стекляшкой */}
@@ -2115,9 +2276,57 @@ export default function YachtDashboard() {
           </div>
         </div>
 
-        <div style={{ marginLeft: -92, paddingTop: 20 }}>
+        {/* Правый двигатель - обычный */}
+        <motion.div
+          animate={{
+            opacity: controls.navigation ? 0 : 1,
+            scale: controls.navigation ? 0.5 : 1,
+            x: controls.navigation ? 200 : 0,
+          }}
+          transition={{ type: "spring", stiffness: 200, damping: 25 }}
+          style={{ marginLeft: -92, paddingTop: 20, pointerEvents: controls.navigation ? 'none' : 'auto' }}
+        >
           <EngineCard side="Right" tempText="Темп 81°C · Масло ОК" rpm={Math.round(rpmRight)} throttle={Math.round(throttleRight)} gear={gearRight} motorHours={1198} fuelLevel={18} expanded={false} onToggleExpand={() => setExpandedEngine("Right")} />
-        </div>
+        </motion.div>
+
+        {/* Мини двигатели в углах - появляются при навигации */}
+        <AnimatePresence>
+          {controls.navigation && (
+            <>
+              {/* Левый мини-двигатель - нижний левый угол */}
+              <motion.div
+                initial={{ opacity: 0, x: -100, y: 100 }}
+                animate={{ opacity: 1, x: 0, y: 0 }}
+                exit={{ opacity: 0, x: -100, y: 100 }}
+                transition={{ type: "spring", stiffness: 200, damping: 25 }}
+                style={{
+                  position: 'fixed',
+                  bottom: 120,
+                  left: 30,
+                  zIndex: 50,
+                }}
+              >
+                <MiniEngineCard side="Left" rpm={Math.round(rpmLeft)} fuelLevel={75} hasFaults={false} />
+              </motion.div>
+
+              {/* Правый мини-двигатель - нижний правый угол */}
+              <motion.div
+                initial={{ opacity: 0, x: 100, y: 100 }}
+                animate={{ opacity: 1, x: 0, y: 0 }}
+                exit={{ opacity: 0, x: 100, y: 100 }}
+                transition={{ type: "spring", stiffness: 200, damping: 25 }}
+                style={{
+                  position: 'fixed',
+                  bottom: 120,
+                  right: 30,
+                  zIndex: 50,
+                }}
+              >
+                <MiniEngineCard side="Right" rpm={Math.round(rpmRight)} fuelLevel={18} hasFaults={true} />
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
       </motion.div>
 
       <motion.div 
