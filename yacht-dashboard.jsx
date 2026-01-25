@@ -1141,9 +1141,9 @@ export default function YachtDashboard() {
               pointerEvents: 'none',
             }}
           >
-            <div style={{ width: '100%', position: 'relative' }}>
+            <div style={{ width: '100%', position: 'relative', overflow: 'hidden' }}>
               <div style={{
-                overflow: 'visible',
+                overflow: 'hidden',
                 height: 700,
                 position: 'relative',
                 WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 70%)',

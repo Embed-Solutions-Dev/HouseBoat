@@ -31595,8 +31595,8 @@
           pointerEvents: "none"
         }
       },
-      /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "100%", position: "relative" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-        overflow: "visible",
+      /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "100%", position: "relative", overflow: "hidden" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+        overflow: "hidden",
         height: 700,
         position: "relative",
         WebkitMaskImage: "radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 70%)",
