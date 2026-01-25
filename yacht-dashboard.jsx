@@ -408,10 +408,10 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
 
         {/* Motor hours in center (smaller than old RPM display) */}
         <div style={{ position: 'absolute', left: 0, right: 0, top: cy + 46, textAlign: 'center' }}>
-          <div style={{ fontSize: 22, fontWeight: 600, color: T.textPrimary, textShadow: '0 0 15px rgba(200,230,255,0.2)', fontVariantNumeric: 'tabular-nums' }}>
+          <div style={{ fontSize: 22, fontWeight: 600, color: T.textSecondary, textShadow: '0 0 15px rgba(200,230,255,0.1)', fontVariantNumeric: 'tabular-nums' }}>
             {motorHours.toLocaleString()}
           </div>
-          <div style={{ fontSize: 9, color: T.textMuted, letterSpacing: 0.5, marginTop: 0 }}>МОТОЧАСЫ</div>
+          <div style={{ fontSize: 9, color: T.textMuted, letterSpacing: 0.5, marginTop: 2 }}>МОТОЧАСЫ</div>
         </div>
 
         {/* Throttle on horizontal center line, 66px left of center */}
@@ -420,9 +420,9 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
           <div style={{ fontSize: 16, fontWeight: 600, color: T.textPrimary }}>{throttle}%</div>
         </div>
 
-        {/* Error indicator - 66px right of center, on horizontal center line */}
+        {/* Error indicator - 66px right of center, 4px below horizontal center line */}
         {hasFaults && (
-          <div style={{ position: 'absolute', top: cy, left: cx + 66, transform: 'translate(-50%, -50%)', filter: 'drop-shadow(0 0 8px rgba(255,60,60,0.8))' }}>
+          <div style={{ position: 'absolute', top: cy + 4, left: cx + 66, transform: 'translate(-50%, -50%)', filter: 'drop-shadow(0 0 8px rgba(255,60,60,0.8))' }}>
             <svg style={{ width: 28, height: 28 }} viewBox="0 0 24 24" fill="none" stroke={T.textRed} strokeWidth="2">
               <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
               <line x1="12" y1="9" x2="12" y2="13"/>
@@ -432,8 +432,8 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
         )}
 
         {/* Fuel pump icon at bottom */}
-        <div style={{ position: 'absolute', bottom: 20, left: 0, right: 0, textAlign: 'center' }}>
-          <svg style={{ width: 18, height: 18 }} viewBox="0 0 24 24" fill={lowFuel ? T.textAmber : T.textMuted} stroke="none">
+        <div style={{ position: 'absolute', bottom: 28, left: 0, right: 0, textAlign: 'center' }}>
+          <svg style={{ width: 27, height: 27 }} viewBox="0 0 24 24" fill={lowFuel ? T.textAmber : T.textMuted} stroke="none">
             <path d="M19.77 7.23l.01-.01-3.72-3.72L15 4.56l2.11 2.11c-.94.36-1.61 1.26-1.61 2.33 0 1.38 1.12 2.5 2.5 2.5.36 0 .69-.08 1-.21v7.21c0 .55-.45 1-1 1s-1-.45-1-1V14c0-1.1-.9-2-2-2h-1V5c0-1.1-.9-2-2-2H6c-1.1 0-2 .9-2 2v16h10v-7.5h1.5v5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V9c0-.69-.28-1.32-.73-1.77zM12 10H6V5h6v5z"/>
           </svg>
         </div>
