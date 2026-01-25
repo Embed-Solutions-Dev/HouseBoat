@@ -196,13 +196,14 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
   const arcR = r - 5;
   const needleLength = r - 40;
 
-  // Fuel arc parameters (bottom arc, closing the circle)
+  // Fuel arc parameters (bottom arc, closing the circle - trimmed on edges)
   const fuelArcR = r - 5;
-  const fuelStartAngle = -45; // degrees (bottom right)
-  const fuelEndAngle = -135; // degrees (bottom left)
-  const fuelSweep = 90; // total sweep for fuel arc
+  const fuelStartAngle = -55; // degrees (trimmed from -45)
+  const fuelEndAngle = -125; // degrees (trimmed from -135)
+  const fuelSweep = 70; // total sweep for fuel arc (was 90)
   const fuelRatio = clamp(fuelLevel, 0, 100) / 100;
   const fuelFilledAngle = fuelStartAngle - fuelRatio * fuelSweep;
+  const fuelColor = lowFuel ? T.textAmber : T.gaugeActive;
 
   return (
     <div style={{ minHeight: 360, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'visible' }}>
@@ -292,7 +293,7 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
             <path
               d={`M ${cx + fuelArcR * Math.cos(fuelStartAngle * Math.PI / 180)} ${cy - fuelArcR * Math.sin(fuelStartAngle * Math.PI / 180)} A ${fuelArcR} ${fuelArcR} 0 0 1 ${cx + fuelArcR * Math.cos(fuelFilledAngle * Math.PI / 180)} ${cy - fuelArcR * Math.sin(fuelFilledAngle * Math.PI / 180)}`}
               fill="none"
-              stroke={lowFuel ? T.gaugeRed : T.gaugeActive}
+              stroke={fuelColor}
               strokeWidth="6"
               strokeLinecap="round"
             />
@@ -406,49 +407,35 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
         </div>
 
         {/* Motor hours in center (smaller than old RPM display) */}
-        <div style={{ position: 'absolute', left: 0, right: 0, top: cy + 30, textAlign: 'center' }}>
+        <div style={{ position: 'absolute', left: 0, right: 0, top: cy + 46, textAlign: 'center' }}>
           <div style={{ fontSize: 22, fontWeight: 600, color: T.textPrimary, textShadow: '0 0 15px rgba(200,230,255,0.2)', fontVariantNumeric: 'tabular-nums' }}>
             {motorHours.toLocaleString()}
           </div>
           <div style={{ fontSize: 9, color: T.textMuted, letterSpacing: 0.5, marginTop: 0 }}>МОТОЧАСЫ</div>
         </div>
 
-        {/* Throttle left of center, Error right of center */}
-        <div style={{ position: 'absolute', bottom: 55, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 60 }}>
-          {/* Throttle - left side */}
-          <div style={{ textAlign: 'center', width: 50 }}>
-            <div style={{ fontSize: 9, color: T.textMuted }}>ГАЗ</div>
-            <div style={{ fontSize: 16, fontWeight: 600, color: T.textPrimary }}>{throttle}%</div>
-          </div>
-
-          {/* Error indicator - right side (only shown if faults) */}
-          <div style={{ textAlign: 'center', width: 50, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            {hasFaults && (
-              <div style={{ filter: 'drop-shadow(0 0 8px rgba(255,60,60,0.8))' }}>
-                <svg style={{ width: 28, height: 28 }} viewBox="0 0 24 24" fill="none" stroke={T.textRed} strokeWidth="2">
-                  <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
-                  <line x1="12" y1="9" x2="12" y2="13"/>
-                  <circle cx="12" cy="17" r="0.6" fill={T.textRed}/>
-                </svg>
-              </div>
-            )}
-          </div>
+        {/* Throttle left of center (-30px), Error right of center (+30px) */}
+        <div style={{ position: 'absolute', bottom: 55, left: cx - 30, transform: 'translateX(-50%)', textAlign: 'center' }}>
+          <div style={{ fontSize: 9, color: T.textMuted }}>ГАЗ</div>
+          <div style={{ fontSize: 16, fontWeight: 600, color: T.textPrimary }}>{throttle}%</div>
         </div>
 
-        {/* Fuel indicator at bottom */}
-        <div style={{ position: 'absolute', bottom: 18, left: 0, right: 0, textAlign: 'center' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-            {lowFuel && (
-              <svg style={{ width: 14, height: 14 }} viewBox="0 0 24 24" fill={T.textRed} stroke="none">
-                <path d="M12 2L2 22h20L12 2zm0 5l7.5 13h-15L12 7z"/>
-                <rect x="11" y="10" width="2" height="5"/>
-                <rect x="11" y="16" width="2" height="2"/>
-              </svg>
-            )}
-            <div style={{ fontSize: 10, color: lowFuel ? T.textRed : T.textMuted, fontWeight: lowFuel ? 600 : 400 }}>
-              ТОПЛИВО {fuelLevel}%
-            </div>
+        {/* Error indicator - right of center (+30px) */}
+        {hasFaults && (
+          <div style={{ position: 'absolute', bottom: 55, left: cx + 30, transform: 'translateX(-50%)', filter: 'drop-shadow(0 0 8px rgba(255,60,60,0.8))' }}>
+            <svg style={{ width: 28, height: 28 }} viewBox="0 0 24 24" fill="none" stroke={T.textRed} strokeWidth="2">
+              <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/>
+              <circle cx="12" cy="17" r="0.6" fill={T.textRed}/>
+            </svg>
           </div>
+        )}
+
+        {/* Fuel pump icon at bottom */}
+        <div style={{ position: 'absolute', bottom: 20, left: 0, right: 0, textAlign: 'center' }}>
+          <svg style={{ width: 18, height: 18 }} viewBox="0 0 24 24" fill={lowFuel ? T.textAmber : T.textMuted} stroke="none">
+            <path d="M19.77 7.23l.01-.01-3.72-3.72L15 4.56l2.11 2.11c-.94.36-1.61 1.26-1.61 2.33 0 1.38 1.12 2.5 2.5 2.5.36 0 .69-.08 1-.21v7.21c0 .55-.45 1-1 1s-1-.45-1-1V14c0-1.1-.9-2-2-2h-1V5c0-1.1-.9-2-2-2H6c-1.1 0-2 .9-2 2v16h10v-7.5h1.5v5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V9c0-.69-.28-1.32-.73-1.77zM12 10H6V5h6v5z"/>
+          </svg>
         </div>
       </div>
       </div>
