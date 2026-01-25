@@ -31048,7 +31048,7 @@
       const targetAngle = -startAngle + ratio * sweep;
       mv.set(targetAngle);
     }, [ratio, mv]);
-    return /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", gap: 6 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: 100, display: "flex", alignItems: "center", gap: 6 } }, /* @__PURE__ */ import_react27.default.createElement("svg", { style: { width: 12, height: 12, flexShrink: 0 }, viewBox: "0 0 24 24", fill: fuelColor, stroke: "none" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "M19.77 7.23l.01-.01-3.72-3.72L15 4.56l2.11 2.11c-.94.36-1.61 1.26-1.61 2.33 0 1.38 1.12 2.5 2.5 2.5.36 0 .69-.08 1-.21v7.21c0 .55-.45 1-1 1s-1-.45-1-1V14c0-1.1-.9-2-2-2h-1V5c0-1.1-.9-2-2-2H6c-1.1 0-2 .9-2 2v16h10v-7.5h1.5v5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V9c0-.69-.28-1.32-.73-1.77zM12 10H6V5h6v5z" })), /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1, height: 5, borderRadius: 3, background: "rgba(30,45,60,0.6)", border: "1px solid rgba(80,100,120,0.3)", overflow: "hidden" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: `${fuelLevel}%`, height: "100%", background: `linear-gradient(90deg, ${fuelColor} 0%, ${fuelColor}88 100%)`, borderRadius: 2 } })), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: fuelColor, width: 24, textAlign: "right" } }, fuelLevel, "%")), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+    return /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", gap: 18 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: 135, display: "flex", alignItems: "center", gap: 6 } }, /* @__PURE__ */ import_react27.default.createElement("svg", { style: { width: 14, height: 14, flexShrink: 0 }, viewBox: "0 0 24 24", fill: fuelColor, stroke: "none" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "M19.77 7.23l.01-.01-3.72-3.72L15 4.56l2.11 2.11c-.94.36-1.61 1.26-1.61 2.33 0 1.38 1.12 2.5 2.5 2.5.36 0 .69-.08 1-.21v7.21c0 .55-.45 1-1 1s-1-.45-1-1V14c0-1.1-.9-2-2-2h-1V5c0-1.1-.9-2-2-2H6c-1.1 0-2 .9-2 2v16h10v-7.5h1.5v5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V9c0-.69-.28-1.32-.73-1.77zM12 10H6V5h6v5z" })), /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1, height: 6, borderRadius: 3, background: "rgba(30,45,60,0.6)", border: "1px solid rgba(80,100,120,0.3)", overflow: "hidden" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: `${fuelLevel}%`, height: "100%", background: `linear-gradient(90deg, ${fuelColor} 0%, ${fuelColor}88 100%)`, borderRadius: 2 } })), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: fuelColor, width: 28, textAlign: "right" } }, fuelLevel, "%")), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
       width: 135,
       height: 135,
       borderRadius: "50%",
@@ -31109,8 +31109,8 @@
       {
         style: {
           position: "absolute",
-          top: 50,
-          left: 50,
+          top: "50%",
+          left: "50%",
           width: 3,
           height: 35,
           marginLeft: -1.5,
@@ -31132,7 +31132,7 @@
       borderRadius: "50%",
       background: "radial-gradient(circle at 35% 35%, #ffffff 0%, #d0d0d0 30%, #909090 70%, #606060 100%)",
       boxShadow: "0 2px 4px rgba(0,0,0,0.4)"
-    } }), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", bottom: 18, left: "50%", transform: "translateX(-50%)" } }, hasFaults ? /* @__PURE__ */ import_react27.default.createElement("svg", { style: { width: 20, height: 20 }, viewBox: "0 0 24 24", fill: "none", stroke: T.textRed, strokeWidth: "2" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" }), /* @__PURE__ */ import_react27.default.createElement("line", { x1: "12", y1: "9", x2: "12", y2: "13" }), /* @__PURE__ */ import_react27.default.createElement("circle", { cx: "12", cy: "17", r: "0.6", fill: T.textRed })) : /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, fontWeight: 600, color: T.textGreen } }, "\u041E\u041A")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", top: 16, left: "50%", transform: "translateX(-50%)", fontSize: 8, color: T.textMuted, letterSpacing: 0.5 } }, side === "Left" ? "\u041B\u0415\u0412" : "\u041F\u0420\u0410\u0412"))));
+    } }), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)" } }, hasFaults ? /* @__PURE__ */ import_react27.default.createElement("svg", { style: { width: 20, height: 20 }, viewBox: "0 0 24 24", fill: "none", stroke: T.textRed, strokeWidth: "2" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" }), /* @__PURE__ */ import_react27.default.createElement("line", { x1: "12", y1: "9", x2: "12", y2: "13" }), /* @__PURE__ */ import_react27.default.createElement("circle", { cx: "12", cy: "17", r: "0.6", fill: T.textRed })) : /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, fontWeight: 600, color: T.textGreen } }, "\u041E\u041A")))));
   });
   var controlItems = [
     { key: "power", label: "\u041F\u0438\u0442\u0430\u043D\u0438\u0435", icon: Power },
@@ -32419,7 +32419,7 @@
           transition: { type: "spring", stiffness: 200, damping: 25 },
           style: {
             position: "fixed",
-            bottom: 144,
+            bottom: 156,
             left: "calc(50% - 576px)",
             zIndex: 50
           }
@@ -32434,7 +32434,7 @@
           transition: { type: "spring", stiffness: 200, damping: 25 },
           style: {
             position: "fixed",
-            bottom: 144,
+            bottom: 156,
             right: "calc(50% - 576px)",
             zIndex: 50
           }
