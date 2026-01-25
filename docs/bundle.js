@@ -32279,8 +32279,8 @@
               width: expandedEngine ? expandedWidth : collapsedWidth,
               height: expandedEngine ? expandedHeight : collapsedHeight,
               x: expandedEngine ? -expandedWidth / 2 : -collapsedWidth / 2,
-              y: expandedEngine ? -expandedHeight / 2 : isNavMode ? 82 : -collapsedHeight / 2,
-              scale: isNavMode ? 0.5 : 1
+              y: expandedEngine ? -expandedHeight / 2 : isNavMode ? 42 : -collapsedHeight / 2,
+              scale: isNavMode ? 0.6 : 1
             },
             transition: { type: "spring", stiffness: 300, damping: 30 },
             style: {
