@@ -2104,9 +2104,167 @@ export default function YachtDashboard() {
           <EngineCard side="Left" tempText="Темп 82°C · Масло ОК" rpm={Math.round(rpmLeft)} throttle={Math.round(throttleLeft)} gear={gearLeft} motorHours={1247} fuelLevel={75} expanded={false} onToggleExpand={() => setExpandedEngine("Left")} />
         </div>
 
-        <div style={{ height: 400, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ position: 'relative', width: 230, height: 190 }}>
-            
+        <div style={{ height: 400, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          {/* Компас и Киль над стекляшкой */}
+          <div style={{ display: 'flex', gap: 24, marginBottom: 12 }}>
+            {/* Компас */}
+            <div style={{
+              width: 90,
+              height: 90,
+              borderRadius: '50%',
+              background: 'linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
+              padding: 4,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <div style={{
+                width: '100%',
+                height: '100%',
+                borderRadius: '50%',
+                background: 'linear-gradient(145deg, rgba(10,15,25,0.98) 0%, rgba(5,8,15,1) 100%)',
+                position: 'relative',
+              }}>
+                <motion.div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  animate={{ rotate: -heading }}
+                  transition={{ type: "spring", stiffness: 120, damping: 18 }}
+                >
+                  <svg viewBox="0 0 100 100" style={{ width: '100%', height: '100%' }}>
+                    {Array.from({ length: 36 }).map((_, i) => {
+                      const angle = (i * 10) * Math.PI / 180;
+                      const isMajor = i % 9 === 0;
+                      const r1 = isMajor ? 38 : 42;
+                      const r2 = 48;
+                      return (
+                        <line
+                          key={i}
+                          x1={50 + r1 * Math.sin(angle)}
+                          y1={50 - r1 * Math.cos(angle)}
+                          x2={50 + r2 * Math.sin(angle)}
+                          y2={50 - r2 * Math.cos(angle)}
+                          stroke={isMajor ? 'rgba(200,210,230,0.8)' : 'rgba(150,160,180,0.4)'}
+                          strokeWidth={isMajor ? 2 : 1}
+                        />
+                      );
+                    })}
+                    <text x="50" y="20" fill="rgba(200,210,230,0.6)" fontSize="9" fontWeight="500" textAnchor="middle" dominantBaseline="middle">С</text>
+                    <text x="50" y="80" fill="rgba(200,210,230,0.6)" fontSize="9" fontWeight="500" textAnchor="middle" dominantBaseline="middle" transform="rotate(180 50 80)">Ю</text>
+                    <text x="80" y="50" fill="rgba(200,210,230,0.6)" fontSize="9" fontWeight="500" textAnchor="middle" dominantBaseline="middle" transform="rotate(90 80 50)">В</text>
+                    <text x="20" y="50" fill="rgba(200,210,230,0.6)" fontSize="9" fontWeight="500" textAnchor="middle" dominantBaseline="middle" transform="rotate(-90 20 50)">З</text>
+                  </svg>
+                </motion.div>
+                <div style={{
+                  position: 'absolute',
+                  top: -15,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  width: 0,
+                  height: 0,
+                  borderLeft: '5px solid transparent',
+                  borderRight: '5px solid transparent',
+                  borderTop: '8px solid #d44050',
+                  filter: 'drop-shadow(0 0 4px rgba(212,64,80,0.6))',
+                }} />
+              </div>
+            </div>
+
+            {/* Киль */}
+            <div style={{
+              width: 90,
+              height: 90,
+              borderRadius: '50%',
+              background: 'linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
+              padding: 4,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <div style={{
+                width: '100%',
+                height: '100%',
+                borderRadius: '50%',
+                background: 'linear-gradient(145deg, rgba(10,15,25,0.98) 0%, rgba(5,8,15,1) 100%)',
+                position: 'relative',
+                overflow: 'hidden',
+              }}>
+                <svg viewBox="0 0 100 100" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
+                  {Array.from({ length: 19 }).map((_, i) => {
+                    const deg = -45 + i * 5;
+                    const angle = (deg + 90) * Math.PI / 180;
+                    const isMajor = deg % 15 === 0;
+                    const r1 = isMajor ? 38 : 40;
+                    const r2 = 46;
+                    return (
+                      <line
+                        key={i}
+                        x1={50 + r1 * Math.cos(angle)}
+                        y1={50 + r1 * Math.sin(angle)}
+                        x2={50 + r2 * Math.cos(angle)}
+                        y2={50 + r2 * Math.sin(angle)}
+                        stroke={isMajor ? 'rgba(200,210,230,0.8)' : 'rgba(150,160,180,0.4)'}
+                        strokeWidth={isMajor ? 2 : 1}
+                        strokeLinecap="round"
+                      />
+                    );
+                  })}
+                </svg>
+                <svg
+                  viewBox="0 0 24 32"
+                  style={{
+                    position: 'absolute',
+                    top: 15,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: 22,
+                    height: 30,
+                    opacity: 0.35,
+                  }}
+                >
+                  <path
+                    d="M12 1 L18 8 L19 22 Q12 30 5 22 L6 8 Z"
+                    fill="rgba(150,180,210,0.6)"
+                    stroke="rgba(150,180,210,0.8)"
+                    strokeWidth="0.5"
+                  />
+                  <ellipse
+                    cx="12"
+                    cy="14"
+                    rx="4"
+                    ry="6"
+                    fill="rgba(100,130,160,0.5)"
+                  />
+                </svg>
+                <motion.div
+                  style={{
+                    position: 'absolute',
+                    top: 38,
+                    left: '50%',
+                    width: 3,
+                    height: 32,
+                    marginLeft: -1.5,
+                    background: 'linear-gradient(90deg, #a03040 0%, #d04050 25%, #e85060 50%, #d04050 75%, #a03040 100%)',
+                    borderRadius: 2,
+                    transformOrigin: 'center top',
+                    boxShadow: '0 0 8px rgba(224,80,96,0.5)',
+                  }}
+                  animate={{ rotate: rudderDeg }}
+                  transition={{ type: "spring", stiffness: 100, damping: 15 }}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div style={{ position: 'relative', width: 230, height: 127, marginTop: 8 }}>
+
             {/* Стекляшка - расширяется от центра */}
             {(() => {
               const expandedFaults = expandedEngine === "Left" ? [] : ["E102 - Датчик температуры", "E045 - Низкое давление масла"];
@@ -2114,7 +2272,7 @@ export default function YachtDashboard() {
               const expandedWidth = hasExpandedFaults ? 580 : 380;
               const expandedHeight = 380;
               const collapsedWidth = 230;
-              const collapsedHeight = 190;
+              const collapsedHeight = 127;
               
               return (
             <motion.div 
@@ -2131,7 +2289,7 @@ export default function YachtDashboard() {
                 left: '50%',
                 width: collapsedWidth, 
                 height: collapsedHeight,
-                borderRadius: 42,
+                borderRadius: 28,
                 background: 'linear-gradient(145deg, rgba(15,22,35,0.97) 0%, rgba(8,12,22,0.98) 50%, rgba(5,8,15,1) 100%)',
                 boxShadow: '0 12px 40px rgba(0,0,0,0.6), 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 1px rgba(100,140,200,0.1), inset 0 -2px 10px rgba(0,0,0,0.5)',
                 border: '1px solid rgba(80,100,130,0.2)',
@@ -2141,18 +2299,18 @@ export default function YachtDashboard() {
             >
               <div style={{
                 position: 'absolute',
-                inset: 6,
-                borderRadius: 36,
-                boxShadow: 'inset 0 8px 30px rgba(0,0,0,0.8), inset 0 2px 10px rgba(0,5,15,0.5)',
+                inset: 4,
+                borderRadius: 24,
+                boxShadow: 'inset 0 6px 20px rgba(0,0,0,0.8), inset 0 2px 8px rgba(0,5,15,0.5)',
                 pointerEvents: 'none',
               }} />
-              
+
               <div style={{
                 position: 'absolute',
                 top: 0,
-                left: 15,
-                right: 15,
-                height: 60,
+                left: 12,
+                right: 12,
+                height: 40,
                 borderRadius: '0 0 50% 50%',
                 background: 'linear-gradient(180deg, rgba(180,210,255,0.12) 0%, rgba(150,180,220,0.05) 40%, transparent 100%)',
                 pointerEvents: 'none',
@@ -2294,7 +2452,7 @@ export default function YachtDashboard() {
               <div style={{
                 position: 'absolute',
                 inset: 0,
-                borderRadius: 42,
+                borderRadius: 28,
                 border: '1px solid rgba(150,180,220,0.08)',
                 pointerEvents: 'none',
               }} />
@@ -2305,12 +2463,12 @@ export default function YachtDashboard() {
             {/* Лого houseboat - плоское темное */}
             <div style={{
               position: 'absolute',
-              bottom: -94,
+              bottom: -58,
               left: '50%',
               transform: 'translateX(-50%)',
               zIndex: 5,
             }}>
-              <svg width="105" height="68" viewBox="600 -100 1620 750" style={{ opacity: 0.6 }}>
+              <svg width="75" height="48" viewBox="600 -100 1620 750" style={{ opacity: 0.6 }}>
                 <path 
                   fill="#2a3a4a" 
                   d="M1798.09 319.87c-4.35,-12.65 -31.56,-22.61 -26.42,-5.52 2.53,29.43 7.74,74.72 -23.19,131.9 -34.39,29.27 5.18,34.93 43.53,16.19 64.03,-24.99 12.21,-119.88 6.08,-142.57zm-498.41 -195.06l0 0 -0.42 0 0 54.51 47.15 0c-0.78,-30.15 -21.5,-54.51 -46.73,-54.51zm-17.11 0.05l0 0c-24.28,1.3 -43.89,25.15 -44.65,54.46l44.65 0 0 -54.46zm-44.67 74.57l0 0 0 51 44.67 0 0 -51 -44.67 0zm61.36 51l0 0 47.17 0 0 -51 -47.17 0 0 51zm488.43 -118.7l0 0c-75.64,39.65 -105.96,79.31 -167.43,107.06 -14.5,6.53 -30.65,12.67 -48.33,18.34l0 -102.15c0,-34.71 -28.38,-63.1 -63.09,-63.1 -34.71,0 -63.1,28.39 -63.1,63.1l0 130.53c-114.9,17.14 -260.31,19.42 -421.05,-2.18 209.11,99.93 576.41,33.58 705.24,-76.57 38.48,-32.89 101.67,-75.25 149.43,-91.4 151.13,-55.09 221.23,-5.03 260.55,84.96 -7.9,31.59 -71.1,31.12 -109.89,46.44 -109.8,30.41 -134.33,31.14 -244.26,11.66 -12.86,-0.26 -32.74,10.03 -27.17,24.4 10.58,216.03 -71.36,208.7 -255.45,232.26 -61.99,2.97 -1.08,-78.65 13.4,-87.72 46.13,-48.5 75.84,-52.86 86.21,-69.64 14.88,-26.72 3.03,-38.46 -31.76,-15.84 -142.22,60.11 -308.64,63.74 -496.17,18.12 -193.15,147.77 -382.49,16.88 -304.72,-13.59 67.62,-23.73 138.17,-42.34 211.83,-55.51l-26.05 -41.91c50.95,-25.54 95,-62.9 135.37,-106.56 212.3,-195.78 446.39,-180.44 696.44,-10.7z"
