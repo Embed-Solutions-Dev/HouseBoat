@@ -176,7 +176,8 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
     const t = val / max;
     const angle = (startAngle - t * sweep) * Math.PI / 180;
     const isMajor = val % majorStep === 0;
-    const innerR = isMajor ? r - 18 : r - 10;
+    const isHalf = val % 1000 !== 0 && val % 500 === 0; // половинчатые значения (500, 1500, 2500, 3500)
+    const innerR = isMajor ? (isHalf ? r - 14 : r - 18) : r - 10;
     const outerR = r;
 
     ticks.push({
@@ -186,8 +187,8 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
       y2: cy - outerR * Math.sin(angle),
       isMajor,
       value: val,
-      labelX: cx + (r - 34) * Math.cos(angle),
-      labelY: cy - (r - 34) * Math.sin(angle),
+      labelX: cx + (r - 38) * Math.cos(angle),
+      labelY: cy - (r - 38) * Math.sin(angle),
       isRedZone: val >= max * 0.8,
     });
   }
@@ -406,23 +407,9 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
           <div style={{ fontSize: 11, color: T.textGreen, marginTop: 2 }}>{tempText.split(' · ')[1]}</div>
         </div>
 
-        {/* Motor hours in center (smaller than old RPM display) */}
-        <div style={{ position: 'absolute', left: 0, right: 0, top: cy + 46, textAlign: 'center' }}>
-          <div style={{ fontSize: 22, fontWeight: 600, color: T.textSecondary, textShadow: '0 0 15px rgba(200,230,255,0.1)', fontVariantNumeric: 'tabular-nums' }}>
-            {motorHours.toLocaleString()}
-          </div>
-          <div style={{ fontSize: 9, color: T.textMuted, letterSpacing: 0.5, marginTop: 2 }}>МОТОЧАСЫ</div>
-        </div>
-
-        {/* Throttle on horizontal center line, 66px left of center */}
-        <div style={{ position: 'absolute', top: cy, left: cx - 66, transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
-          <div style={{ fontSize: 9, color: T.textMuted }}>ГАЗ</div>
-          <div style={{ fontSize: 16, fontWeight: 600, color: T.textSecondary }}>{throttle}%</div>
-        </div>
-
-        {/* Error indicator - 66px right of center, 4px below horizontal center line */}
+        {/* Error indicator - 66px left of center (swapped with motor hours) */}
         {hasFaults && (
-          <div style={{ position: 'absolute', top: cy + 4, left: cx + 66, transform: 'translate(-50%, -50%)', filter: 'drop-shadow(0 0 8px rgba(255,60,60,0.8))' }}>
+          <div style={{ position: 'absolute', top: cy, left: cx - 66, transform: 'translate(-50%, -50%)', filter: 'drop-shadow(0 0 8px rgba(255,60,60,0.8))' }}>
             <svg style={{ width: 28, height: 28 }} viewBox="0 0 24 24" fill="none" stroke={T.textRed} strokeWidth="2">
               <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
               <line x1="12" y1="9" x2="12" y2="13"/>
@@ -430,6 +417,18 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
             </svg>
           </div>
         )}
+
+        {/* Throttle on horizontal center line, 66px left of center (or center if no faults) */}
+        <div style={{ position: 'absolute', top: cy, left: hasFaults ? cx : cx - 66, transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
+          <div style={{ fontSize: 9, color: T.textMuted }}>ГАЗ</div>
+          <div style={{ fontSize: 16, fontWeight: 600, color: T.textSecondary }}>{throttle}%</div>
+        </div>
+
+        {/* Motor hours - 66px right of center (same size as throttle) */}
+        <div style={{ position: 'absolute', top: cy, left: cx + 66, transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
+          <div style={{ fontSize: 9, color: T.textMuted }}>МОТОЧАСЫ</div>
+          <div style={{ fontSize: 16, fontWeight: 600, color: T.textSecondary, fontVariantNumeric: 'tabular-nums' }}>{motorHours.toLocaleString()}</div>
+        </div>
 
         {/* Fuel pump icon at bottom */}
         <div style={{ position: 'absolute', bottom: 28, left: 0, right: 0, textAlign: 'center' }}>
