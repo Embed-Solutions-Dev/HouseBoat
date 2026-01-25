@@ -32091,7 +32091,7 @@
         motion.div,
         {
           animate: {
-            x: controls.navigation ? -330 : 0
+            x: controls.navigation ? -426 : 0
           },
           transition: { type: "spring", stiffness: 200, damping: 25 },
           style: {
@@ -32159,7 +32159,7 @@
         motion.div,
         {
           animate: {
-            x: controls.navigation ? 330 : 0
+            x: controls.navigation ? 426 : 0
           },
           transition: { type: "spring", stiffness: 200, damping: 25 },
           style: {

@@ -1896,7 +1896,7 @@ export default function YachtDashboard() {
             {/* Компас */}
             <motion.div
               animate={{
-                x: controls.navigation ? -330 : 0,
+                x: controls.navigation ? -426 : 0,
               }}
               transition={{ type: "spring", stiffness: 200, damping: 25 }}
               style={{
@@ -1970,7 +1970,7 @@ export default function YachtDashboard() {
             {/* Киль */}
             <motion.div
               animate={{
-                x: controls.navigation ? 330 : 0,
+                x: controls.navigation ? 426 : 0,
               }}
               transition={{ type: "spring", stiffness: 200, damping: 25 }}
               style={{
