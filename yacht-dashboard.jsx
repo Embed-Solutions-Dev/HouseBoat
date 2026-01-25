@@ -498,12 +498,14 @@ const MiniEngineCard = memo(function MiniEngineCard({ side, rpm, fuelLevel, hasF
         }}>
           {/* Шкала */}
           <svg viewBox="0 0 100 100" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
-            {Array.from({ length: 9 }).map((_, i) => {
-              const val = i * 500;
+            {/* Мелкие риски каждые 100 об/мин */}
+            {Array.from({ length: 41 }).map((_, i) => {
+              const val = i * 100;
               const t = val / max;
               const angle = (startAngle - t * sweep) * Math.PI / 180;
               const isMajor = val % 1000 === 0;
-              const r1 = isMajor ? 43 : 44;
+              const isMedium = val % 500 === 0 && !isMajor;
+              const r1 = isMajor ? 42 : isMedium ? 43.5 : 45;
               const r2 = 46;
               const isRedZone = val >= max * 0.8;
               return (
@@ -513,8 +515,8 @@ const MiniEngineCard = memo(function MiniEngineCard({ side, rpm, fuelLevel, hasF
                   y1={50 - r1 * Math.sin(angle)}
                   x2={50 + r2 * Math.cos(angle)}
                   y2={50 - r2 * Math.sin(angle)}
-                  stroke={isRedZone ? 'rgba(224,80,96,0.8)' : isMajor ? 'rgba(200,210,230,0.8)' : 'rgba(150,160,180,0.4)'}
-                  strokeWidth={isMajor ? 1.5 : 1}
+                  stroke={isRedZone ? 'rgba(224,80,96,0.7)' : isMajor ? 'rgba(200,210,230,0.8)' : isMedium ? 'rgba(150,160,180,0.5)' : 'rgba(120,130,150,0.3)'}
+                  strokeWidth={isMajor ? 1.5 : isMedium ? 1 : 0.5}
                   strokeLinecap="round"
                 />
               );
@@ -539,6 +541,17 @@ const MiniEngineCard = memo(function MiniEngineCard({ side, rpm, fuelLevel, hasF
                 </text>
               );
             })}
+            {/* Надпись x1000 */}
+            <text
+              x="50"
+              y="72"
+              fill="rgba(150,160,180,0.6)"
+              fontSize="6"
+              fontWeight="500"
+              textAnchor="middle"
+            >
+              ×1000 об/м
+            </text>
           </svg>
 
           {/* Стрелка */}
