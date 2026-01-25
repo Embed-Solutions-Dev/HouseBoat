@@ -31585,19 +31585,17 @@
         exit: { opacity: 0 },
         transition: { duration: 0.3 },
         style: {
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
+          position: "absolute",
+          top: 760,
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "100%",
+          maxWidth: 1152,
           zIndex: 1,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
           pointerEvents: "none"
         }
       },
-      /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "100%", maxWidth: 1152, position: "relative", marginTop: 760 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+      /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "100%", position: "relative" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
         overflow: "visible",
         height: 500,
         position: "relative",
@@ -32440,9 +32438,9 @@
           exit: { opacity: 0, x: -100, y: 100 },
           transition: { type: "spring", stiffness: 200, damping: 25 },
           style: {
-            position: "fixed",
-            bottom: 132,
-            left: "calc(50% - 576px)",
+            position: "absolute",
+            bottom: -80,
+            left: 0,
             zIndex: 50
           }
         },
@@ -32455,9 +32453,9 @@
           exit: { opacity: 0, x: 100, y: 100 },
           transition: { type: "spring", stiffness: 200, damping: 25 },
           style: {
-            position: "fixed",
-            bottom: 132,
-            right: "calc(50% - 576px)",
+            position: "absolute",
+            bottom: -80,
+            right: 0,
             zIndex: 50
           }
         },
