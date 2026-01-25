@@ -32433,7 +32433,7 @@
           transition: { type: "spring", stiffness: 300, damping: 30 },
           style: {
             position: "absolute",
-            bottom: -62,
+            bottom: -66,
             left: "50%",
             transform: "translateX(-50%)",
             zIndex: 5
