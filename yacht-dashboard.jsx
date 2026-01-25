@@ -790,9 +790,9 @@ export default function YachtDashboard() {
 
   // Компонент камеры
   const CameraView = ({ cam, isExpanded, onClick }) => (
-    <motion.div 
-      layout
-      onClick={onClick}
+    <motion.div
+      whileTap={{ scale: 0.98 }}
+      onClick={(e) => { e.stopPropagation(); onClick(); }}
       style={{
         background: 'linear-gradient(180deg, rgba(12,18,28,0.95) 0%, rgba(6,10,18,0.98) 100%)',
         borderRadius: isExpanded ? 24 : 16,
@@ -1142,10 +1142,10 @@ export default function YachtDashboard() {
         <AnimatePresence>
           {expandedCamera !== null && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
               style={{
                 position: 'absolute',
                 top: 0,
@@ -1153,13 +1153,19 @@ export default function YachtDashboard() {
                 right: 0,
                 bottom: 0,
                 zIndex: 10,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
+              onClick={() => setExpandedCamera(null)}
             >
-              <CameraView
-                cam={cameras[expandedCamera]}
-                isExpanded={true}
-                onClick={() => setExpandedCamera(null)}
-              />
+              <div style={{ width: '100%', height: '100%' }} onClick={(e) => e.stopPropagation()}>
+                <CameraView
+                  cam={cameras[expandedCamera]}
+                  isExpanded={true}
+                  onClick={() => setExpandedCamera(null)}
+                />
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
