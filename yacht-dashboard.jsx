@@ -1052,7 +1052,7 @@ export default function YachtDashboard() {
                 scale: 1,
               }}
               transition={{ duration: loadingPhase === 'transition' ? 0.6 : 0.8, ease: "easeOut" }}
-              style={{ position: 'relative' }}
+              style={{ position: 'relative', marginTop: -20 }}
             >
               <svg width="280" height="180" viewBox="600 -100 1620 750" style={{ overflow: 'visible' }}>
                 <defs>
