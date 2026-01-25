@@ -1103,13 +1103,13 @@ export default function YachtDashboard() {
         )}
       </AnimatePresence>
 
-      {/* Камеры видеонаблюдения */}
-      <div style={{ 
-        width: '100%', 
-        maxWidth: 1152, 
-        marginBottom: 20, 
+      {/* Камеры видеонаблюдения - плитка 2x2 */}
+      <div style={{
+        width: '100%',
+        maxWidth: 1152,
+        marginBottom: 20,
         display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
+        gridTemplateColumns: 'repeat(2, 1fr)',
         gap: 16,
       }}>
         {cameras.map((cam, idx) => (

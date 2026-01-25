@@ -31567,7 +31567,7 @@
       maxWidth: 1152,
       marginBottom: 20,
       display: "grid",
-      gridTemplateColumns: "repeat(4, 1fr)",
+      gridTemplateColumns: "repeat(2, 1fr)",
       gap: 16
     } }, cameras.map((cam, idx) => /* @__PURE__ */ import_react27.default.createElement(
       CameraView,
