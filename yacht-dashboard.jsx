@@ -1894,7 +1894,12 @@ export default function YachtDashboard() {
           {/* Компас и Киль над стекляшкой */}
           <div style={{ display: 'flex', gap: 30, marginBottom: 16 }}>
             {/* Компас */}
-            <div style={{
+            <motion.div
+              animate={{
+                x: controls.navigation ? -330 : 0,
+              }}
+              transition={{ type: "spring", stiffness: 200, damping: 25 }}
+              style={{
               width: 135,
               height: 135,
               borderRadius: '50%',
@@ -1960,10 +1965,15 @@ export default function YachtDashboard() {
                   filter: 'drop-shadow(0 0 4px rgba(212,64,80,0.6))',
                 }} />
               </div>
-            </div>
+            </motion.div>
 
             {/* Киль */}
-            <div style={{
+            <motion.div
+              animate={{
+                x: controls.navigation ? 330 : 0,
+              }}
+              transition={{ type: "spring", stiffness: 200, damping: 25 }}
+              style={{
               width: 135,
               height: 135,
               borderRadius: '50%',
@@ -2058,7 +2068,7 @@ export default function YachtDashboard() {
                   boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
                 }} />
               </div>
-            </div>
+            </motion.div>
           </div>
 
           <div style={{ position: 'relative', width: 230, height: 127, marginTop: 22 }}>
