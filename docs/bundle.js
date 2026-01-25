@@ -31552,62 +31552,56 @@
           }
         )))
       )
-    )), /* @__PURE__ */ import_react27.default.createElement(AnimatePresence, null, expandedCamera !== null && /* @__PURE__ */ import_react27.default.createElement(
-      motion.div,
-      {
-        initial: { opacity: 0 },
-        animate: { opacity: 1 },
-        exit: { opacity: 0 },
-        transition: { duration: 0.3 },
-        style: {
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: "rgba(0,0,0,0.9)",
-          zIndex: 1e3,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: 40
-        },
-        onClick: () => setExpandedCamera(null)
-      },
-      /* @__PURE__ */ import_react27.default.createElement(
-        motion.div,
-        {
-          initial: { scale: 0.8, opacity: 0 },
-          animate: { scale: 1, opacity: 1 },
-          exit: { scale: 0.8, opacity: 0 },
-          transition: { type: "spring", stiffness: 300, damping: 30 },
-          style: { width: "100%", maxWidth: 1048 },
-          onClick: (e) => e.stopPropagation()
-        },
-        /* @__PURE__ */ import_react27.default.createElement(
-          CameraView,
-          {
-            cam: cameras[expandedCamera],
-            isExpanded: true,
-            onClick: () => setExpandedCamera(null)
-          }
-        )
-      )
     )), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
       width: "100%",
       maxWidth: 1048,
       marginBottom: 16,
-      display: "grid",
-      gridTemplateColumns: "repeat(2, 1fr)",
-      gap: 12
-    } }, cameras.map((cam, idx) => /* @__PURE__ */ import_react27.default.createElement(
-      CameraView,
+      position: "relative"
+    } }, /* @__PURE__ */ import_react27.default.createElement(
+      motion.div,
       {
-        key: idx,
-        cam,
-        isExpanded: false,
-        onClick: () => setExpandedCamera(idx)
-      }
+        animate: { opacity: expandedCamera !== null ? 0 : 1 },
+        transition: { duration: 0.2 },
+        style: {
+          display: "grid",
+          gridTemplateColumns: "repeat(2, 1fr)",
+          gap: 12,
+          pointerEvents: expandedCamera !== null ? "none" : "auto"
+        }
+      },
+      cameras.map((cam, idx) => /* @__PURE__ */ import_react27.default.createElement(
+        CameraView,
+        {
+          key: idx,
+          cam,
+          isExpanded: false,
+          onClick: () => setExpandedCamera(idx)
+        }
+      ))
+    ), /* @__PURE__ */ import_react27.default.createElement(AnimatePresence, null, expandedCamera !== null && /* @__PURE__ */ import_react27.default.createElement(
+      motion.div,
+      {
+        initial: { opacity: 0, scale: 0.9 },
+        animate: { opacity: 1, scale: 1 },
+        exit: { opacity: 0, scale: 0.9 },
+        transition: { type: "spring", stiffness: 300, damping: 30 },
+        style: {
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 10
+        }
+      },
+      /* @__PURE__ */ import_react27.default.createElement(
+        CameraView,
+        {
+          cam: cameras[expandedCamera],
+          isExpanded: true,
+          onClick: () => setExpandedCamera(null)
+        }
+      )
     ))), /* @__PURE__ */ import_react27.default.createElement(AnimatePresence, null, controls.navigation && /* @__PURE__ */ import_react27.default.createElement(
       motion.div,
       {

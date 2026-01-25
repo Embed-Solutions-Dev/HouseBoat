@@ -1110,64 +1110,59 @@ export default function YachtDashboard() {
         )}
       </AnimatePresence>
 
-      {/* Полноэкранная камера */}
-      <AnimatePresence>
-        {expandedCamera !== null && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'rgba(0,0,0,0.9)',
-              zIndex: 1000,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 40,
-            }}
-            onClick={() => setExpandedCamera(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              style={{ width: '100%', maxWidth: 1048 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <CameraView 
-                cam={cameras[expandedCamera]} 
-                isExpanded={true} 
-                onClick={() => setExpandedCamera(null)}
-              />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Камеры видеонаблюдения - плитка 2x2 */}
+      {/* Камеры видеонаблюдения - плитка 2x2 или 1 раскрытая */}
       <div style={{
         width: '100%',
         maxWidth: 1048,
         marginBottom: 16,
-        display: 'grid',
-        gridTemplateColumns: 'repeat(2, 1fr)',
-        gap: 12,
+        position: 'relative',
       }}>
-        {cameras.map((cam, idx) => (
-          <CameraView 
-            key={idx}
-            cam={cam} 
-            isExpanded={false} 
-            onClick={() => setExpandedCamera(idx)}
-          />
-        ))}
+        {/* Сетка 2x2 - скрывается когда камера раскрыта */}
+        <motion.div
+          animate={{ opacity: expandedCamera !== null ? 0 : 1 }}
+          transition={{ duration: 0.2 }}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: 12,
+            pointerEvents: expandedCamera !== null ? 'none' : 'auto',
+          }}
+        >
+          {cameras.map((cam, idx) => (
+            <CameraView
+              key={idx}
+              cam={cam}
+              isExpanded={false}
+              onClick={() => setExpandedCamera(idx)}
+            />
+          ))}
+        </motion.div>
+
+        {/* Раскрытая камера - поверх сетки */}
+        <AnimatePresence>
+          {expandedCamera !== null && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                zIndex: 10,
+              }}
+            >
+              <CameraView
+                cam={cameras[expandedCamera]}
+                isExpanded={true}
+                onClick={() => setExpandedCamera(null)}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Навигация - фоновый слой, появляется при нажатии кнопки Навигация */}
