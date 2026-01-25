@@ -1132,7 +1132,7 @@ export default function YachtDashboard() {
             transition={{ duration: 0.3 }}
             style={{
               position: 'absolute',
-              top: 680,
+              top: 780,
               left: '50%',
               transform: 'translateX(-50%)',
               width: '100%',
@@ -1364,8 +1364,8 @@ export default function YachtDashboard() {
               {/* Масштаб - слева внизу */}
               <div style={{
                 position: 'absolute',
-                bottom: 92,
-                left: 142,
+                bottom: 192,
+                left: 172,
                 zIndex: 10,
               }}>
                 <div style={{
@@ -1408,8 +1408,8 @@ export default function YachtDashboard() {
               {/* Координаты - справа внизу */}
               <div style={{
                 position: 'absolute',
-                bottom: 92,
-                right: 142,
+                bottom: 192,
+                right: 172,
                 zIndex: 10,
                 textAlign: 'right',
               }}>
