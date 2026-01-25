@@ -552,7 +552,7 @@ const MiniEngineCard = memo(function MiniEngineCard({ side, rpm, fuelLevel, hasF
             {/* Надпись x1000 */}
             <text
               x="50"
-              y="60"
+              y="66"
               fill="rgba(150,160,180,0.6)"
               fontSize="6"
               fontWeight="500"
@@ -594,7 +594,7 @@ const MiniEngineCard = memo(function MiniEngineCard({ side, rpm, fuelLevel, hasF
           }} />
 
           {/* Статус внизу: ОК или ошибка */}
-          <div style={{ position: 'absolute', bottom: 12, left: '50%', transform: 'translateX(-50%)' }}>
+          <div style={{ position: 'absolute', bottom: 16, left: '50%', transform: 'translateX(-50%)' }}>
             {hasFaults ? (
               <svg style={{ width: 20, height: 20 }} viewBox="0 0 24 24" fill="none" stroke={T.textRed} strokeWidth="2">
                 <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
