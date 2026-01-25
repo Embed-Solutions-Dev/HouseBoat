@@ -417,8 +417,8 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
           <div style={{ fontSize: 16, fontWeight: 600, color: T.textSecondary, fontVariantNumeric: 'tabular-nums' }}>{motorHours.toLocaleString()}</div>
         </div>
 
-        {/* Status indicator - center bottom, above fuel icon */}
-        <div style={{ position: 'absolute', bottom: 86, left: '50%', transform: 'translateX(-50%)', textAlign: 'center' }}>
+        {/* Status indicator - moved up */}
+        <div style={{ position: 'absolute', bottom: 140, left: '50%', transform: 'translateX(-50%)', textAlign: 'center' }}>
           {hasFaults ? (
             <div style={{ filter: 'drop-shadow(0 0 8px rgba(255,60,60,0.8))' }}>
               <svg style={{ width: 28, height: 28 }} viewBox="0 0 24 24" fill="none" stroke={T.textRed} strokeWidth="2">
@@ -433,6 +433,11 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
               <div style={{ fontSize: 11, color: T.textGreen, marginTop: 2 }}>{tempText.split(' · ')[1]}</div>
             </>
           )}
+        </div>
+
+        {/* RPM multiplier label */}
+        <div style={{ position: 'absolute', bottom: 86, left: '50%', transform: 'translateX(-50%)', textAlign: 'center' }}>
+          <div style={{ fontSize: 10, color: 'rgba(150,160,180,0.6)', fontWeight: 500 }}>×1000 об/мин</div>
         </div>
 
         {/* Fuel pump icon at bottom */}
