@@ -2068,7 +2068,7 @@ export default function YachtDashboard() {
             </div>
           </div>
 
-          <div style={{ position: 'relative', width: 230, height: 127, marginTop: 16 }}>
+          <div style={{ position: 'relative', width: 230, height: 127, marginTop: 22 }}>
 
             {/* Стекляшка - расширяется от центра */}
             {(() => {
