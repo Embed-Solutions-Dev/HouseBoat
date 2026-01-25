@@ -1132,7 +1132,7 @@ export default function YachtDashboard() {
             transition={{ duration: 0.3 }}
             style={{
               position: 'absolute',
-              top: 1060,
+              top: 810,
               left: '50%',
               transform: 'translateX(-50%)',
               width: '100%',
@@ -2332,7 +2332,7 @@ export default function YachtDashboard() {
                 transition={{ type: "spring", stiffness: 200, damping: 25 }}
                 style={{
                   position: 'absolute',
-                  bottom: -20,
+                  bottom: 4,
                   left: 24,
                   zIndex: 50,
                 }}
@@ -2348,7 +2348,7 @@ export default function YachtDashboard() {
                 transition={{ type: "spring", stiffness: 200, damping: 25 }}
                 style={{
                   position: 'absolute',
-                  bottom: -20,
+                  bottom: 4,
                   right: 24,
                   zIndex: 50,
                 }}
