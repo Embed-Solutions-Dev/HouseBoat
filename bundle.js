@@ -31303,13 +31303,9 @@
       setControls((p) => ({ ...p, [k]: !p[k] }));
     }, []);
     const CameraView = ({ cam, isExpanded, onClick }) => /* @__PURE__ */ import_react27.default.createElement(
-      motion.div,
+      "div",
       {
-        whileTap: { scale: 0.98 },
-        onClick: (e) => {
-          e.stopPropagation();
-          onClick();
-        },
+        onClick,
         style: {
           background: "linear-gradient(180deg, rgba(12,18,28,0.95) 0%, rgba(6,10,18,0.98) 100%)",
           borderRadius: isExpanded ? 24 : 16,
@@ -31318,7 +31314,8 @@
           overflow: "hidden",
           position: "relative",
           cursor: "pointer",
-          aspectRatio: isExpanded ? "16/9" : "16/10"
+          height: isExpanded ? "100%" : "auto",
+          aspectRatio: isExpanded ? void 0 : "16/10"
         }
       },
       /* @__PURE__ */ import_react27.default.createElement("div", { style: {
@@ -31584,31 +31581,27 @@
     ), /* @__PURE__ */ import_react27.default.createElement(AnimatePresence, null, expandedCamera !== null && /* @__PURE__ */ import_react27.default.createElement(
       motion.div,
       {
-        initial: { opacity: 0, scale: 0.95 },
-        animate: { opacity: 1, scale: 1 },
-        exit: { opacity: 0, scale: 0.95 },
-        transition: { duration: 0.2 },
+        initial: { opacity: 0 },
+        animate: { opacity: 1 },
+        exit: { opacity: 0 },
+        transition: { duration: 0.15 },
         style: {
           position: "absolute",
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
-          zIndex: 10,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center"
-        },
-        onClick: () => setExpandedCamera(null)
+          zIndex: 10
+        }
       },
-      /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "100%", height: "100%" }, onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ import_react27.default.createElement(
+      /* @__PURE__ */ import_react27.default.createElement(
         CameraView,
         {
           cam: cameras[expandedCamera],
           isExpanded: true,
           onClick: () => setExpandedCamera(null)
         }
-      ))
+      )
     ))), /* @__PURE__ */ import_react27.default.createElement(AnimatePresence, null, controls.navigation && /* @__PURE__ */ import_react27.default.createElement(
       motion.div,
       {
