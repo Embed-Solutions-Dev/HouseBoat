@@ -418,7 +418,7 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
         </div>
 
         {/* Status indicator - moved up */}
-        <div style={{ position: 'absolute', bottom: 194, left: '50%', transform: 'translateX(-50%)', textAlign: 'center' }}>
+        <div style={{ position: 'absolute', bottom: 202, left: '50%', transform: 'translateX(-50%)', textAlign: 'center' }}>
           {hasFaults ? (
             <div style={{ filter: 'drop-shadow(0 0 8px rgba(255,60,60,0.8))' }}>
               <svg style={{ width: 28, height: 28 }} viewBox="0 0 24 24" fill="none" stroke={T.textRed} strokeWidth="2">
