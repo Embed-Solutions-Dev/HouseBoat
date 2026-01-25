@@ -32215,7 +32215,17 @@
           animate: { rotate: rudderDeg },
           transition: { type: "spring", stiffness: 100, damping: 15 }
         }
-      )))), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "relative", width: 230, height: 127, marginTop: 4 } }, (() => {
+      ), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        width: 18,
+        height: 18,
+        borderRadius: "50%",
+        background: "radial-gradient(circle at 35% 35%, #ffffff 0%, #d0d0d0 30%, #909090 70%, #606060 100%)",
+        boxShadow: "0 2px 6px rgba(0,0,0,0.4)"
+      } })))), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "relative", width: 230, height: 127, marginTop: 4 } }, (() => {
         const expandedFaults = expandedEngine === "Left" ? [] : ["E102 - \u0414\u0430\u0442\u0447\u0438\u043A \u0442\u0435\u043C\u043F\u0435\u0440\u0430\u0442\u0443\u0440\u044B", "E045 - \u041D\u0438\u0437\u043A\u043E\u0435 \u0434\u0430\u0432\u043B\u0435\u043D\u0438\u0435 \u043C\u0430\u0441\u043B\u0430"];
         const hasExpandedFaults = expandedFaults.length > 0;
         const expandedWidth = hasExpandedFaults ? 580 : 380;

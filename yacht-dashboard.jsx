@@ -2052,6 +2052,18 @@ export default function YachtDashboard() {
                   animate={{ rotate: rudderDeg }}
                   transition={{ type: "spring", stiffness: 100, damping: 15 }}
                 />
+                {/* Центральная пипка */}
+                <div style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  width: 18,
+                  height: 18,
+                  borderRadius: '50%',
+                  background: 'radial-gradient(circle at 35% 35%, #ffffff 0%, #d0d0d0 30%, #909090 70%, #606060 100%)',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
+                }} />
               </div>
             </div>
           </div>
