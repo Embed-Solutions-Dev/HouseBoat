@@ -30833,7 +30833,7 @@
     const cx = size / 2;
     const cy = size / 2;
     const r = size / 2 - 8;
-    const majorStep = 1e3;
+    const majorStep = 500;
     const minorStep = 100;
     const ticks = [];
     for (let val = 0; val <= max; val += minorStep) {
@@ -30955,13 +30955,13 @@
         strokeWidth: tick.isMajor ? 2.5 : 1,
         strokeLinecap: "round"
       }
-    ), tick.isMajor && /* @__PURE__ */ import_react27.default.createElement(
+    ), tick.value % 1e3 === 0 && /* @__PURE__ */ import_react27.default.createElement(
       "text",
       {
         x: tick.labelX,
         y: tick.labelY,
         fill: tick.isRedZone ? T.gaugeRed : T.textPrimary,
-        fontSize: "16",
+        fontSize: "24",
         fontWeight: "600",
         textAnchor: "middle",
         dominantBaseline: "middle"

@@ -168,7 +168,7 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
   const cy = size / 2;
   const r = size / 2 - 8;
 
-  const majorStep = 1000;
+  const majorStep = 500;
   const minorStep = 100;
   const ticks = [];
 
@@ -310,12 +310,12 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
                 strokeWidth={tick.isMajor ? 2.5 : 1}
                 strokeLinecap="round"
               />
-              {tick.isMajor && (
+              {tick.value % 1000 === 0 && (
                 <text
                   x={tick.labelX}
                   y={tick.labelY}
                   fill={tick.isRedZone ? T.gaugeRed : T.textPrimary}
-                  fontSize="16"
+                  fontSize="24"
                   fontWeight="600"
                   textAnchor="middle"
                   dominantBaseline="middle"
