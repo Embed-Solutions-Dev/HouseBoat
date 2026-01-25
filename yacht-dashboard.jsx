@@ -1143,7 +1143,7 @@ export default function YachtDashboard() {
               pointerEvents: 'none',
             }}
           >
-            <div style={{ width: '100%', maxWidth: 1152, position: 'relative', marginTop: 400 }}>
+            <div style={{ width: '100%', maxWidth: 1152, position: 'relative', marginTop: 700 }}>
               <div style={{
                 overflow: 'visible',
                 height: 500,

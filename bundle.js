@@ -31597,7 +31597,7 @@
           pointerEvents: "none"
         }
       },
-      /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "100%", maxWidth: 1152, position: "relative", marginTop: 400 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+      /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "100%", maxWidth: 1152, position: "relative", marginTop: 700 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
         overflow: "visible",
         height: 500,
         position: "relative",
