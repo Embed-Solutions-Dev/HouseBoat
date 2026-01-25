@@ -163,7 +163,7 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
     mv.set(targetAngle);
   }, [ratio, mv]);
 
-  const size = 290;
+  const size = 310;
   const cx = size / 2;
   const cy = size / 2;
   const r = size / 2 - 8;
@@ -1932,7 +1932,7 @@ export default function YachtDashboard() {
             x: controls.navigation ? -170 : 0,
           }}
           transition={{ type: "spring", stiffness: 200, damping: 25 }}
-          style={{ marginRight: -70, paddingTop: 16, pointerEvents: controls.navigation ? 'none' : 'auto' }}
+          style={{ marginRight: -50, paddingTop: 16, pointerEvents: controls.navigation ? 'none' : 'auto' }}
         >
           <EngineCard side="Left" tempText="Темп 82°C · Масло ОК" rpm={Math.round(rpmLeft)} throttle={Math.round(throttleLeft)} gear={gearLeft} motorHours={1247} fuelLevel={75} expanded={false} onToggleExpand={() => setExpandedEngine("Left")} />
         </motion.div>
@@ -2467,7 +2467,7 @@ export default function YachtDashboard() {
             x: controls.navigation ? 170 : 0,
           }}
           transition={{ type: "spring", stiffness: 200, damping: 25 }}
-          style={{ marginLeft: -70, paddingTop: 16, pointerEvents: controls.navigation ? 'none' : 'auto' }}
+          style={{ marginLeft: -50, paddingTop: 16, pointerEvents: controls.navigation ? 'none' : 'auto' }}
         >
           <EngineCard side="Right" tempText="Темп 81°C · Масло ОК" rpm={Math.round(rpmRight)} throttle={Math.round(throttleRight)} gear={gearRight} motorHours={1198} fuelLevel={18} expanded={false} onToggleExpand={() => setExpandedEngine("Right")} />
         </motion.div>

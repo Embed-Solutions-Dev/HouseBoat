@@ -30830,7 +30830,7 @@
       const targetAngle = -startAngle + ratio * sweep;
       mv.set(targetAngle);
     }, [ratio, mv]);
-    const size = 290;
+    const size = 310;
     const cx = size / 2;
     const cy = size / 2;
     const r = size / 2 - 8;
@@ -32121,7 +32121,7 @@
             x: controls.navigation ? -170 : 0
           },
           transition: { type: "spring", stiffness: 200, damping: 25 },
-          style: { marginRight: -70, paddingTop: 16, pointerEvents: controls.navigation ? "none" : "auto" }
+          style: { marginRight: -50, paddingTop: 16, pointerEvents: controls.navigation ? "none" : "auto" }
         },
         /* @__PURE__ */ import_react27.default.createElement(EngineCard, { side: "Left", tempText: "\u0422\u0435\u043C\u043F 82\xB0C \xB7 \u041C\u0430\u0441\u043B\u043E \u041E\u041A", rpm: Math.round(rpmLeft), throttle: Math.round(throttleLeft), gear: gearLeft, motorHours: 1247, fuelLevel: 75, expanded: false, onToggleExpand: () => setExpandedEngine("Left") })
       ),
@@ -32548,7 +32548,7 @@
             x: controls.navigation ? 170 : 0
           },
           transition: { type: "spring", stiffness: 200, damping: 25 },
-          style: { marginLeft: -70, paddingTop: 16, pointerEvents: controls.navigation ? "none" : "auto" }
+          style: { marginLeft: -50, paddingTop: 16, pointerEvents: controls.navigation ? "none" : "auto" }
         },
         /* @__PURE__ */ import_react27.default.createElement(EngineCard, { side: "Right", tempText: "\u0422\u0435\u043C\u043F 81\xB0C \xB7 \u041C\u0430\u0441\u043B\u043E \u041E\u041A", rpm: Math.round(rpmRight), throttle: Math.round(throttleRight), gear: gearRight, motorHours: 1198, fuelLevel: 18, expanded: false, onToggleExpand: () => setExpandedEngine("Right") })
       ),
