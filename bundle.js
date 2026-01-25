@@ -32067,7 +32067,7 @@
             "div",
             {
               onClick: () => setExpandedSection("weather"),
-              style: { flex: 1, height: 100, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 12, cursor: "pointer" }
+              style: { flex: 1, height: 85, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 10, cursor: "pointer" }
             },
             /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 16 } }, "\u041F\u041E\u0413\u041E\u0414\u0410"),
             /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", gap: 20, alignItems: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 16, fontWeight: 500, color: T.textSecondary } }, "18\xB0"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted } }, "\u0432\u043E\u0434\u0430")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 16, fontWeight: 500, color: T.textSecondary } }, "5 \u043C/\u0441"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted } }, "\u0432\u0435\u0442\u0435\u0440")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 16, fontWeight: 500, color: T.textSecondary } }, "1013"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted } }, "\u0433\u041F\u0430")))
@@ -32075,7 +32075,7 @@
             "div",
             {
               onClick: () => setExpandedSection("electric"),
-              style: { flex: 1, height: 100, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 12, cursor: "pointer" }
+              style: { flex: 1, height: 85, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 10, cursor: "pointer" }
             },
             /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 10 } }, "\u042D\u041B\u0415\u041A\u0422\u0420\u0418\u041A\u0410"),
             /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", gap: 20, alignItems: "center", marginBottom: 10 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 16, fontWeight: 500, color: T.textSecondary } }, "12.8 \u0412"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted } }, "\u0410\u041A\u0411")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 16, fontWeight: 500, color: T.textSecondary } }, "2.1 \u043A\u0412\u0442"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted } }, "\u0441\u043E\u043B\u043D\u0446\u0435")))
@@ -32083,7 +32083,7 @@
             "div",
             {
               onClick: () => setExpandedSection("tanks"),
-              style: { flex: 1, height: 100, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 12, cursor: "pointer" }
+              style: { flex: 1, height: 85, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 10, cursor: "pointer" }
             },
             /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 16 } }, "\u0411\u0410\u041A\u0418"),
             /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 6, width: "70%" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted, width: 36 } }, "\u0432\u043E\u0434\u0430"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1, height: 8, borderRadius: 4, background: "rgba(30,45,60,0.6)", border: "1px solid rgba(80,100,120,0.3)", overflow: "hidden" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "65%", height: "100%", background: "linear-gradient(90deg, rgba(61,200,140,0.7) 0%, rgba(61,200,140,0.5) 100%)", borderRadius: 3 } })), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textSecondary, width: 28, textAlign: "right" } }, "65%")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted, width: 36 } }, "\u0433\u0435\u043D."), /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1, height: 8, borderRadius: 4, background: "rgba(30,45,60,0.6)", border: "1px solid rgba(80,100,120,0.3)", overflow: "hidden" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "45%", height: "100%", background: "linear-gradient(90deg, rgba(61,200,140,0.7) 0%, rgba(61,200,140,0.5) 100%)", borderRadius: 3 } })), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textSecondary, width: 28, textAlign: "right" } }, "45%")))
@@ -32091,7 +32091,7 @@
             "div",
             {
               onClick: () => setExpandedSection("safety"),
-              style: { flex: 1, height: 100, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 12, cursor: "pointer" }
+              style: { flex: 1, height: 85, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 10, cursor: "pointer" }
             },
             /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 24 } }, "\u0411\u0415\u0417\u041E\u041F\u0410\u0421\u041D\u041E\u0421\u0422\u042C"),
             /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {

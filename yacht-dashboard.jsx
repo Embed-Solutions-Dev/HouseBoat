@@ -1829,7 +1829,7 @@ export default function YachtDashboard() {
               {/* ПОГОДА */}
               <div 
                 onClick={() => setExpandedSection('weather')}
-                style={{ flex: 1, height: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 12, cursor: 'pointer' }}
+                style={{ flex: 1, height: 85, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 10, cursor: 'pointer' }}
               >
                 <div style={{ fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 16 }}>ПОГОДА</div>
                 <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
@@ -1853,7 +1853,7 @@ export default function YachtDashboard() {
               {/* ЭЛЕКТРИКА */}
               <div
                 onClick={() => setExpandedSection('electric')}
-                style={{ flex: 1, height: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 12, cursor: 'pointer' }}
+                style={{ flex: 1, height: 85, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 10, cursor: 'pointer' }}
               >
                 <div style={{ fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 10 }}>ЭЛЕКТРИКА</div>
                 <div style={{ display: 'flex', gap: 20, alignItems: 'center', marginBottom: 10 }}>
@@ -1873,7 +1873,7 @@ export default function YachtDashboard() {
               {/* БАКИ */}
               <div 
                 onClick={() => setExpandedSection('tanks')}
-                style={{ flex: 1, height: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 12, cursor: 'pointer' }}
+                style={{ flex: 1, height: 85, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 10, cursor: 'pointer' }}
               >
                 <div style={{ fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 16 }}>БАКИ</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6, width: '70%' }}>
@@ -1899,7 +1899,7 @@ export default function YachtDashboard() {
               {/* БЕЗОПАСНОСТЬ */}
               <div 
                 onClick={() => setExpandedSection('safety')}
-                style={{ flex: 1, height: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 12, cursor: 'pointer' }}
+                style={{ flex: 1, height: 85, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 10, cursor: 'pointer' }}
               >
                 <div style={{ fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 24 }}>БЕЗОПАСНОСТЬ</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
