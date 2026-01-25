@@ -32446,7 +32446,7 @@
           transition: { type: "spring", stiffness: 300, damping: 30 },
           style: {
             position: "absolute",
-            top: 95,
+            top: 120,
             left: "calc(50% + 85px)",
             width: 138,
             height: 76,
