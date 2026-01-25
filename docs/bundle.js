@@ -31871,7 +31871,7 @@
         motion.div,
         {
           animate: {
-            height: expandedSection ? 380 : 102
+            height: expandedSection ? 380 : 88
           },
           transition: { type: "spring", stiffness: 300, damping: 30 },
           style: {
