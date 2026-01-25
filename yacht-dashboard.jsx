@@ -414,8 +414,8 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
           <div style={{ fontSize: 9, color: T.textMuted, letterSpacing: 0.5, marginTop: 0 }}>МОТОЧАСЫ</div>
         </div>
 
-        {/* Throttle on horizontal center line, 54px left of center */}
-        <div style={{ position: 'absolute', top: cy, left: cx - 54, transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
+        {/* Throttle on horizontal center line, 66px left of center */}
+        <div style={{ position: 'absolute', top: cy, left: cx - 66, transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
           <div style={{ fontSize: 9, color: T.textMuted }}>ГАЗ</div>
           <div style={{ fontSize: 16, fontWeight: 600, color: T.textPrimary }}>{throttle}%</div>
         </div>
