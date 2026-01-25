@@ -31586,7 +31586,7 @@
         transition: { duration: 0.3 },
         style: {
           position: "absolute",
-          top: 760,
+          top: 1060,
           left: "50%",
           transform: "translateX(-50%)",
           width: "100%",
@@ -32439,8 +32439,8 @@
           transition: { type: "spring", stiffness: 200, damping: 25 },
           style: {
             position: "absolute",
-            bottom: -80,
-            left: 0,
+            bottom: -20,
+            left: 24,
             zIndex: 50
           }
         },
@@ -32454,8 +32454,8 @@
           transition: { type: "spring", stiffness: 200, damping: 25 },
           style: {
             position: "absolute",
-            bottom: -80,
-            right: 0,
+            bottom: -20,
+            right: 24,
             zIndex: 50
           }
         },
