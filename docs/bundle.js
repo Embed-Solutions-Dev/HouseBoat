@@ -31467,7 +31467,7 @@
       { label: "\u041A\u041E\u0420\u041C\u0410", angle: 180 },
       { label: "\u041B\u0415\u0412\u042B\u0419 \u0411\u041E\u0420\u0422", angle: 270 }
     ];
-    return /* @__PURE__ */ import_react27.default.createElement("div", { style: { minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24, background: T.pageBg, overflow: "hidden" } }, /* @__PURE__ */ import_react27.default.createElement(AnimatePresence, null, loadingPhase !== "done" && /* @__PURE__ */ import_react27.default.createElement(
+    return /* @__PURE__ */ import_react27.default.createElement("div", { style: { minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24, background: T.pageBg, overflow: "hidden", position: "relative" } }, /* @__PURE__ */ import_react27.default.createElement(AnimatePresence, null, loadingPhase !== "done" && /* @__PURE__ */ import_react27.default.createElement(
       motion.div,
       {
         initial: { opacity: 1 },
