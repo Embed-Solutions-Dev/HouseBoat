@@ -30830,7 +30830,7 @@
       const targetAngle = -startAngle + ratio * sweep;
       mv.set(targetAngle);
     }, [ratio, mv]);
-    const size = 340;
+    const size = 290;
     const cx = size / 2;
     const cy = size / 2;
     const r = size / 2 - 8;
@@ -31498,7 +31498,7 @@
       { label: "\u041A\u041E\u0420\u041C\u0410", angle: 180 },
       { label: "\u041B\u0415\u0412\u042B\u0419 \u0411\u041E\u0420\u0422", angle: 270 }
     ];
-    return /* @__PURE__ */ import_react27.default.createElement("div", { style: { minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24, background: T.pageBg, overflow: "hidden", position: "relative" } }, /* @__PURE__ */ import_react27.default.createElement(AnimatePresence, null, loadingPhase !== "done" && /* @__PURE__ */ import_react27.default.createElement(
+    return /* @__PURE__ */ import_react27.default.createElement("div", { style: { minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 16, background: T.pageBg, overflow: "hidden", position: "relative" } }, /* @__PURE__ */ import_react27.default.createElement(AnimatePresence, null, loadingPhase !== "done" && /* @__PURE__ */ import_react27.default.createElement(
       motion.div,
       {
         initial: { opacity: 1 },
@@ -31581,7 +31581,7 @@
           animate: { scale: 1, opacity: 1 },
           exit: { scale: 0.8, opacity: 0 },
           transition: { type: "spring", stiffness: 300, damping: 30 },
-          style: { width: "100%", maxWidth: 1400 },
+          style: { width: "100%", maxWidth: 1048 },
           onClick: (e) => e.stopPropagation()
         },
         /* @__PURE__ */ import_react27.default.createElement(
@@ -31595,11 +31595,11 @@
       )
     )), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
       width: "100%",
-      maxWidth: 1152,
-      marginBottom: 20,
+      maxWidth: 1048,
+      marginBottom: 16,
       display: "grid",
       gridTemplateColumns: "repeat(2, 1fr)",
-      gap: 16
+      gap: 12
     } }, cameras.map((cam, idx) => /* @__PURE__ */ import_react27.default.createElement(
       CameraView,
       {
@@ -31617,11 +31617,11 @@
         transition: { duration: 0.3 },
         style: {
           position: "absolute",
-          top: 780,
+          top: 680,
           left: "50%",
           transform: "translateX(-50%)",
           width: "100%",
-          maxWidth: 1152,
+          maxWidth: 1048,
           zIndex: 1,
           pointerEvents: "none"
         }
@@ -31865,7 +31865,7 @@
         initial: { opacity: 0, y: 30 },
         animate: { opacity: loadingPhase === "done" ? 1 : 0, y: loadingPhase === "done" ? 0 : 30 },
         transition: { duration: 0.6, delay: 0.2 },
-        style: { width: "100%", maxWidth: 1152, marginBottom: 20, position: "relative", height: 102 }
+        style: { width: "100%", maxWidth: 1048, marginBottom: 16, position: "relative", height: 88 }
       },
       /* @__PURE__ */ import_react27.default.createElement(
         motion.div,
@@ -32110,7 +32110,7 @@
         initial: { opacity: 0, y: 30 },
         animate: { opacity: loadingPhase === "done" ? 1 : 0, y: loadingPhase === "done" ? 0 : 30 },
         transition: { duration: 0.6, delay: 0.3 },
-        style: { width: "100%", maxWidth: 1200, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, position: "relative" }
+        style: { width: "100%", maxWidth: 1048, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, position: "relative" }
       },
       /* @__PURE__ */ import_react27.default.createElement(
         motion.div,
@@ -32118,18 +32118,18 @@
           animate: {
             opacity: controls.navigation ? 0 : 1,
             scale: controls.navigation ? 0.5 : 1,
-            x: controls.navigation ? -200 : 0
+            x: controls.navigation ? -170 : 0
           },
           transition: { type: "spring", stiffness: 200, damping: 25 },
-          style: { marginRight: -92, paddingTop: 20, pointerEvents: controls.navigation ? "none" : "auto" }
+          style: { marginRight: -70, paddingTop: 16, pointerEvents: controls.navigation ? "none" : "auto" }
         },
         /* @__PURE__ */ import_react27.default.createElement(EngineCard, { side: "Left", tempText: "\u0422\u0435\u043C\u043F 82\xB0C \xB7 \u041C\u0430\u0441\u043B\u043E \u041E\u041A", rpm: Math.round(rpmLeft), throttle: Math.round(throttleLeft), gear: gearLeft, motorHours: 1247, fuelLevel: 75, expanded: false, onToggleExpand: () => setExpandedEngine("Left") })
       ),
-      /* @__PURE__ */ import_react27.default.createElement("div", { style: { height: 400, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 20 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", gap: 30, marginBottom: 16 } }, /* @__PURE__ */ import_react27.default.createElement(
+      /* @__PURE__ */ import_react27.default.createElement("div", { style: { height: 340, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 16 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", gap: 30, marginBottom: 16 } }, /* @__PURE__ */ import_react27.default.createElement(
         motion.div,
         {
           animate: {
-            x: controls.navigation ? -426 : 0
+            x: controls.navigation ? -360 : 0
           },
           transition: { type: "spring", stiffness: 200, damping: 25 },
           style: {
@@ -32197,7 +32197,7 @@
         motion.div,
         {
           animate: {
-            x: controls.navigation ? 426 : 0
+            x: controls.navigation ? 360 : 0
           },
           transition: { type: "spring", stiffness: 200, damping: 25 },
           style: {
@@ -32545,10 +32545,10 @@
           animate: {
             opacity: controls.navigation ? 0 : 1,
             scale: controls.navigation ? 0.5 : 1,
-            x: controls.navigation ? 200 : 0
+            x: controls.navigation ? 170 : 0
           },
           transition: { type: "spring", stiffness: 200, damping: 25 },
-          style: { marginLeft: -92, paddingTop: 20, pointerEvents: controls.navigation ? "none" : "auto" }
+          style: { marginLeft: -70, paddingTop: 16, pointerEvents: controls.navigation ? "none" : "auto" }
         },
         /* @__PURE__ */ import_react27.default.createElement(EngineCard, { side: "Right", tempText: "\u0422\u0435\u043C\u043F 81\xB0C \xB7 \u041C\u0430\u0441\u043B\u043E \u041E\u041A", rpm: Math.round(rpmRight), throttle: Math.round(throttleRight), gear: gearRight, motorHours: 1198, fuelLevel: 18, expanded: false, onToggleExpand: () => setExpandedEngine("Right") })
       ),
@@ -32589,7 +32589,7 @@
         initial: { opacity: 0, y: 30 },
         animate: { opacity: loadingPhase === "done" ? 1 : 0, y: loadingPhase === "done" ? 0 : 30 },
         transition: { duration: 0.6, delay: 0.5 },
-        style: { width: "100%", maxWidth: 1152, marginTop: 20 }
+        style: { width: "100%", maxWidth: 1048, marginTop: 16 }
       },
       /* @__PURE__ */ import_react27.default.createElement("div", { style: {
         background: "linear-gradient(180deg, rgba(12,18,28,0.95) 0%, rgba(6,10,18,0.98) 100%)",
