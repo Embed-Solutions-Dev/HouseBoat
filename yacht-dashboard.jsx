@@ -447,6 +447,7 @@ const controlItems = [
   { key: "power", label: "Питание", icon: Power },
   { key: "runLight", label: "Ходовые", icon: LightRunning },
   { key: "parkLight", label: "Стоян. огонь", icon: LightParking },
+  { key: "navigation", label: "Навигация", icon: Navigation2 },
   { key: "thruster", label: "Подрулька", icon: BowThruster },
   { key: "anchor", label: "Якорь", icon: Anchor },
   { key: "generator", label: "Генератор", icon: Generator },
@@ -470,7 +471,7 @@ export default function YachtDashboard() {
   const [batteryV, setBatteryV] = useState(24.7);
   const [rudderDeg, setRudderDeg] = useState(-6);
   const [statusOk] = useState(true);
-  const [controls, setControls] = useState({ power: true, generator: false, thruster: false, parkLight: false, runLight: true, anchor: false });
+  const [controls, setControls] = useState({ power: true, generator: false, thruster: false, parkLight: false, runLight: true, anchor: false, navigation: false });
   const [anchorModal, setAnchorModal] = useState(false);
   const [anchorPosition, setAnchorPosition] = useState(0);
   const [anchorMoving, setAnchorMoving] = useState(null);

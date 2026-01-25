@@ -30783,6 +30783,7 @@
     pointerRed: "#d03040"
   };
   var Anchor = (p) => /* @__PURE__ */ import_react27.default.createElement("svg", { ...p, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" }, /* @__PURE__ */ import_react27.default.createElement("circle", { cx: "12", cy: "5", r: "3" }), /* @__PURE__ */ import_react27.default.createElement("line", { x1: "12", x2: "12", y1: "22", y2: "8" }), /* @__PURE__ */ import_react27.default.createElement("path", { d: "M5 12H2a10 10 0 0 0 20 0h-3" }));
+  var Navigation2 = (p) => /* @__PURE__ */ import_react27.default.createElement("svg", { ...p, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" }, /* @__PURE__ */ import_react27.default.createElement("polygon", { points: "12 2 19 21 12 17 5 21 12 2" }));
   var Power = (p) => /* @__PURE__ */ import_react27.default.createElement("svg", { ...p, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "M12 2v10" }), /* @__PURE__ */ import_react27.default.createElement("path", { d: "M18.4 6.6a9 9 0 1 1-12.77.04" }));
   var Generator = (p) => /* @__PURE__ */ import_react27.default.createElement("svg", { ...p, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" }, /* @__PURE__ */ import_react27.default.createElement("rect", { x: "2", y: "6", width: "20", height: "12", rx: "2" }), /* @__PURE__ */ import_react27.default.createElement("path", { d: "M6 12h.01" }), /* @__PURE__ */ import_react27.default.createElement("path", { d: "M10 12h.01" }), /* @__PURE__ */ import_react27.default.createElement("path", { d: "M14 12h4" }), /* @__PURE__ */ import_react27.default.createElement("path", { d: "M6 10v4" }));
   var BowThruster = (p) => /* @__PURE__ */ import_react27.default.createElement("svg", { ...p, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" }, /* @__PURE__ */ import_react27.default.createElement("circle", { cx: "12", cy: "12", r: "9" }), /* @__PURE__ */ import_react27.default.createElement("path", { d: "M12 6v12" }), /* @__PURE__ */ import_react27.default.createElement("path", { d: "M8 9l4 3-4 3" }), /* @__PURE__ */ import_react27.default.createElement("path", { d: "M16 9l-4 3 4 3" }));
@@ -31037,6 +31038,7 @@
     { key: "power", label: "\u041F\u0438\u0442\u0430\u043D\u0438\u0435", icon: Power },
     { key: "runLight", label: "\u0425\u043E\u0434\u043E\u0432\u044B\u0435", icon: LightRunning },
     { key: "parkLight", label: "\u0421\u0442\u043E\u044F\u043D. \u043E\u0433\u043E\u043D\u044C", icon: LightParking },
+    { key: "navigation", label: "\u041D\u0430\u0432\u0438\u0433\u0430\u0446\u0438\u044F", icon: Navigation2 },
     { key: "thruster", label: "\u041F\u043E\u0434\u0440\u0443\u043B\u044C\u043A\u0430", icon: BowThruster },
     { key: "anchor", label: "\u042F\u043A\u043E\u0440\u044C", icon: Anchor },
     { key: "generator", label: "\u0413\u0435\u043D\u0435\u0440\u0430\u0442\u043E\u0440", icon: Generator }
@@ -31059,7 +31061,7 @@
     const [batteryV, setBatteryV] = (0, import_react27.useState)(24.7);
     const [rudderDeg, setRudderDeg] = (0, import_react27.useState)(-6);
     const [statusOk] = (0, import_react27.useState)(true);
-    const [controls, setControls] = (0, import_react27.useState)({ power: true, generator: false, thruster: false, parkLight: false, runLight: true, anchor: false });
+    const [controls, setControls] = (0, import_react27.useState)({ power: true, generator: false, thruster: false, parkLight: false, runLight: true, anchor: false, navigation: false });
     const [anchorModal, setAnchorModal] = (0, import_react27.useState)(false);
     const [anchorPosition, setAnchorPosition] = (0, import_react27.useState)(0);
     const [anchorMoving, setAnchorMoving] = (0, import_react27.useState)(null);
