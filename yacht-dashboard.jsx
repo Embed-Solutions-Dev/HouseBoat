@@ -369,8 +369,8 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
         </motion.div>
         
         <div style={{ position: 'absolute', top: 90, left: 0, right: 0, textAlign: 'center' }}>
-          <div style={{ fontSize: 14, fontWeight: 600, color: T.textSecondary }}>{side === "Left" ? "Левый" : "Правый"} двигатель</div>
-          <div style={{ fontSize: 11, color: T.textGreen, marginTop: 2 }}>{tempText}</div>
+          <div style={{ fontSize: 11, color: T.textGreen }}>{tempText.split(' · ')[0]}</div>
+          <div style={{ fontSize: 11, color: T.textGreen, marginTop: 2 }}>{tempText.split(' · ')[1]}</div>
         </div>
         
         <div style={{ position: 'absolute', left: 0, right: 0, top: cy + 40, textAlign: 'center' }}>
