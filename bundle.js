@@ -31189,10 +31189,12 @@
     });
     (0, import_react27.useEffect)(() => {
       const timer1 = setTimeout(() => setLoadingPhase("transition"), 2800);
-      const timer2 = setTimeout(() => setLoadingPhase("done"), 3400);
+      const timer2 = setTimeout(() => setLoadingPhase("systemCheck"), 3400);
+      const timer3 = setTimeout(() => setLoadingPhase("done"), 7200);
       return () => {
         clearTimeout(timer1);
         clearTimeout(timer2);
+        clearTimeout(timer3);
       };
     }, []);
     const anchorDepthMeters = anchorPosition / 100 * 25;
@@ -31517,11 +31519,139 @@
           justifyContent: "center"
         }
       },
+      loadingPhase === "systemCheck" && /* @__PURE__ */ import_react27.default.createElement(
+        motion.div,
+        {
+          initial: { opacity: 0 },
+          animate: { opacity: 1 },
+          transition: { duration: 0.4 },
+          style: {
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 24
+          }
+        },
+        /* @__PURE__ */ import_react27.default.createElement(
+          motion.div,
+          {
+            initial: { opacity: 0, y: -10 },
+            animate: { opacity: 1, y: 0 },
+            transition: { duration: 0.3 },
+            style: {
+              fontSize: 20,
+              fontWeight: 500,
+              color: T.textPrimary,
+              letterSpacing: "0.15em",
+              textTransform: "uppercase"
+            }
+          },
+          "\u0417\u0430\u043F\u0443\u0441\u043A \u0441\u0438\u0441\u0442\u0435\u043C\u044B"
+        ),
+        /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+          width: 280,
+          height: 1,
+          background: "linear-gradient(90deg, transparent, rgba(100,160,220,0.4), transparent)"
+        } }),
+        /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 12 } }, [
+          { label: "\u0421\u0438\u0441\u0442\u0435\u043C\u0430 \u043F\u0438\u0442\u0430\u043D\u0438\u044F", delay: 0.2 },
+          { label: "\u0421\u0435\u0442\u044C \u0438 \u0434\u0430\u0442\u0447\u0438\u043A\u0438", delay: 0.6 },
+          { label: "\u041B\u0435\u0432\u044B\u0439 \u0434\u0432\u0438\u0433\u0430\u0442\u0435\u043B\u044C", delay: 1 },
+          { label: "\u041F\u0440\u0430\u0432\u044B\u0439 \u0434\u0432\u0438\u0433\u0430\u0442\u0435\u043B\u044C", delay: 1.4 },
+          { label: "\u0420\u0443\u043B\u0435\u0432\u043E\u0435 \u0443\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435", delay: 1.8 },
+          { label: "\u041D\u0430\u0432\u0438\u0433\u0430\u0446\u0438\u044F", delay: 2.2 },
+          { label: "\u0421\u0438\u0441\u0442\u0435\u043C\u044B \u0431\u0435\u0437\u043E\u043F\u0430\u0441\u043D\u043E\u0441\u0442\u0438", delay: 2.6 }
+        ].map((item, idx) => /* @__PURE__ */ import_react27.default.createElement(
+          motion.div,
+          {
+            key: idx,
+            initial: { opacity: 0, x: -20 },
+            animate: { opacity: 1, x: 0 },
+            transition: { duration: 0.3, delay: item.delay },
+            style: {
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              fontSize: 15,
+              color: T.textSecondary
+            }
+          },
+          /* @__PURE__ */ import_react27.default.createElement(
+            motion.div,
+            {
+              initial: { scale: 0, opacity: 0 },
+              animate: { scale: 1, opacity: 1 },
+              transition: {
+                duration: 0.25,
+                delay: item.delay + 0.15,
+                type: "spring",
+                stiffness: 400,
+                damping: 15
+              },
+              style: {
+                width: 18,
+                height: 18,
+                borderRadius: "50%",
+                background: "rgba(61,200,140,0.15)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+              }
+            },
+            /* @__PURE__ */ import_react27.default.createElement(
+              motion.svg,
+              {
+                width: "12",
+                height: "12",
+                viewBox: "0 0 12 12",
+                initial: { pathLength: 0 },
+                animate: { pathLength: 1 },
+                transition: { duration: 0.2, delay: item.delay + 0.2 }
+              },
+              /* @__PURE__ */ import_react27.default.createElement(
+                motion.path,
+                {
+                  d: "M 2 6 L 5 9 L 10 3",
+                  fill: "none",
+                  stroke: T.textGreen,
+                  strokeWidth: "1.5",
+                  strokeLinecap: "round",
+                  strokeLinejoin: "round",
+                  initial: { pathLength: 0 },
+                  animate: { pathLength: 1 },
+                  transition: { duration: 0.2, delay: item.delay + 0.2 }
+                }
+              )
+            )
+          ),
+          /* @__PURE__ */ import_react27.default.createElement("span", null, item.label)
+        ))),
+        /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+          width: 280,
+          height: 1,
+          background: "linear-gradient(90deg, transparent, rgba(100,160,220,0.4), transparent)",
+          marginTop: 4
+        } }),
+        /* @__PURE__ */ import_react27.default.createElement(
+          motion.div,
+          {
+            initial: { opacity: 0 },
+            animate: { opacity: [0, 1, 0.5, 1] },
+            transition: { duration: 1.2, delay: 3, repeat: Infinity, repeatDelay: 0.3 },
+            style: {
+              fontSize: 14,
+              color: T.textSecondary,
+              letterSpacing: "0.05em"
+            }
+          },
+          "\u0417\u0430\u043F\u0443\u0441\u043A \u043F\u0430\u043D\u0435\u043B\u0438 \u0443\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u044F..."
+        )
+      ),
       /* @__PURE__ */ import_react27.default.createElement(
         motion.div,
         {
           initial: { opacity: 0, scale: 0.95 },
-          animate: loadingPhase === "transition" ? {
+          animate: loadingPhase === "transition" || loadingPhase === "systemCheck" ? {
             opacity: 0,
             scale: 0.9
           } : {
@@ -31529,7 +31659,7 @@
             scale: 1
           },
           transition: { duration: loadingPhase === "transition" ? 0.6 : 0.8, ease: "easeOut" },
-          style: { position: "relative", marginTop: -20 }
+          style: { position: loadingPhase === "systemCheck" ? "absolute" : "relative", marginTop: -20 }
         },
         /* @__PURE__ */ import_react27.default.createElement("svg", { width: "280", height: "180", viewBox: "600 -100 1620 750", style: { overflow: "visible" } }, /* @__PURE__ */ import_react27.default.createElement("defs", null, /* @__PURE__ */ import_react27.default.createElement("linearGradient", { id: "loadingLogoGradient", x1: "0%", y1: "0%", x2: "0%", y2: "100%" }, /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "0%", stopColor: "#5a6a7a" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "50%", stopColor: "#4a5a6a" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "100%", stopColor: "#3a4a5a" })), /* @__PURE__ */ import_react27.default.createElement("linearGradient", { id: "topShineGradient", x1: "0%", y1: "0%", x2: "100%", y2: "0%" }, /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "0%", stopColor: "rgba(255,255,255,0)" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "20%", stopColor: "rgba(255,255,255,0)" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "35%", stopColor: "rgba(255,255,255,0.15)" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "45%", stopColor: "rgba(255,255,255,0.35)" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "50%", stopColor: "rgba(255,255,255,0.45)" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "55%", stopColor: "rgba(255,255,255,0.35)" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "65%", stopColor: "rgba(255,255,255,0.15)" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "80%", stopColor: "rgba(255,255,255,0)" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "100%", stopColor: "rgba(255,255,255,0)" })), /* @__PURE__ */ import_react27.default.createElement("linearGradient", { id: "topFadeMask", x1: "0%", y1: "0%", x2: "0%", y2: "100%" }, /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "0%", stopColor: "white" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "30%", stopColor: "white" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "60%", stopColor: "black" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "100%", stopColor: "black" })), /* @__PURE__ */ import_react27.default.createElement("mask", { id: "topOnlyMask" }, /* @__PURE__ */ import_react27.default.createElement("rect", { x: "500", y: "-200", width: "1800", height: "900", fill: "url(#topFadeMask)" })), /* @__PURE__ */ import_react27.default.createElement("clipPath", { id: "logoClipPath" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "M1798.09 319.87c-4.35,-12.65 -31.56,-22.61 -26.42,-5.52 2.53,29.43 7.74,74.72 -23.19,131.9 -34.39,29.27 5.18,34.93 43.53,16.19 64.03,-24.99 12.21,-119.88 6.08,-142.57zm-498.41 -195.06l0 0 -0.42 0 0 54.51 47.15 0c-0.78,-30.15 -21.5,-54.51 -46.73,-54.51zm-17.11 0.05l0 0c-24.28,1.3 -43.89,25.15 -44.65,54.46l44.65 0 0 -54.46zm-44.67 74.57l0 0 0 51 44.67 0 0 -51 -44.67 0zm61.36 51l0 0 47.17 0 0 -51 -47.17 0 0 51zm488.43 -118.7l0 0c-75.64,39.65 -105.96,79.31 -167.43,107.06 -14.5,6.53 -30.65,12.67 -48.33,18.34l0 -102.15c0,-34.71 -28.38,-63.1 -63.09,-63.1 -34.71,0 -63.1,28.39 -63.1,63.1l0 130.53c-114.9,17.14 -260.31,19.42 -421.05,-2.18 209.11,99.93 576.41,33.58 705.24,-76.57 38.48,-32.89 101.67,-75.25 149.43,-91.4 151.13,-55.09 221.23,-5.03 260.55,84.96 -7.9,31.59 -71.1,31.12 -109.89,46.44 -109.8,30.41 -134.33,31.14 -244.26,11.66 -12.86,-0.26 -32.74,10.03 -27.17,24.4 10.58,216.03 -71.36,208.7 -255.45,232.26 -61.99,2.97 -1.08,-78.65 13.4,-87.72 46.13,-48.5 75.84,-52.86 86.21,-69.64 14.88,-26.72 3.03,-38.46 -31.76,-15.84 -142.22,60.11 -308.64,63.74 -496.17,18.12 -193.15,147.77 -382.49,16.88 -304.72,-13.59 67.62,-23.73 138.17,-42.34 211.83,-55.51l-26.05 -41.91c50.95,-25.54 95,-62.9 135.37,-106.56 212.3,-195.78 446.39,-180.44 696.44,-10.7z" }))), /* @__PURE__ */ import_react27.default.createElement(
           "path",
@@ -31642,7 +31772,7 @@
         /* @__PURE__ */ import_react27.default.createElement("svg", { width: "100%", height: "100%", style: { position: "absolute", top: 0, left: 0 } }, /* @__PURE__ */ import_react27.default.createElement("defs", null, /* @__PURE__ */ import_react27.default.createElement("pattern", { id: "gridPatternNav", width: "30", height: "30", patternUnits: "userSpaceOnUse" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "M 30 0 L 0 0 0 30", fill: "none", stroke: "rgba(40,70,100,0.05)", strokeWidth: "0.5" })), /* @__PURE__ */ import_react27.default.createElement("pattern", { id: "gridPatternLargeNav", width: "150", height: "150", patternUnits: "userSpaceOnUse" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "M 150 0 L 0 0 0 150", fill: "none", stroke: "rgba(40,70,100,0.08)", strokeWidth: "0.5" }))), /* @__PURE__ */ import_react27.default.createElement("rect", { width: "100%", height: "100%", fill: "url(#gridPatternNav)" }), /* @__PURE__ */ import_react27.default.createElement("rect", { width: "100%", height: "100%", fill: "url(#gridPatternLargeNav)" }), /* @__PURE__ */ import_react27.default.createElement(
           "path",
           {
-            d: "M 780 -100 C 750 50 740 150 760 300 C 780 450 730 550 740 700 C 750 850 770 1000 760 1150 C 750 1300 780 1400 770 1550",
+            d: "M 760 -100 C 730 50 720 150 740 300 C 760 450 710 550 720 700 C 730 850 750 1000 740 1150 C 730 1300 760 1400 750 1550",
             fill: "none",
             stroke: "rgba(25,45,70,0.35)",
             strokeWidth: "80",
@@ -31652,7 +31782,7 @@
         ), /* @__PURE__ */ import_react27.default.createElement(
           "path",
           {
-            d: "M 780 -100 C 750 50 740 150 760 300 C 780 450 730 550 740 700 C 750 850 770 1000 760 1150 C 750 1300 780 1400 770 1550",
+            d: "M 760 -100 C 730 50 720 150 740 300 C 760 450 710 550 720 700 C 730 850 750 1000 740 1150 C 730 1300 760 1400 750 1550",
             fill: "none",
             stroke: "rgba(20,38,60,0.5)",
             strokeWidth: "50",
@@ -31662,7 +31792,7 @@
         ), /* @__PURE__ */ import_react27.default.createElement(
           "path",
           {
-            d: "M 780 -100 C 750 50 740 150 760 300 C 780 450 730 550 740 700 C 750 850 770 1000 760 1150 C 750 1300 780 1400 770 1550",
+            d: "M 760 -100 C 730 50 720 150 740 300 C 760 450 710 550 720 700 C 730 850 750 1000 740 1150 C 730 1300 760 1400 750 1550",
             fill: "none",
             stroke: "rgba(15,30,50,0.6)",
             strokeWidth: "25",
@@ -31752,7 +31882,7 @@
         ), /* @__PURE__ */ import_react27.default.createElement("ellipse", { cx: "500", cy: "900", rx: "45", ry: "35", fill: "rgba(20,38,60,0.35)" }), /* @__PURE__ */ import_react27.default.createElement(
           "path",
           {
-            d: "M 780 -50 C 760 100 770 250 775 400 C 780 550 765 700 770 850 C 775 1000 780 1150 772 1300 C 765 1450 778 1500 775 1600",
+            d: "M 720 -50 C 700 100 710 250 715 400 C 720 550 705 700 710 850 C 715 1000 720 1150 712 1300 C 705 1450 718 1500 715 1600",
             fill: "none",
             stroke: "rgba(100,160,220,0.3)",
             strokeWidth: "2",

@@ -628,7 +628,7 @@ const controlItems = [
 ];
 
 export default function YachtDashboard() {
-  const [loadingPhase, setLoadingPhase] = useState('logo'); // 'logo' | 'transition' | 'done'
+  const [loadingPhase, setLoadingPhase] = useState('logo'); // 'logo' | 'transition' | 'systemCheck' | 'done'
   const [expandedEngine, setExpandedEngine] = useState(null);
   const [expandedSection, setExpandedSection] = useState(null);
   const [expandedCamera, setExpandedCamera] = useState(null);
@@ -664,10 +664,12 @@ export default function YachtDashboard() {
   // Анимация загрузки
   useEffect(() => {
     const timer1 = setTimeout(() => setLoadingPhase('transition'), 2800);
-    const timer2 = setTimeout(() => setLoadingPhase('done'), 3400);
+    const timer2 = setTimeout(() => setLoadingPhase('systemCheck'), 3400);
+    const timer3 = setTimeout(() => setLoadingPhase('done'), 7200);
     return () => {
       clearTimeout(timer1);
       clearTimeout(timer2);
+      clearTimeout(timer3);
     };
   }, []);
 
@@ -1042,9 +1044,135 @@ export default function YachtDashboard() {
               justifyContent: 'center',
             }}
           >
+            {/* Экран проверки систем */}
+            {loadingPhase === 'systemCheck' && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4 }}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 24,
+                }}
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  style={{
+                    fontSize: 20,
+                    fontWeight: 500,
+                    color: T.textPrimary,
+                    letterSpacing: '0.15em',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  Запуск системы
+                </motion.div>
+
+                <div style={{
+                  width: 280,
+                  height: 1,
+                  background: 'linear-gradient(90deg, transparent, rgba(100,160,220,0.4), transparent)',
+                }} />
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {[
+                    { label: 'Система питания', delay: 0.2 },
+                    { label: 'Сеть и датчики', delay: 0.6 },
+                    { label: 'Левый двигатель', delay: 1.0 },
+                    { label: 'Правый двигатель', delay: 1.4 },
+                    { label: 'Рулевое управление', delay: 1.8 },
+                    { label: 'Навигация', delay: 2.2 },
+                    { label: 'Системы безопасности', delay: 2.6 },
+                  ].map((item, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, delay: item.delay }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 12,
+                        fontSize: 15,
+                        color: T.textSecondary,
+                      }}
+                    >
+                      <motion.div
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{
+                          duration: 0.25,
+                          delay: item.delay + 0.15,
+                          type: 'spring',
+                          stiffness: 400,
+                          damping: 15
+                        }}
+                        style={{
+                          width: 18,
+                          height: 18,
+                          borderRadius: '50%',
+                          background: 'rgba(61,200,140,0.15)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <motion.svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 12 12"
+                          initial={{ pathLength: 0 }}
+                          animate={{ pathLength: 1 }}
+                          transition={{ duration: 0.2, delay: item.delay + 0.2 }}
+                        >
+                          <motion.path
+                            d="M 2 6 L 5 9 L 10 3"
+                            fill="none"
+                            stroke={T.textGreen}
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            initial={{ pathLength: 0 }}
+                            animate={{ pathLength: 1 }}
+                            transition={{ duration: 0.2, delay: item.delay + 0.2 }}
+                          />
+                        </motion.svg>
+                      </motion.div>
+                      <span>{item.label}</span>
+                    </motion.div>
+                  ))}
+                </div>
+
+                <div style={{
+                  width: 280,
+                  height: 1,
+                  background: 'linear-gradient(90deg, transparent, rgba(100,160,220,0.4), transparent)',
+                  marginTop: 4,
+                }} />
+
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: [0, 1, 0.5, 1] }}
+                  transition={{ duration: 1.2, delay: 3.0, repeat: Infinity, repeatDelay: 0.3 }}
+                  style={{
+                    fontSize: 14,
+                    color: T.textSecondary,
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  Запуск панели управления...
+                </motion.div>
+              </motion.div>
+            )}
+
+            {/* Логотип */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
-              animate={loadingPhase === 'transition' ? {
+              animate={loadingPhase === 'transition' || loadingPhase === 'systemCheck' ? {
                 opacity: 0,
                 scale: 0.9,
               } : {
@@ -1052,7 +1180,7 @@ export default function YachtDashboard() {
                 scale: 1,
               }}
               transition={{ duration: loadingPhase === 'transition' ? 0.6 : 0.8, ease: "easeOut" }}
-              style={{ position: 'relative', marginTop: -20 }}
+              style={{ position: loadingPhase === 'systemCheck' ? 'absolute' : 'relative', marginTop: -20 }}
             >
               <svg width="280" height="180" viewBox="600 -100 1620 750" style={{ overflow: 'visible' }}>
                 <defs>
@@ -1222,7 +1350,7 @@ export default function YachtDashboard() {
 
                     {/* Главная река - вертикально, плавные кривые */}
                     <path
-                      d="M 780 -100 C 750 50 740 150 760 300 C 780 450 730 550 740 700 C 750 850 770 1000 760 1150 C 750 1300 780 1400 770 1550"
+                      d="M 760 -100 C 730 50 720 150 740 300 C 760 450 710 550 720 700 C 730 850 750 1000 740 1150 C 730 1300 760 1400 750 1550"
                       fill="none"
                       stroke="rgba(25,45,70,0.35)"
                       strokeWidth="80"
@@ -1230,7 +1358,7 @@ export default function YachtDashboard() {
                       strokeLinejoin="round"
                     />
                     <path
-                      d="M 780 -100 C 750 50 740 150 760 300 C 780 450 730 550 740 700 C 750 850 770 1000 760 1150 C 750 1300 780 1400 770 1550"
+                      d="M 760 -100 C 730 50 720 150 740 300 C 760 450 710 550 720 700 C 730 850 750 1000 740 1150 C 730 1300 760 1400 750 1550"
                       fill="none"
                       stroke="rgba(20,38,60,0.5)"
                       strokeWidth="50"
@@ -1238,7 +1366,7 @@ export default function YachtDashboard() {
                       strokeLinejoin="round"
                     />
                     <path
-                      d="M 780 -100 C 750 50 740 150 760 300 C 780 450 730 550 740 700 C 750 850 770 1000 760 1150 C 750 1300 780 1400 770 1550"
+                      d="M 760 -100 C 730 50 720 150 740 300 C 760 450 710 550 720 700 C 730 850 750 1000 740 1150 C 730 1300 760 1400 750 1550"
                       fill="none"
                       stroke="rgba(15,30,50,0.6)"
                       strokeWidth="25"
@@ -1331,7 +1459,7 @@ export default function YachtDashboard() {
 
                     {/* Маршрут - пунктир, плавный - по центру */}
                     <path
-                      d="M 780 -50 C 760 100 770 250 775 400 C 780 550 765 700 770 850 C 775 1000 780 1150 772 1300 C 765 1450 778 1500 775 1600"
+                      d="M 720 -50 C 700 100 710 250 715 400 C 720 550 705 700 710 850 C 715 1000 720 1150 712 1300 C 705 1450 718 1500 715 1600"
                       fill="none"
                       stroke="rgba(100,160,220,0.3)"
                       strokeWidth="2"
