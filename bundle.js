@@ -32400,7 +32400,7 @@
           style: {
             position: "fixed",
             bottom: 120,
-            left: 30,
+            left: "calc(50% - 576px)",
             zIndex: 50
           }
         },
@@ -32415,7 +32415,7 @@
           style: {
             position: "fixed",
             bottom: 120,
-            right: 30,
+            right: "calc(50% - 576px)",
             zIndex: 50
           }
         },

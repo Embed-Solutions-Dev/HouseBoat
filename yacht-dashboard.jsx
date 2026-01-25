@@ -2293,7 +2293,7 @@ export default function YachtDashboard() {
         <AnimatePresence>
           {controls.navigation && (
             <>
-              {/* Левый мини-двигатель - нижний левый угол */}
+              {/* Левый мини-двигатель - выровнен по левому краю нижней панели */}
               <motion.div
                 initial={{ opacity: 0, x: -100, y: 100 }}
                 animate={{ opacity: 1, x: 0, y: 0 }}
@@ -2302,14 +2302,14 @@ export default function YachtDashboard() {
                 style={{
                   position: 'fixed',
                   bottom: 120,
-                  left: 30,
+                  left: 'calc(50% - 576px)',
                   zIndex: 50,
                 }}
               >
                 <MiniEngineCard side="Left" rpm={Math.round(rpmLeft)} fuelLevel={75} hasFaults={false} />
               </motion.div>
 
-              {/* Правый мини-двигатель - нижний правый угол */}
+              {/* Правый мини-двигатель - выровнен по правому краю нижней панели */}
               <motion.div
                 initial={{ opacity: 0, x: 100, y: 100 }}
                 animate={{ opacity: 1, x: 0, y: 0 }}
@@ -2318,7 +2318,7 @@ export default function YachtDashboard() {
                 style={{
                   position: 'fixed',
                   bottom: 120,
-                  right: 30,
+                  right: 'calc(50% - 576px)',
                   zIndex: 50,
                 }}
               >
