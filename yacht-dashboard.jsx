@@ -2331,7 +2331,7 @@ export default function YachtDashboard() {
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
               style={{
                 position: 'absolute',
-                bottom: -82,
+                bottom: -62,
                 left: '50%',
                 transform: 'translateX(-50%)',
                 zIndex: 5,
