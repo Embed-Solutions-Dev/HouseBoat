@@ -407,19 +407,8 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
           <div style={{ fontSize: 11, color: T.textGreen, marginTop: 2 }}>{tempText.split(' · ')[1]}</div>
         </div>
 
-        {/* Error indicator - 66px left of center (swapped with motor hours) */}
-        {hasFaults && (
-          <div style={{ position: 'absolute', top: cy, left: cx - 66, transform: 'translate(-50%, -50%)', filter: 'drop-shadow(0 0 8px rgba(255,60,60,0.8))' }}>
-            <svg style={{ width: 28, height: 28 }} viewBox="0 0 24 24" fill="none" stroke={T.textRed} strokeWidth="2">
-              <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
-              <line x1="12" y1="9" x2="12" y2="13"/>
-              <circle cx="12" cy="17" r="0.6" fill={T.textRed}/>
-            </svg>
-          </div>
-        )}
-
-        {/* Throttle on horizontal center line, 66px left of center (or center if no faults) */}
-        <div style={{ position: 'absolute', top: cy, left: hasFaults ? cx : cx - 66, transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
+        {/* Throttle on horizontal center line, 66px left of center */}
+        <div style={{ position: 'absolute', top: cy, left: cx - 66, transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
           <div style={{ fontSize: 9, color: T.textMuted }}>ГАЗ</div>
           <div style={{ fontSize: 16, fontWeight: 600, color: T.textSecondary }}>{throttle}%</div>
         </div>
@@ -429,6 +418,17 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
           <div style={{ fontSize: 9, color: T.textMuted }}>МОТОЧАСЫ</div>
           <div style={{ fontSize: 16, fontWeight: 600, color: T.textSecondary, fontVariantNumeric: 'tabular-nums' }}>{motorHours.toLocaleString()}</div>
         </div>
+
+        {/* Error indicator - center bottom, above fuel icon */}
+        {hasFaults && (
+          <div style={{ position: 'absolute', bottom: 58, left: '50%', transform: 'translateX(-50%)', filter: 'drop-shadow(0 0 8px rgba(255,60,60,0.8))' }}>
+            <svg style={{ width: 28, height: 28 }} viewBox="0 0 24 24" fill="none" stroke={T.textRed} strokeWidth="2">
+              <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/>
+              <circle cx="12" cy="17" r="0.6" fill={T.textRed}/>
+            </svg>
+          </div>
+        )}
 
         {/* Fuel pump icon at bottom */}
         <div style={{ position: 'absolute', bottom: 28, left: 0, right: 0, textAlign: 'center' }}>
