@@ -32295,11 +32295,24 @@
           background: "radial-gradient(circle at 35% 35%, #ffffff 0%, #d0d0d0 30%, #909090 70%, #606060 100%)",
           boxShadow: "0 2px 6px rgba(0,0,0,0.4)"
         } }))
-      )), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "relative", width: 230, height: 127, marginTop: 22 } }, (() => {
+      )), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "relative", width: 230, height: 127, marginTop: 22 } }, expandedEngine && /* @__PURE__ */ import_react27.default.createElement(
+        "div",
+        {
+          onClick: () => setExpandedEngine(null),
+          style: {
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 29
+          }
+        }
+      ), (() => {
         const expandedFaults = expandedEngine === "Left" ? [] : ["E102 - \u0414\u0430\u0442\u0447\u0438\u043A \u0442\u0435\u043C\u043F\u0435\u0440\u0430\u0442\u0443\u0440\u044B", "E045 - \u041D\u0438\u0437\u043A\u043E\u0435 \u0434\u0430\u0432\u043B\u0435\u043D\u0438\u0435 \u043C\u0430\u0441\u043B\u0430"];
         const hasExpandedFaults = expandedFaults.length > 0;
         const expandedWidth = hasExpandedFaults ? 580 : 380;
-        const expandedHeight = 380;
+        const expandedHeight = 300;
         const collapsedWidth = 230;
         const collapsedHeight = 127;
         const miniWidth = 115;
@@ -32384,23 +32397,7 @@
               }
             },
             fault
-          )))), /* @__PURE__ */ import_react27.default.createElement(
-            "button",
-            {
-              onClick: () => setExpandedEngine(null),
-              style: {
-                marginTop: 16,
-                padding: "10px 28px",
-                background: "rgba(80,110,140,0.2)",
-                border: "1px solid rgba(100,130,160,0.3)",
-                borderRadius: 20,
-                color: "rgba(150,180,210,0.7)",
-                fontSize: 12,
-                cursor: "pointer"
-              }
-            },
-            "\u0417\u0430\u043A\u0440\u044B\u0442\u044C"
-          )) : /* @__PURE__ */ import_react27.default.createElement(import_react27.default.Fragment, null, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+          ))))) : /* @__PURE__ */ import_react27.default.createElement(import_react27.default.Fragment, null, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
             fontSize: 56,
             fontWeight: 400,
             color: "#d4af65",

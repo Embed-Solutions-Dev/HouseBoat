@@ -2122,12 +2122,27 @@ export default function YachtDashboard() {
 
           <div style={{ position: 'relative', width: 230, height: 127, marginTop: 22 }}>
 
+            {/* Backdrop для закрытия развернутой стекляшки */}
+            {expandedEngine && (
+              <div
+                onClick={() => setExpandedEngine(null)}
+                style={{
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  zIndex: 29,
+                }}
+              />
+            )}
+
             {/* Стекляшка - расширяется от центра */}
             {(() => {
               const expandedFaults = expandedEngine === "Left" ? [] : ["E102 - Датчик температуры", "E045 - Низкое давление масла"];
               const hasExpandedFaults = expandedFaults.length > 0;
               const expandedWidth = hasExpandedFaults ? 580 : 380;
-              const expandedHeight = 380;
+              const expandedHeight = 300;
               const collapsedWidth = 230;
               const collapsedHeight = 127;
               const miniWidth = 115;
@@ -2269,22 +2284,6 @@ export default function YachtDashboard() {
                         </div>
                       )}
                     </div>
-                    
-                    <button
-                      onClick={() => setExpandedEngine(null)}
-                      style={{
-                        marginTop: 16,
-                        padding: '10px 28px',
-                        background: 'rgba(80,110,140,0.2)',
-                        border: '1px solid rgba(100,130,160,0.3)',
-                        borderRadius: 20,
-                        color: 'rgba(150,180,210,0.7)',
-                        fontSize: 12,
-                        cursor: 'pointer',
-                      }}
-                    >
-                      Закрыть
-                    </button>
                   </>
                 ) : (
                   <>
