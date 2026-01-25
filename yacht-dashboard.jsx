@@ -1932,7 +1932,7 @@ export default function YachtDashboard() {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: loadingPhase === 'done' ? 1 : 0, y: loadingPhase === 'done' ? 0 : 30 }}
         transition={{ duration: 0.6, delay: 0.3 }}
-        style={{ width: '100%', maxWidth: 1200, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, overflow: 'hidden', position: 'relative' }}
+        style={{ width: '100%', maxWidth: 1200, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, position: 'relative' }}
       >
         {/* Левый двигатель - обычный */}
         <motion.div
