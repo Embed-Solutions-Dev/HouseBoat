@@ -436,7 +436,7 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
         </div>
 
         {/* RPM multiplier label */}
-        <div style={{ position: 'absolute', bottom: 86, left: '50%', transform: 'translateX(-50%)', textAlign: 'center' }}>
+        <div style={{ position: 'absolute', bottom: 102, left: '50%', transform: 'translateX(-50%)', textAlign: 'center' }}>
           <div style={{ fontSize: 10, color: 'rgba(150,160,180,0.6)', fontWeight: 500 }}>×1000 об/мин</div>
         </div>
 
