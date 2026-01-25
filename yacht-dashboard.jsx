@@ -214,7 +214,11 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
         height: size + 16,
         borderRadius: '50%',
         background: 'linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.8)',
+        boxShadow: hasFaults
+          ? '0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.8), 0 0 30px rgba(224,64,80,0.6), 0 0 60px rgba(224,64,80,0.3)'
+          : lowFuel
+            ? '0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.8), 0 0 30px rgba(232,160,48,0.5), 0 0 60px rgba(232,160,48,0.25)'
+            : '0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.8)',
         padding: 8,
       }}>
         <button
@@ -482,7 +486,11 @@ const MiniEngineCard = memo(function MiniEngineCard({ side, rpm, fuelLevel, hasF
         height: 135,
         borderRadius: '50%',
         background: 'linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)',
-        boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
+        boxShadow: hasFaults
+          ? '0 4px 16px rgba(0,0,0,0.5), 0 0 20px rgba(224,64,80,0.7), 0 0 40px rgba(224,64,80,0.4)'
+          : lowFuel
+            ? '0 4px 16px rgba(0,0,0,0.5), 0 0 20px rgba(232,160,48,0.6), 0 0 40px rgba(232,160,48,0.3)'
+            : '0 4px 16px rgba(0,0,0,0.5)',
         padding: 5,
         display: 'flex',
         alignItems: 'center',
@@ -515,8 +523,8 @@ const MiniEngineCard = memo(function MiniEngineCard({ side, rpm, fuelLevel, hasF
                   y1={50 - r1 * Math.sin(angle)}
                   x2={50 + r2 * Math.cos(angle)}
                   y2={50 - r2 * Math.sin(angle)}
-                  stroke={isRedZone ? 'rgba(224,80,96,0.7)' : isMajor ? 'rgba(200,210,230,0.8)' : isMedium ? 'rgba(150,160,180,0.5)' : 'rgba(120,130,150,0.3)'}
-                  strokeWidth={isMajor ? 1.5 : isMedium ? 1 : 0.5}
+                  stroke={isRedZone ? (isMajor ? 'rgba(224,80,96,1)' : isMedium ? 'rgba(224,80,96,0.85)' : 'rgba(224,80,96,0.6)') : isMajor ? 'rgba(200,210,230,0.9)' : isMedium ? 'rgba(180,190,210,0.7)' : 'rgba(150,165,185,0.5)'}
+                  strokeWidth={isMajor ? 1.5 : isMedium ? 1 : 0.75}
                   strokeLinecap="round"
                 />
               );
