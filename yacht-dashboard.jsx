@@ -421,7 +421,7 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
 
         {/* Error indicator - center bottom, above fuel icon */}
         {hasFaults && (
-          <div style={{ position: 'absolute', bottom: 58, left: '50%', transform: 'translateX(-50%)', filter: 'drop-shadow(0 0 8px rgba(255,60,60,0.8))' }}>
+          <div style={{ position: 'absolute', bottom: 82, left: '50%', transform: 'translateX(-50%)', filter: 'drop-shadow(0 0 8px rgba(255,60,60,0.8))' }}>
             <svg style={{ width: 28, height: 28 }} viewBox="0 0 24 24" fill="none" stroke={T.textRed} strokeWidth="2">
               <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
               <line x1="12" y1="9" x2="12" y2="13"/>
