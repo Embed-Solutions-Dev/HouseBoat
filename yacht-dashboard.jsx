@@ -474,6 +474,7 @@ export default function YachtDashboard() {
   const [anchorModal, setAnchorModal] = useState(false);
   const [anchorPosition, setAnchorPosition] = useState(0);
   const [anchorMoving, setAnchorMoving] = useState(null);
+  const [navMode, setNavMode] = useState(false);
 
   // Анимация загрузки
   useEffect(() => {
@@ -913,71 +914,43 @@ export default function YachtDashboard() {
         )}
       </AnimatePresence>
 
-      {/* Полноэкранная камера */}
-      <AnimatePresence>
-        {expandedCamera !== null && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'rgba(0,0,0,0.9)',
-              zIndex: 1000,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 40,
-            }}
-            onClick={() => setExpandedCamera(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              style={{ width: '100%', maxWidth: 1400 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <CameraView 
-                cam={cameras[expandedCamera]} 
-                isExpanded={true} 
-                onClick={() => setExpandedCamera(null)}
-              />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Камеры видеонаблюдения */}
-      <div style={{ 
-        width: '100%', 
-        maxWidth: 1152, 
-        marginBottom: 20, 
+      {/* Камеры видеонаблюдения - увеличенные */}
+      <div style={{
+        width: '100%',
+        maxWidth: 1152,
+        marginBottom: 20,
         display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
+        gridTemplateColumns: expandedCamera !== null ? '1fr' : 'repeat(2, 1fr)',
+        gridTemplateRows: expandedCamera !== null ? '1fr' : 'repeat(2, 1fr)',
         gap: 16,
+        height: 420,
       }}>
-        {cameras.map((cam, idx) => (
-          <CameraView 
-            key={idx}
-            cam={cam} 
-            isExpanded={false} 
-            onClick={() => setExpandedCamera(idx)}
+        {expandedCamera !== null ? (
+          <CameraView
+            cam={cameras[expandedCamera]}
+            isExpanded={true}
+            onClick={() => setExpandedCamera(null)}
           />
-        ))}
+        ) : (
+          cameras.map((cam, idx) => (
+            <CameraView
+              key={idx}
+              cam={cam}
+              isExpanded={false}
+              onClick={() => setExpandedCamera(idx)}
+            />
+          ))
+        )}
       </div>
 
-      {/* Виджет карты */}
-      <motion.div 
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: loadingPhase === 'done' ? 1 : 0, y: loadingPhase === 'done' ? 0 : 30 }}
-        transition={{ duration: 0.6, delay: 0.1 }}
+      {/* Виджет карты - показывается только в режиме навигации */}
+      <AnimatePresence>
+      {navMode && (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.9 }}
+        transition={{ duration: 0.4 }}
         style={{ width: '100%', maxWidth: 1152, marginBottom: -60, position: 'relative', zIndex: 0 }}
       >
         <div style={{
@@ -1263,14 +1236,16 @@ export default function YachtDashboard() {
           </div>
         </div>
       </motion.div>
+      )}
+      </AnimatePresence>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: loadingPhase === 'done' ? 1 : 0, y: loadingPhase === 'done' ? 0 : 30 }}
         transition={{ duration: 0.6, delay: 0.2 }}
         style={{ width: '100%', maxWidth: 1152, marginBottom: 20, position: 'relative', height: 102 }}
       >
-        {/* Верхняя панель - 5 разделов */}
+        {/* Нижняя панель систем - 5 разделов */}
         <motion.div 
           animate={{
             height: expandedSection ? 380 : 102,
@@ -1669,7 +1644,46 @@ export default function YachtDashboard() {
               </div>
               
               <div style={{ width: 1, background: 'linear-gradient(180deg, transparent 10%, rgba(80,100,120,0.3) 50%, transparent 90%)' }} />
-              
+
+              {/* НАВИГАЦИЯ */}
+              <div
+                onClick={() => setNavMode(!navMode)}
+                style={{
+                  flex: 1,
+                  height: 100,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  background: navMode ? 'rgba(61,200,140,0.1)' : 'transparent',
+                  transition: 'background 0.3s ease',
+                }}
+              >
+                <div style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: '50%',
+                  background: navMode
+                    ? 'linear-gradient(145deg, rgba(61,200,140,0.3) 0%, rgba(61,200,140,0.15) 100%)'
+                    : 'linear-gradient(145deg, rgba(40,60,80,0.4) 0%, rgba(30,45,60,0.3) 100%)',
+                  border: navMode ? '1px solid rgba(61,200,140,0.4)' : '1px solid rgba(80,100,120,0.3)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: 8,
+                  boxShadow: navMode ? '0 0 12px rgba(61,200,140,0.3)' : 'none',
+                  transition: 'all 0.3s ease',
+                }}>
+                  <svg style={{ width: 20, height: 20 }} viewBox="0 0 24 24" fill="none" stroke={navMode ? T.textGreen : T.textMuted} strokeWidth="2">
+                    <polygon points="3 11 22 2 13 21 11 13 3 11"/>
+                  </svg>
+                </div>
+                <div style={{ fontSize: 10, color: navMode ? T.textGreen : T.textMuted, letterSpacing: 0.5, fontWeight: 500 }}>НАВИГАЦИЯ</div>
+              </div>
+
+              <div style={{ width: 1, background: 'linear-gradient(180deg, transparent 10%, rgba(80,100,120,0.3) 50%, transparent 90%)' }} />
+
               {/* ЁМКОСТИ */}
               <div 
                 onClick={() => setExpandedSection('tanks')}
@@ -1718,17 +1732,93 @@ export default function YachtDashboard() {
         </motion.div>
       </motion.div>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: loadingPhase === 'done' ? 1 : 0, y: loadingPhase === 'done' ? 0 : 30 }}
         transition={{ duration: 0.6, delay: 0.3 }}
-        style={{ width: '100%', maxWidth: 1200, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, overflow: 'visible' }}
+        style={{ width: '100%', maxWidth: 1200, position: 'relative', overflow: 'visible', height: navMode ? 500 : 400 }}
       >
-        <div style={{ marginRight: -92, paddingTop: 20 }}>
-          <EngineCard side="Left" tempText="Темп 82°C · Масло ОК" rpm={Math.round(rpmLeft)} throttle={Math.round(throttleLeft)} gear={gearLeft} motorHours={1247} fuelLevel={75} expanded={false} onToggleExpand={() => setExpandedEngine("Left")} />
-        </div>
+        {/* Левый блок: двигатель + компас */}
+        <motion.div
+          animate={{
+            x: navMode ? -80 : 0,
+            scale: navMode ? 0.55 : 1,
+          }}
+          transition={{ type: "spring", stiffness: 200, damping: 25 }}
+          style={{
+            position: 'absolute',
+            left: navMode ? 0 : 108,
+            top: 20,
+            transformOrigin: 'left top',
+            zIndex: 10,
+          }}
+        >
+          {navMode ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'center' }}>
+              {/* Компас уменьшенный */}
+              <div style={{
+                width: 135,
+                height: 135,
+                borderRadius: '50%',
+                background: 'linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
+                padding: 5,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                <div style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '50%',
+                  background: 'linear-gradient(145deg, rgba(10,15,25,0.98) 0%, rgba(5,8,15,1) 100%)',
+                  position: 'relative',
+                }}>
+                  <motion.div
+                    style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    animate={{ rotate: -heading }}
+                    transition={{ type: "spring", stiffness: 120, damping: 18 }}
+                  >
+                    <svg viewBox="0 0 100 100" style={{ width: '100%', height: '100%' }}>
+                      {Array.from({ length: 36 }).map((_, i) => {
+                        const angle = (i * 10) * Math.PI / 180;
+                        const isMajor = i % 9 === 0;
+                        return (
+                          <line key={i} x1={50 + (isMajor ? 38 : 42) * Math.sin(angle)} y1={50 - (isMajor ? 38 : 42) * Math.cos(angle)} x2={50 + 48 * Math.sin(angle)} y2={50 - 48 * Math.cos(angle)} stroke={isMajor ? 'rgba(200,210,230,0.8)' : 'rgba(150,160,180,0.4)'} strokeWidth={isMajor ? 2 : 1} />
+                        );
+                      })}
+                      <text x="50" y="20" fill="rgba(200,210,230,0.6)" fontSize="9" fontWeight="500" textAnchor="middle">С</text>
+                      <text x="50" y="80" fill="rgba(200,210,230,0.6)" fontSize="9" fontWeight="500" textAnchor="middle" transform="rotate(180 50 80)">Ю</text>
+                      <text x="80" y="50" fill="rgba(200,210,230,0.6)" fontSize="9" fontWeight="500" textAnchor="middle" transform="rotate(90 80 50)">В</text>
+                      <text x="20" y="50" fill="rgba(200,210,230,0.6)" fontSize="9" fontWeight="500" textAnchor="middle" transform="rotate(-90 20 50)">З</text>
+                    </svg>
+                  </motion.div>
+                  <div style={{ position: 'absolute', top: -18, left: '50%', transform: 'translateX(-50%)', width: 0, height: 0, borderLeft: '7px solid transparent', borderRight: '7px solid transparent', borderTop: '11px solid #d44050', filter: 'drop-shadow(0 0 4px rgba(212,64,80,0.6))' }} />
+                </div>
+              </div>
+              {/* Мини двигатель */}
+              <EngineCard side="Left" tempText="Темп 82°C · Масло ОК" rpm={Math.round(rpmLeft)} throttle={Math.round(throttleLeft)} gear={gearLeft} motorHours={1247} fuelLevel={75} expanded={false} onToggleExpand={() => setExpandedEngine("Left")} />
+            </div>
+          ) : (
+            <EngineCard side="Left" tempText="Темп 82°C · Масло ОК" rpm={Math.round(rpmLeft)} throttle={Math.round(throttleLeft)} gear={gearLeft} motorHours={1247} fuelLevel={75} expanded={false} onToggleExpand={() => setExpandedEngine("Left")} />
+          )}
+        </motion.div>
 
-        <div style={{ height: 400, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 20 }}>
+        {/* Центральный блок */}
+        <motion.div
+          animate={{ opacity: navMode ? 0 : 1 }}
+          transition={{ duration: 0.3 }}
+          style={{
+            position: 'absolute',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            top: 20,
+            display: navMode ? 'none' : 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            height: 400,
+          }}
+        >
           {/* Компас и Киль над стекляшкой */}
           <div style={{ display: 'flex', gap: 30, marginBottom: 16 }}>
             {/* Компас */}
@@ -2112,11 +2202,104 @@ export default function YachtDashboard() {
               </svg>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div style={{ marginLeft: -92, paddingTop: 20 }}>
-          <EngineCard side="Right" tempText="Темп 81°C · Масло ОК" rpm={Math.round(rpmRight)} throttle={Math.round(throttleRight)} gear={gearRight} motorHours={1198} fuelLevel={18} expanded={false} onToggleExpand={() => setExpandedEngine("Right")} />
-        </div>
+        {/* Правый блок: двигатель + киль */}
+        <motion.div
+          animate={{
+            x: navMode ? 80 : 0,
+            scale: navMode ? 0.55 : 1,
+          }}
+          transition={{ type: "spring", stiffness: 200, damping: 25 }}
+          style={{
+            position: 'absolute',
+            right: navMode ? 0 : 108,
+            top: 20,
+            transformOrigin: 'right top',
+            zIndex: 10,
+          }}
+        >
+          {navMode ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'center' }}>
+              {/* Киль уменьшенный */}
+              <div style={{
+                width: 135,
+                height: 135,
+                borderRadius: '50%',
+                background: 'linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
+                padding: 5,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                <div style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '50%',
+                  background: 'linear-gradient(145deg, rgba(10,15,25,0.98) 0%, rgba(5,8,15,1) 100%)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                }}>
+                  <svg viewBox="0 0 100 100" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
+                    {Array.from({ length: 19 }).map((_, i) => {
+                      const deg = -45 + i * 5;
+                      const angle = (deg + 90) * Math.PI / 180;
+                      const isMajor = deg % 15 === 0;
+                      return (
+                        <line key={i} x1={50 + (isMajor ? 38 : 40) * Math.cos(angle)} y1={50 + (isMajor ? 38 : 40) * Math.sin(angle)} x2={50 + 46 * Math.cos(angle)} y2={50 + 46 * Math.sin(angle)} stroke={isMajor ? 'rgba(200,210,230,0.8)' : 'rgba(150,160,180,0.4)'} strokeWidth={isMajor ? 2 : 1} strokeLinecap="round" />
+                      );
+                    })}
+                  </svg>
+                  <svg viewBox="0 0 24 32" style={{ position: 'absolute', top: 22, left: '50%', transform: 'translateX(-50%)', width: 33, height: 45, opacity: 0.35 }}>
+                    <path d="M12 1 L18 8 L19 22 Q12 30 5 22 L6 8 Z" fill="rgba(150,180,210,0.6)" stroke="rgba(150,180,210,0.8)" strokeWidth="0.5" />
+                    <ellipse cx="12" cy="14" rx="4" ry="6" fill="rgba(100,130,160,0.5)" />
+                  </svg>
+                  <motion.div
+                    style={{ position: 'absolute', top: 57, left: '50%', width: 4, height: 48, marginLeft: -2, background: 'linear-gradient(90deg, #a03040 0%, #d04050 25%, #e85060 50%, #d04050 75%, #a03040 100%)', borderRadius: 2, transformOrigin: 'center top', boxShadow: '0 0 8px rgba(224,80,96,0.5)' }}
+                    animate={{ rotate: rudderDeg }}
+                    transition={{ type: "spring", stiffness: 100, damping: 15 }}
+                  />
+                  <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 14, height: 14, borderRadius: '50%', background: 'radial-gradient(circle at 35% 35%, #ffffff 0%, #d0d0d0 30%, #909090 70%, #606060 100%)', boxShadow: '0 2px 6px rgba(0,0,0,0.4)' }} />
+                </div>
+              </div>
+              {/* Мини двигатель */}
+              <EngineCard side="Right" tempText="Темп 81°C · Масло ОК" rpm={Math.round(rpmRight)} throttle={Math.round(throttleRight)} gear={gearRight} motorHours={1198} fuelLevel={18} expanded={false} onToggleExpand={() => setExpandedEngine("Right")} />
+            </div>
+          ) : (
+            <EngineCard side="Right" tempText="Темп 81°C · Масло ОК" rpm={Math.round(rpmRight)} throttle={Math.round(throttleRight)} gear={gearRight} motorHours={1198} fuelLevel={18} expanded={false} onToggleExpand={() => setExpandedEngine("Right")} />
+          )}
+        </motion.div>
+
+        {/* Скорость - в navMode перемещается вниз по центру */}
+        <AnimatePresence>
+          {navMode && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.3 }}
+              style={{
+                position: 'absolute',
+                bottom: 20,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                zIndex: 20,
+                textAlign: 'center',
+              }}
+            >
+              <div style={{
+                fontSize: 32,
+                fontWeight: 600,
+                color: 'rgba(212,175,101,0.8)',
+                textShadow: '0 0 20px rgba(212,175,101,0.3)',
+              }}>
+                {speed.toFixed(1)}
+              </div>
+              <div style={{ fontSize: 11, color: 'rgba(212,175,101,0.4)', letterSpacing: 2 }}>км/ч</div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
 
       <motion.div 
