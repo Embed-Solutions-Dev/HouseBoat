@@ -1143,7 +1143,7 @@ export default function YachtDashboard() {
               pointerEvents: 'none',
             }}
           >
-            <div style={{ width: '100%', maxWidth: 1152, position: 'relative', marginTop: 700 }}>
+            <div style={{ width: '100%', maxWidth: 1152, position: 'relative', marginTop: 760 }}>
               <div style={{
                 overflow: 'visible',
                 height: 500,
@@ -1367,7 +1367,7 @@ export default function YachtDashboard() {
               <div style={{
                 position: 'absolute',
                 bottom: 80,
-                left: 20,
+                left: 80,
                 zIndex: 10,
               }}>
                 <div style={{
@@ -1411,7 +1411,7 @@ export default function YachtDashboard() {
               <div style={{
                 position: 'absolute',
                 bottom: 80,
-                right: 20,
+                right: 80,
                 zIndex: 10,
                 textAlign: 'right',
               }}>
@@ -2334,7 +2334,7 @@ export default function YachtDashboard() {
                 transition={{ type: "spring", stiffness: 200, damping: 25 }}
                 style={{
                   position: 'fixed',
-                  bottom: 156,
+                  bottom: 132,
                   left: 'calc(50% - 576px)',
                   zIndex: 50,
                 }}
@@ -2350,7 +2350,7 @@ export default function YachtDashboard() {
                 transition={{ type: "spring", stiffness: 200, damping: 25 }}
                 style={{
                   position: 'fixed',
-                  bottom: 156,
+                  bottom: 132,
                   right: 'calc(50% - 576px)',
                   zIndex: 50,
                 }}

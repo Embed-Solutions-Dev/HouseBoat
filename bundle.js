@@ -31597,7 +31597,7 @@
           pointerEvents: "none"
         }
       },
-      /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "100%", maxWidth: 1152, position: "relative", marginTop: 700 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+      /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "100%", maxWidth: 1152, position: "relative", marginTop: 760 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
         overflow: "visible",
         height: 500,
         position: "relative",
@@ -31787,7 +31787,7 @@
       ))))), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
         position: "absolute",
         bottom: 80,
-        left: 20,
+        left: 80,
         zIndex: 10
       } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
         display: "flex",
@@ -31820,7 +31820,7 @@
       } }, "500 \u043C"))), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
         position: "absolute",
         bottom: 80,
-        right: 20,
+        right: 80,
         zIndex: 10,
         textAlign: "right"
       } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
@@ -32441,7 +32441,7 @@
           transition: { type: "spring", stiffness: 200, damping: 25 },
           style: {
             position: "fixed",
-            bottom: 156,
+            bottom: 132,
             left: "calc(50% - 576px)",
             zIndex: 50
           }
@@ -32456,7 +32456,7 @@
           transition: { type: "spring", stiffness: 200, damping: 25 },
           style: {
             position: "fixed",
-            bottom: 156,
+            bottom: 132,
             right: "calc(50% - 576px)",
             zIndex: 50
           }
