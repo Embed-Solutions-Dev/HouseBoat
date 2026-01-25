@@ -2156,7 +2156,7 @@ export default function YachtDashboard() {
                 width: expandedEngine ? expandedWidth : collapsedWidth,
                 height: expandedEngine ? expandedHeight : collapsedHeight,
                 x: expandedEngine ? -expandedWidth / 2 : -collapsedWidth / 2,
-                y: expandedEngine ? -expandedHeight / 2 : isNavMode ? 22 : -collapsedHeight / 2,
+                y: expandedEngine ? -expandedHeight / 2 - 40 : isNavMode ? 22 : -collapsedHeight / 2,
                 scale: isNavMode ? 0.6 : 1,
               }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
@@ -2204,10 +2204,10 @@ export default function YachtDashboard() {
               }}>
                 {expandedEngine ? (
                   <>
-                    <div style={{ fontSize: 16, fontWeight: 600, color: hasExpandedFaults ? T.textRed : T.textSecondary, marginBottom: 20 }}>
+                    <div style={{ fontSize: 16, fontWeight: 600, color: hasExpandedFaults ? T.textRed : T.textSecondary, marginBottom: 36 }}>
                       {expandedEngine === "Left" ? "Левый" : "Правый"} двигатель
                     </div>
-                    
+
                     <div style={{ display: 'flex', width: '100%', flex: 1, position: 'relative', alignItems: 'flex-start' }}>
                       {/* Левая часть - показания (всегда 50% или 100% без ошибок) */}
                       <div style={{ 

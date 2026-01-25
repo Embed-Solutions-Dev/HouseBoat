@@ -32325,7 +32325,7 @@
               width: expandedEngine ? expandedWidth : collapsedWidth,
               height: expandedEngine ? expandedHeight : collapsedHeight,
               x: expandedEngine ? -expandedWidth / 2 : -collapsedWidth / 2,
-              y: expandedEngine ? -expandedHeight / 2 : isNavMode ? 22 : -collapsedHeight / 2,
+              y: expandedEngine ? -expandedHeight / 2 - 40 : isNavMode ? 22 : -collapsedHeight / 2,
               scale: isNavMode ? 0.6 : 1
             },
             transition: { type: "spring", stiffness: 300, damping: 30 },
@@ -32368,7 +32368,7 @@
             alignItems: "center",
             justifyContent: expandedEngine ? "flex-start" : "center",
             padding: expandedEngine ? "28px 32px 24px" : 0
-          } }, expandedEngine ? /* @__PURE__ */ import_react27.default.createElement(import_react27.default.Fragment, null, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 16, fontWeight: 600, color: hasExpandedFaults ? T.textRed : T.textSecondary, marginBottom: 20 } }, expandedEngine === "Left" ? "\u041B\u0435\u0432\u044B\u0439" : "\u041F\u0440\u0430\u0432\u044B\u0439", " \u0434\u0432\u0438\u0433\u0430\u0442\u0435\u043B\u044C"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", width: "100%", flex: 1, position: "relative", alignItems: "flex-start" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+          } }, expandedEngine ? /* @__PURE__ */ import_react27.default.createElement(import_react27.default.Fragment, null, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 16, fontWeight: 600, color: hasExpandedFaults ? T.textRed : T.textSecondary, marginBottom: 36 } }, expandedEngine === "Left" ? "\u041B\u0435\u0432\u044B\u0439" : "\u041F\u0440\u0430\u0432\u044B\u0439", " \u0434\u0432\u0438\u0433\u0430\u0442\u0435\u043B\u044C"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", width: "100%", flex: 1, position: "relative", alignItems: "flex-start" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
             flex: 1,
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
