@@ -30813,9 +30813,10 @@
       justifyContent: "center"
     } }, /* @__PURE__ */ import_react27.default.createElement(Icon, { style: { width: 22, height: 22, color: tone === "ok" ? T.textGreen : T.textSecondary } })), /* @__PURE__ */ import_react27.default.createElement("div", null, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 20, fontWeight: 600, color: T.textPrimary } }, value), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textMuted, marginTop: 2 } }, label)));
   });
-  var EngineCard = (0, import_react27.memo)(function EngineCard2({ side, tempText, rpm, throttle, gear, expanded, onToggleExpand }) {
+  var EngineCard = (0, import_react27.memo)(function EngineCard2({ side, tempText, rpm, throttle, gear, motorHours, fuelLevel, expanded, onToggleExpand }) {
     const faults = side === "Left" ? [] : ["E102 - Temp sensor intermittent"];
     const hasFaults = faults.length > 0;
+    const lowFuel = fuelLevel < 25;
     const v = clamp2(rpm, 0, 4e3);
     const max = 4e3;
     const ratio = v / max;
@@ -30856,6 +30857,12 @@
     const redZoneStartAngle = startAngle - 0.8 * sweep;
     const arcR = r - 5;
     const needleLength = r - 40;
+    const fuelArcR = r - 5;
+    const fuelStartAngle = -45;
+    const fuelEndAngle = -135;
+    const fuelSweep = 90;
+    const fuelRatio = clamp2(fuelLevel, 0, 100) / 100;
+    const fuelFilledAngle = fuelStartAngle - fuelRatio * fuelSweep;
     return /* @__PURE__ */ import_react27.default.createElement("div", { style: { minHeight: 360, display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
       position: "relative",
       width: size + 16,
@@ -30916,6 +30923,24 @@
         fill: "none",
         stroke: "rgba(224,64,80,0.5)",
         strokeWidth: "4",
+        strokeLinecap: "round"
+      }
+    ), /* @__PURE__ */ import_react27.default.createElement(
+      "path",
+      {
+        d: `M ${cx + fuelArcR * Math.cos(fuelStartAngle * Math.PI / 180)} ${cy - fuelArcR * Math.sin(fuelStartAngle * Math.PI / 180)} A ${fuelArcR} ${fuelArcR} 0 0 1 ${cx + fuelArcR * Math.cos(fuelEndAngle * Math.PI / 180)} ${cy - fuelArcR * Math.sin(fuelEndAngle * Math.PI / 180)}`,
+        fill: "none",
+        stroke: T.gaugeBg,
+        strokeWidth: "6",
+        strokeLinecap: "round"
+      }
+    ), fuelRatio > 0 && /* @__PURE__ */ import_react27.default.createElement(
+      "path",
+      {
+        d: `M ${cx + fuelArcR * Math.cos(fuelStartAngle * Math.PI / 180)} ${cy - fuelArcR * Math.sin(fuelStartAngle * Math.PI / 180)} A ${fuelArcR} ${fuelArcR} 0 0 1 ${cx + fuelArcR * Math.cos(fuelFilledAngle * Math.PI / 180)} ${cy - fuelArcR * Math.sin(fuelFilledAngle * Math.PI / 180)}`,
+        fill: "none",
+        stroke: lowFuel ? T.gaugeRed : T.gaugeActive,
+        strokeWidth: "6",
         strokeLinecap: "round"
       }
     ), ticks.map((tick, i) => /* @__PURE__ */ import_react27.default.createElement("g", { key: i }, /* @__PURE__ */ import_react27.default.createElement(
@@ -31004,7 +31029,7 @@
         }),
         /* @__PURE__ */ import_react27.default.createElement("circle", { cx: "22", cy: "22", r: "2", fill: "#080808" })
       )
-    ), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", top: 90, left: 0, right: 0, textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textGreen } }, tempText.split(" \xB7 ")[0]), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textGreen, marginTop: 2 } }, tempText.split(" \xB7 ")[1])), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", left: 0, right: 0, top: cy + 40, textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 32, fontWeight: 600, color: T.textPrimary, textShadow: "0 0 20px rgba(200,230,255,0.3)", fontVariantNumeric: "tabular-nums" } }, rpm.toLocaleString()), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textMuted, letterSpacing: 0.5, marginTop: -2 } }, "\u041E\u0411/\u041C\u0418\u041D")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", bottom: 20, left: 0, right: 0, display: "flex", justifyContent: "center", gap: 32 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textMuted } }, "\u0413\u0410\u0417"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 18, fontWeight: 600, color: T.textPrimary } }, throttle, "%")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textMuted } }, "\u041F\u0415\u0420."), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 18, fontWeight: 600, color: T.textPrimary } }, gear)), hasFaults && /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "center", filter: "drop-shadow(0 0 8px rgba(255,60,60,0.8))" } }, /* @__PURE__ */ import_react27.default.createElement("svg", { style: { width: 24, height: 24 }, viewBox: "0 0 24 24", fill: "none", stroke: T.textRed, strokeWidth: "2" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" }), /* @__PURE__ */ import_react27.default.createElement("line", { x1: "12", y1: "9", x2: "12", y2: "13" }), /* @__PURE__ */ import_react27.default.createElement("circle", { cx: "12", cy: "17", r: "0.6", fill: T.textRed })))))));
+    ), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", top: 90, left: 0, right: 0, textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textGreen } }, tempText.split(" \xB7 ")[0]), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textGreen, marginTop: 2 } }, tempText.split(" \xB7 ")[1])), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", left: 0, right: 0, top: cy + 30, textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 22, fontWeight: 600, color: T.textPrimary, textShadow: "0 0 15px rgba(200,230,255,0.2)", fontVariantNumeric: "tabular-nums" } }, motorHours.toLocaleString()), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted, letterSpacing: 0.5, marginTop: 0 } }, "\u041C\u041E\u0422\u041E\u0427\u0410\u0421\u042B")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", bottom: 55, left: 0, right: 0, display: "flex", justifyContent: "center", gap: 60 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center", width: 50 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted } }, "\u0413\u0410\u0417"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 16, fontWeight: 600, color: T.textPrimary } }, throttle, "%")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center", width: 50, display: "flex", alignItems: "center", justifyContent: "center" } }, hasFaults && /* @__PURE__ */ import_react27.default.createElement("div", { style: { filter: "drop-shadow(0 0 8px rgba(255,60,60,0.8))" } }, /* @__PURE__ */ import_react27.default.createElement("svg", { style: { width: 28, height: 28 }, viewBox: "0 0 24 24", fill: "none", stroke: T.textRed, strokeWidth: "2" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" }), /* @__PURE__ */ import_react27.default.createElement("line", { x1: "12", y1: "9", x2: "12", y2: "13" }), /* @__PURE__ */ import_react27.default.createElement("circle", { cx: "12", cy: "17", r: "0.6", fill: T.textRed }))))), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", bottom: 18, left: 0, right: 0, textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "center", justifyContent: "center", gap: 6 } }, lowFuel && /* @__PURE__ */ import_react27.default.createElement("svg", { style: { width: 14, height: 14 }, viewBox: "0 0 24 24", fill: T.textRed, stroke: "none" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "M12 2L2 22h20L12 2zm0 5l7.5 13h-15L12 7z" }), /* @__PURE__ */ import_react27.default.createElement("rect", { x: "11", y: "10", width: "2", height: "5" }), /* @__PURE__ */ import_react27.default.createElement("rect", { x: "11", y: "16", width: "2", height: "2" })), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: lowFuel ? T.textRed : T.textMuted, fontWeight: lowFuel ? 600 : 400 } }, "\u0422\u041E\u041F\u041B\u0418\u0412\u041E ", fuelLevel, "%"))))));
   });
   var controlItems = [
     { key: "power", label: "\u041F\u0438\u0442\u0430\u043D\u0438\u0435", icon: Power },
@@ -32228,7 +32253,7 @@
         transition: { duration: 0.6, delay: 0.3 },
         style: { width: "100%", maxWidth: 1200, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, overflow: "visible" }
       },
-      /* @__PURE__ */ import_react27.default.createElement("div", { style: { marginRight: -92, paddingTop: 20 } }, /* @__PURE__ */ import_react27.default.createElement(EngineCard, { side: "Left", tempText: "\u0422\u0435\u043C\u043F 82\xB0C \xB7 \u041C\u0430\u0441\u043B\u043E \u041E\u041A", rpm: Math.round(rpmLeft), throttle: Math.round(throttleLeft), gear: gearLeft, expanded: false, onToggleExpand: () => setExpandedEngine("Left") })),
+      /* @__PURE__ */ import_react27.default.createElement("div", { style: { marginRight: -92, paddingTop: 20 } }, /* @__PURE__ */ import_react27.default.createElement(EngineCard, { side: "Left", tempText: "\u0422\u0435\u043C\u043F 82\xB0C \xB7 \u041C\u0430\u0441\u043B\u043E \u041E\u041A", rpm: Math.round(rpmLeft), throttle: Math.round(throttleLeft), gear: gearLeft, motorHours: 1247, fuelLevel: 75, expanded: false, onToggleExpand: () => setExpandedEngine("Left") })),
       /* @__PURE__ */ import_react27.default.createElement("div", { style: { height: 400, display: "flex", alignItems: "center", justifyContent: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "relative", width: 230, height: 190 } }, (() => {
         const expandedFaults = expandedEngine === "Left" ? [] : ["E102 - \u0414\u0430\u0442\u0447\u0438\u043A \u0442\u0435\u043C\u043F\u0435\u0440\u0430\u0442\u0443\u0440\u044B", "E045 - \u041D\u0438\u0437\u043A\u043E\u0435 \u0434\u0430\u0432\u043B\u0435\u043D\u0438\u0435 \u043C\u0430\u0441\u043B\u0430"];
         const hasExpandedFaults = expandedFaults.length > 0;
@@ -32364,7 +32389,7 @@
           d: "M1798.09 319.87c-4.35,-12.65 -31.56,-22.61 -26.42,-5.52 2.53,29.43 7.74,74.72 -23.19,131.9 -34.39,29.27 5.18,34.93 43.53,16.19 64.03,-24.99 12.21,-119.88 6.08,-142.57zm-498.41 -195.06l0 0 -0.42 0 0 54.51 47.15 0c-0.78,-30.15 -21.5,-54.51 -46.73,-54.51zm-17.11 0.05l0 0c-24.28,1.3 -43.89,25.15 -44.65,54.46l44.65 0 0 -54.46zm-44.67 74.57l0 0 0 51 44.67 0 0 -51 -44.67 0zm61.36 51l0 0 47.17 0 0 -51 -47.17 0 0 51zm488.43 -118.7l0 0c-75.64,39.65 -105.96,79.31 -167.43,107.06 -14.5,6.53 -30.65,12.67 -48.33,18.34l0 -102.15c0,-34.71 -28.38,-63.1 -63.09,-63.1 -34.71,0 -63.1,28.39 -63.1,63.1l0 130.53c-114.9,17.14 -260.31,19.42 -421.05,-2.18 209.11,99.93 576.41,33.58 705.24,-76.57 38.48,-32.89 101.67,-75.25 149.43,-91.4 151.13,-55.09 221.23,-5.03 260.55,84.96 -7.9,31.59 -71.1,31.12 -109.89,46.44 -109.8,30.41 -134.33,31.14 -244.26,11.66 -12.86,-0.26 -32.74,10.03 -27.17,24.4 10.58,216.03 -71.36,208.7 -255.45,232.26 -61.99,2.97 -1.08,-78.65 13.4,-87.72 46.13,-48.5 75.84,-52.86 86.21,-69.64 14.88,-26.72 3.03,-38.46 -31.76,-15.84 -142.22,60.11 -308.64,63.74 -496.17,18.12 -193.15,147.77 -382.49,16.88 -304.72,-13.59 67.62,-23.73 138.17,-42.34 211.83,-55.51l-26.05 -41.91c50.95,-25.54 95,-62.9 135.37,-106.56 212.3,-195.78 446.39,-180.44 696.44,-10.7z"
         }
       ))))),
-      /* @__PURE__ */ import_react27.default.createElement("div", { style: { marginLeft: -92, paddingTop: 20 } }, /* @__PURE__ */ import_react27.default.createElement(EngineCard, { side: "Right", tempText: "\u0422\u0435\u043C\u043F 81\xB0C \xB7 \u041C\u0430\u0441\u043B\u043E \u041E\u041A", rpm: Math.round(rpmRight), throttle: Math.round(throttleRight), gear: gearRight, expanded: false, onToggleExpand: () => setExpandedEngine("Right") }))
+      /* @__PURE__ */ import_react27.default.createElement("div", { style: { marginLeft: -92, paddingTop: 20 } }, /* @__PURE__ */ import_react27.default.createElement(EngineCard, { side: "Right", tempText: "\u0422\u0435\u043C\u043F 81\xB0C \xB7 \u041C\u0430\u0441\u043B\u043E \u041E\u041A", rpm: Math.round(rpmRight), throttle: Math.round(throttleRight), gear: gearRight, motorHours: 1198, fuelLevel: 18, expanded: false, onToggleExpand: () => setExpandedEngine("Right") }))
     ), /* @__PURE__ */ import_react27.default.createElement(
       motion.div,
       {

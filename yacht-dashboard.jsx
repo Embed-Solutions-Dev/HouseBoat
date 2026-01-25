@@ -142,21 +142,22 @@ const TopMetric = memo(function TopMetric({ icon: Icon, value, label, tone = "mu
   );
 });
 
-const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gear, expanded, onToggleExpand }) {
+const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gear, motorHours, fuelLevel, expanded, onToggleExpand }) {
   const faults = side === "Left" ? [] : ["E102 - Temp sensor intermittent"];
   const hasFaults = faults.length > 0;
-  
+  const lowFuel = fuelLevel < 25;
+
   const v = clamp(rpm, 0, 4000);
   const max = 4000;
   const ratio = v / max;
-  
+
   const startAngle = 225;
   const sweep = 270;
   const endAngle = -45;
-  
+
   const mv = useMotionValue(-startAngle);
   const spring = useSpring(mv, { stiffness: 80, damping: 15 });
-  
+
   useEffect(() => {
     const targetAngle = -startAngle + ratio * sweep;
     mv.set(targetAngle);
@@ -170,14 +171,14 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
   const majorStep = 500;
   const minorStep = 100;
   const ticks = [];
-  
+
   for (let val = 0; val <= max; val += minorStep) {
     const t = val / max;
     const angle = (startAngle - t * sweep) * Math.PI / 180;
     const isMajor = val % majorStep === 0;
     const innerR = isMajor ? r - 18 : r - 10;
     const outerR = r;
-    
+
     ticks.push({
       x1: cx + innerR * Math.cos(angle),
       y1: cy - innerR * Math.sin(angle),
@@ -195,13 +196,21 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
   const arcR = r - 5;
   const needleLength = r - 40;
 
+  // Fuel arc parameters (bottom arc, closing the circle)
+  const fuelArcR = r - 5;
+  const fuelStartAngle = -45; // degrees (bottom right)
+  const fuelEndAngle = -135; // degrees (bottom left)
+  const fuelSweep = 90; // total sweep for fuel arc
+  const fuelRatio = clamp(fuelLevel, 0, 100) / 100;
+  const fuelFilledAngle = fuelStartAngle - fuelRatio * fuelSweep;
+
   return (
     <div style={{ minHeight: 360, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'visible' }}>
-      <div style={{ 
-        position: 'relative', 
-        width: size + 16, 
-        height: size + 16, 
-        borderRadius: '50%', 
+      <div style={{
+        position: 'relative',
+        width: size + 16,
+        height: size + 16,
+        borderRadius: '50%',
         background: 'linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)',
         boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.8)',
         padding: 8,
@@ -214,10 +223,10 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
             right: 13,
             width: 32,
             height: 32,
-            background: hasFaults 
+            background: hasFaults
               ? 'linear-gradient(145deg, rgba(224,64,80,0.5) 0%, rgba(180,40,60,0.4) 100%)'
               : 'linear-gradient(145deg, rgba(80,110,140,0.4) 0%, rgba(60,90,120,0.3) 100%)',
-            border: hasFaults 
+            border: hasFaults
               ? '1px solid rgba(224,64,80,0.5)'
               : '1px solid rgba(100,130,160,0.3)',
             borderRadius: '50%',
@@ -227,30 +236,31 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: hasFaults 
+            boxShadow: hasFaults
               ? '0 2px 6px rgba(224,64,80,0.3)'
               : '0 2px 6px rgba(0,0,0,0.2)',
           }}
         >
-          <span style={{ 
-            color: hasFaults ? 'rgba(224,64,80,0.9)' : 'rgba(150,180,210,0.6)', 
-            fontSize: 18, 
-            fontWeight: 600, 
+          <span style={{
+            color: hasFaults ? 'rgba(224,64,80,0.9)' : 'rgba(150,180,210,0.6)',
+            fontSize: 18,
+            fontWeight: 600,
             fontStyle: 'italic',
             fontFamily: 'Georgia, serif',
           }}>i</span>
         </button>
-        
-        <div style={{ 
-          position: 'relative', 
-          width: size, 
-          height: size, 
-          borderRadius: '50%', 
-          background: T.cardBg, 
+
+        <div style={{
+          position: 'relative',
+          width: size,
+          height: size,
+          borderRadius: '50%',
+          background: T.cardBg,
           boxShadow: 'inset 0 4px 16px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.2)',
         }}>
-        
+
         <svg viewBox={`0 0 ${size} ${size}`} style={{ position: 'absolute', inset: 0, overflow: 'visible' }}>
+          {/* Main RPM arc background */}
           <path
             d={`M ${cx + arcR * Math.cos(startAngle * Math.PI / 180)} ${cy - arcR * Math.sin(startAngle * Math.PI / 180)} A ${arcR} ${arcR} 0 1 1 ${cx + arcR * Math.cos(endAngle * Math.PI / 180)} ${cy - arcR * Math.sin(endAngle * Math.PI / 180)}`}
             fill="none"
@@ -258,7 +268,8 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
             strokeWidth="4"
             strokeLinecap="round"
           />
-          
+
+          {/* Red zone on RPM arc */}
           <path
             d={`M ${cx + arcR * Math.cos(redZoneStartAngle * Math.PI / 180)} ${cy - arcR * Math.sin(redZoneStartAngle * Math.PI / 180)} A ${arcR} ${arcR} 0 0 1 ${cx + arcR * Math.cos(endAngle * Math.PI / 180)} ${cy - arcR * Math.sin(endAngle * Math.PI / 180)}`}
             fill="none"
@@ -266,7 +277,27 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
             strokeWidth="4"
             strokeLinecap="round"
           />
-          
+
+          {/* Fuel arc background (bottom, closing the circle) */}
+          <path
+            d={`M ${cx + fuelArcR * Math.cos(fuelStartAngle * Math.PI / 180)} ${cy - fuelArcR * Math.sin(fuelStartAngle * Math.PI / 180)} A ${fuelArcR} ${fuelArcR} 0 0 1 ${cx + fuelArcR * Math.cos(fuelEndAngle * Math.PI / 180)} ${cy - fuelArcR * Math.sin(fuelEndAngle * Math.PI / 180)}`}
+            fill="none"
+            stroke={T.gaugeBg}
+            strokeWidth="6"
+            strokeLinecap="round"
+          />
+
+          {/* Fuel arc filled */}
+          {fuelRatio > 0 && (
+            <path
+              d={`M ${cx + fuelArcR * Math.cos(fuelStartAngle * Math.PI / 180)} ${cy - fuelArcR * Math.sin(fuelStartAngle * Math.PI / 180)} A ${fuelArcR} ${fuelArcR} 0 0 1 ${cx + fuelArcR * Math.cos(fuelFilledAngle * Math.PI / 180)} ${cy - fuelArcR * Math.sin(fuelFilledAngle * Math.PI / 180)}`}
+              fill="none"
+              stroke={lowFuel ? T.gaugeRed : T.gaugeActive}
+              strokeWidth="6"
+              strokeLinecap="round"
+            />
+          )}
+
           {ticks.map((tick, i) => (
             <g key={i}>
               <line
@@ -293,10 +324,10 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
               )}
             </g>
           ))}
-          
+
           <circle cx={cx} cy={cy} r="16" fill="#0a1015" stroke={T.cardBorder} strokeWidth="2" />
         </svg>
-        
+
         <motion.div
           style={{
             position: 'absolute',
@@ -367,37 +398,57 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
             <circle cx="22" cy="22" r="2" fill="#080808" />
           </svg>
         </motion.div>
-        
+
+        {/* Temperature and Oil status at top */}
         <div style={{ position: 'absolute', top: 90, left: 0, right: 0, textAlign: 'center' }}>
           <div style={{ fontSize: 11, color: T.textGreen }}>{tempText.split(' · ')[0]}</div>
           <div style={{ fontSize: 11, color: T.textGreen, marginTop: 2 }}>{tempText.split(' · ')[1]}</div>
         </div>
-        
-        <div style={{ position: 'absolute', left: 0, right: 0, top: cy + 40, textAlign: 'center' }}>
-          <div style={{ fontSize: 32, fontWeight: 600, color: T.textPrimary, textShadow: '0 0 20px rgba(200,230,255,0.3)', fontVariantNumeric: 'tabular-nums' }}>
-            {rpm.toLocaleString()}
+
+        {/* Motor hours in center (smaller than old RPM display) */}
+        <div style={{ position: 'absolute', left: 0, right: 0, top: cy + 30, textAlign: 'center' }}>
+          <div style={{ fontSize: 22, fontWeight: 600, color: T.textPrimary, textShadow: '0 0 15px rgba(200,230,255,0.2)', fontVariantNumeric: 'tabular-nums' }}>
+            {motorHours.toLocaleString()}
           </div>
-          <div style={{ fontSize: 10, color: T.textMuted, letterSpacing: 0.5, marginTop: -2 }}>ОБ/МИН</div>
+          <div style={{ fontSize: 9, color: T.textMuted, letterSpacing: 0.5, marginTop: 0 }}>МОТОЧАСЫ</div>
         </div>
-        
-        <div style={{ position: 'absolute', bottom: 20, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 32 }}>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 10, color: T.textMuted }}>ГАЗ</div>
-            <div style={{ fontSize: 18, fontWeight: 600, color: T.textPrimary }}>{throttle}%</div>
+
+        {/* Throttle left of center, Error right of center */}
+        <div style={{ position: 'absolute', bottom: 55, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 60 }}>
+          {/* Throttle - left side */}
+          <div style={{ textAlign: 'center', width: 50 }}>
+            <div style={{ fontSize: 9, color: T.textMuted }}>ГАЗ</div>
+            <div style={{ fontSize: 16, fontWeight: 600, color: T.textPrimary }}>{throttle}%</div>
           </div>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 10, color: T.textMuted }}>ПЕР.</div>
-            <div style={{ fontSize: 18, fontWeight: 600, color: T.textPrimary }}>{gear}</div>
+
+          {/* Error indicator - right side (only shown if faults) */}
+          <div style={{ textAlign: 'center', width: 50, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {hasFaults && (
+              <div style={{ filter: 'drop-shadow(0 0 8px rgba(255,60,60,0.8))' }}>
+                <svg style={{ width: 28, height: 28 }} viewBox="0 0 24 24" fill="none" stroke={T.textRed} strokeWidth="2">
+                  <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                  <line x1="12" y1="9" x2="12" y2="13"/>
+                  <circle cx="12" cy="17" r="0.6" fill={T.textRed}/>
+                </svg>
+              </div>
+            )}
           </div>
-          {hasFaults && (
-            <div style={{ display: 'flex', alignItems: 'center', filter: 'drop-shadow(0 0 8px rgba(255,60,60,0.8))' }}>
-              <svg style={{ width: 24, height: 24 }} viewBox="0 0 24 24" fill="none" stroke={T.textRed} strokeWidth="2">
-                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
-                <line x1="12" y1="9" x2="12" y2="13"/>
-                <circle cx="12" cy="17" r="0.6" fill={T.textRed}/>
+        </div>
+
+        {/* Fuel indicator at bottom */}
+        <div style={{ position: 'absolute', bottom: 18, left: 0, right: 0, textAlign: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+            {lowFuel && (
+              <svg style={{ width: 14, height: 14 }} viewBox="0 0 24 24" fill={T.textRed} stroke="none">
+                <path d="M12 2L2 22h20L12 2zm0 5l7.5 13h-15L12 7z"/>
+                <rect x="11" y="10" width="2" height="5"/>
+                <rect x="11" y="16" width="2" height="2"/>
               </svg>
+            )}
+            <div style={{ fontSize: 10, color: lowFuel ? T.textRed : T.textMuted, fontWeight: lowFuel ? 600 : 400 }}>
+              ТОПЛИВО {fuelLevel}%
             </div>
-          )}
+          </div>
         </div>
       </div>
       </div>
@@ -2063,7 +2114,7 @@ export default function YachtDashboard() {
         style={{ width: '100%', maxWidth: 1200, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, overflow: 'visible' }}
       >
         <div style={{ marginRight: -92, paddingTop: 20 }}>
-          <EngineCard side="Left" tempText="Темп 82°C · Масло ОК" rpm={Math.round(rpmLeft)} throttle={Math.round(throttleLeft)} gear={gearLeft} expanded={false} onToggleExpand={() => setExpandedEngine("Left")} />
+          <EngineCard side="Left" tempText="Темп 82°C · Масло ОК" rpm={Math.round(rpmLeft)} throttle={Math.round(throttleLeft)} gear={gearLeft} motorHours={1247} fuelLevel={75} expanded={false} onToggleExpand={() => setExpandedEngine("Left")} />
         </div>
 
         <div style={{ height: 400, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -2283,7 +2334,7 @@ export default function YachtDashboard() {
         </div>
 
         <div style={{ marginLeft: -92, paddingTop: 20 }}>
-          <EngineCard side="Right" tempText="Темп 81°C · Масло ОК" rpm={Math.round(rpmRight)} throttle={Math.round(throttleRight)} gear={gearRight} expanded={false} onToggleExpand={() => setExpandedEngine("Right")} />
+          <EngineCard side="Right" tempText="Темп 81°C · Масло ОК" rpm={Math.round(rpmRight)} throttle={Math.round(throttleRight)} gear={gearRight} motorHours={1198} fuelLevel={18} expanded={false} onToggleExpand={() => setExpandedEngine("Right")} />
         </div>
       </motion.div>
 
