@@ -1855,8 +1855,8 @@ export default function YachtDashboard() {
                 onClick={() => setExpandedSection('electric')}
                 style={{ flex: 1, height: 85, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 10, cursor: 'pointer' }}
               >
-                <div style={{ fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 10 }}>ЭЛЕКТРИКА</div>
-                <div style={{ display: 'flex', gap: 20, alignItems: 'center', marginBottom: 10 }}>
+                <div style={{ fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 16 }}>ЭЛЕКТРИКА</div>
+                <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: 16, fontWeight: 500, color: T.textSecondary }}>12.8 В</div>
                     <div style={{ fontSize: 9, color: T.textMuted }}>АКБ</div>
