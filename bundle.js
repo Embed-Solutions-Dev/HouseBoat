@@ -31861,6 +31861,20 @@
         transition: { duration: 0.6, delay: 0.2 },
         style: { width: "100%", maxWidth: 1048, marginBottom: 16, position: "relative", height: 88 }
       },
+      expandedSection && /* @__PURE__ */ import_react27.default.createElement(
+        "div",
+        {
+          onClick: () => setExpandedSection(null),
+          style: {
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 99
+          }
+        }
+      ),
       /* @__PURE__ */ import_react27.default.createElement(
         motion.div,
         {
@@ -31901,22 +31915,7 @@
                 borderRight: "1px solid rgba(80,100,120,0.2)"
               }
             },
-            /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 14, color: T.textSecondary, letterSpacing: 0.5, fontWeight: 500 } }, sectionData[expandedSection]?.title), /* @__PURE__ */ import_react27.default.createElement(
-              "button",
-              {
-                onClick: () => setExpandedSection(null),
-                style: {
-                  padding: "6px 16px",
-                  background: "rgba(80,110,140,0.2)",
-                  border: "1px solid rgba(100,130,160,0.3)",
-                  borderRadius: 12,
-                  color: "rgba(150,180,210,0.7)",
-                  fontSize: 11,
-                  cursor: "pointer"
-                }
-              },
-              "\u0417\u0430\u043A\u0440\u044B\u0442\u044C"
-            )),
+            /* @__PURE__ */ import_react27.default.createElement("div", { style: { marginBottom: 20 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 14, color: T.textSecondary, letterSpacing: 0.5, fontWeight: 500 } }, sectionData[expandedSection]?.title)),
             expandedSection === "tanks" ? (
               /* Кастомное отображение для ёмкостей */
               /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", gap: 32, flex: 1, alignItems: "stretch" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1.5, display: "flex", gap: 20, alignItems: "flex-start", justifyContent: "center", paddingTop: 8 } }, sectionData.tanks.containers.map((container, idx) => /* @__PURE__ */ import_react27.default.createElement(

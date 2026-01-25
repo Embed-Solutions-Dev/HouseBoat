@@ -1472,14 +1472,28 @@ export default function YachtDashboard() {
         )}
       </AnimatePresence>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: loadingPhase === 'done' ? 1 : 0, y: loadingPhase === 'done' ? 0 : 30 }}
         transition={{ duration: 0.6, delay: 0.2 }}
         style={{ width: '100%', maxWidth: 1048, marginBottom: 16, position: 'relative', height: 88 }}
       >
+        {/* Backdrop для закрытия раскрытого виджета */}
+        {expandedSection && (
+          <div
+            onClick={() => setExpandedSection(null)}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 99,
+            }}
+          />
+        )}
         {/* Верхняя панель - 5 разделов */}
-        <motion.div 
+        <motion.div
           animate={{
             height: expandedSection ? 380 : 88,
           }}
@@ -1521,24 +1535,10 @@ export default function YachtDashboard() {
                   borderRight: '1px solid rgba(80,100,120,0.2)',
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                <div style={{ marginBottom: 20 }}>
                   <div style={{ fontSize: 14, color: T.textSecondary, letterSpacing: 0.5, fontWeight: 500 }}>
                     {sectionData[expandedSection]?.title}
                   </div>
-                  <button
-                    onClick={() => setExpandedSection(null)}
-                    style={{
-                      padding: '6px 16px',
-                      background: 'rgba(80,110,140,0.2)',
-                      border: '1px solid rgba(100,130,160,0.3)',
-                      borderRadius: 12,
-                      color: 'rgba(150,180,210,0.7)',
-                      fontSize: 11,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    Закрыть
-                  </button>
                 </div>
                 
                 {/* Кастомное отображение для ёмкостей */}
