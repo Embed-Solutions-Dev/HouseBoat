@@ -552,7 +552,7 @@ const MiniEngineCard = memo(function MiniEngineCard({ side, rpm, fuelLevel, hasF
             {/* Надпись x1000 */}
             <text
               x="50"
-              y="72"
+              y="60"
               fill="rgba(150,160,180,0.6)"
               fontSize="6"
               fontWeight="500"
