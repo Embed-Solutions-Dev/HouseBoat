@@ -623,6 +623,17 @@ export default function YachtDashboard() {
   const [anchorModal, setAnchorModal] = useState(false);
   const [anchorPosition, setAnchorPosition] = useState(0);
   const [anchorMoving, setAnchorMoving] = useState(null);
+  const [depthHistory, setDepthHistory] = useState(() => {
+    // Инициализируем историю глубины (последние 40 точек)
+    const initial = [];
+    let depth = 8.5;
+    for (let i = 0; i < 40; i++) {
+      depth += (Math.random() - 0.5) * 0.8;
+      depth = Math.max(2, Math.min(15, depth));
+      initial.push(depth);
+    }
+    return initial;
+  });
 
   // Анимация загрузки
   useEffect(() => {
@@ -731,6 +742,19 @@ export default function YachtDashboard() {
     }, 100);
     return () => clearInterval(id);
   }, [anchorMoving]);
+
+  // Обновление данных глубины для эхолота
+  useEffect(() => {
+    if (!controls.navigation) return;
+    const id = setInterval(() => {
+      setDepthHistory(prev => {
+        const lastDepth = prev[prev.length - 1];
+        const newDepth = clamp(lastDepth + (Math.random() - 0.5) * 0.6, 2, 15);
+        return [...prev.slice(1), newDepth];
+      });
+    }, 300);
+    return () => clearInterval(id);
+  }, [controls.navigation]);
 
   const toggleControl = useCallback((k) => {
     if (k === 'anchor') {
@@ -2304,6 +2328,123 @@ export default function YachtDashboard() {
                 />
               </svg>
             </motion.div>
+
+            {/* Виджет глубины (эхолот) - появляется при навигации */}
+            <AnimatePresence>
+              {controls.navigation && !expandedEngine && (
+                <motion.div
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 50 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  style={{
+                    position: 'absolute',
+                    top: 42,
+                    left: 'calc(50% + 85px)',
+                    width: 138,
+                    height: 76,
+                    borderRadius: 16,
+                    background: 'linear-gradient(145deg, rgba(15,22,35,0.97) 0%, rgba(8,12,22,0.98) 50%, rgba(5,8,15,1) 100%)',
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 1px rgba(100,140,200,0.1)',
+                    border: '1px solid rgba(80,100,130,0.2)',
+                    overflow: 'hidden',
+                    zIndex: 3,
+                  }}
+                >
+                  {/* Внутренняя тень */}
+                  <div style={{
+                    position: 'absolute',
+                    inset: 3,
+                    borderRadius: 13,
+                    boxShadow: 'inset 0 4px 12px rgba(0,0,0,0.6)',
+                    pointerEvents: 'none',
+                  }} />
+
+                  {/* Заголовок */}
+                  <div style={{
+                    position: 'absolute',
+                    top: 6,
+                    left: 0,
+                    right: 0,
+                    textAlign: 'center',
+                    fontSize: 8,
+                    color: 'rgba(150,180,210,0.6)',
+                    letterSpacing: 1,
+                    fontWeight: 500,
+                  }}>
+                    ГЛУБИНА
+                  </div>
+
+                  {/* Текущая глубина */}
+                  <div style={{
+                    position: 'absolute',
+                    top: 18,
+                    left: 8,
+                    display: 'flex',
+                    alignItems: 'baseline',
+                    gap: 2,
+                  }}>
+                    <span style={{
+                      fontSize: 22,
+                      fontWeight: 400,
+                      color: '#50a0ff',
+                      textShadow: '0 0 15px rgba(80,160,255,0.4)',
+                    }}>
+                      {depthHistory[depthHistory.length - 1].toFixed(1)}
+                    </span>
+                    <span style={{
+                      fontSize: 9,
+                      color: 'rgba(80,160,255,0.5)',
+                    }}>
+                      м
+                    </span>
+                  </div>
+
+                  {/* График глубины */}
+                  <svg
+                    style={{
+                      position: 'absolute',
+                      bottom: 6,
+                      left: 6,
+                      right: 6,
+                      height: 28,
+                    }}
+                    viewBox="0 0 126 28"
+                    preserveAspectRatio="none"
+                  >
+                    {/* Линии сетки */}
+                    <line x1="0" y1="7" x2="126" y2="7" stroke="rgba(80,160,255,0.1)" strokeWidth="0.5" />
+                    <line x1="0" y1="14" x2="126" y2="14" stroke="rgba(80,160,255,0.1)" strokeWidth="0.5" />
+                    <line x1="0" y1="21" x2="126" y2="21" stroke="rgba(80,160,255,0.1)" strokeWidth="0.5" />
+
+                    {/* Градиент для заливки под графиком */}
+                    <defs>
+                      <linearGradient id="depthGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stopColor="rgba(80,160,255,0.3)" />
+                        <stop offset="100%" stopColor="rgba(80,160,255,0)" />
+                      </linearGradient>
+                    </defs>
+
+                    {/* Заливка под графиком */}
+                    <path
+                      d={`M 0 ${((depthHistory[0] - 2) / 13) * 28} ${depthHistory.map((d, i) => `L ${(i / (depthHistory.length - 1)) * 126} ${((d - 2) / 13) * 28}`).join(' ')} L 126 28 L 0 28 Z`}
+                      fill="url(#depthGradient)"
+                    />
+
+                    {/* Линия графика */}
+                    <path
+                      d={`M 0 ${((depthHistory[0] - 2) / 13) * 28} ${depthHistory.map((d, i) => `L ${(i / (depthHistory.length - 1)) * 126} ${((d - 2) / 13) * 28}`).join(' ')}`}
+                      fill="none"
+                      stroke="#50a0ff"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      style={{ filter: 'drop-shadow(0 0 3px rgba(80,160,255,0.6))' }}
+                    />
+                  </svg>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 

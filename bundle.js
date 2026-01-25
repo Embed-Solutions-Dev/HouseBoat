@@ -31165,6 +31165,16 @@
     const [anchorModal, setAnchorModal] = (0, import_react27.useState)(false);
     const [anchorPosition, setAnchorPosition] = (0, import_react27.useState)(0);
     const [anchorMoving, setAnchorMoving] = (0, import_react27.useState)(null);
+    const [depthHistory, setDepthHistory] = (0, import_react27.useState)(() => {
+      const initial = [];
+      let depth = 8.5;
+      for (let i = 0; i < 40; i++) {
+        depth += (Math.random() - 0.5) * 0.8;
+        depth = Math.max(2, Math.min(15, depth));
+        initial.push(depth);
+      }
+      return initial;
+    });
     (0, import_react27.useEffect)(() => {
       const timer1 = setTimeout(() => setLoadingPhase("transition"), 2800);
       const timer2 = setTimeout(() => setLoadingPhase("done"), 3400);
@@ -31264,6 +31274,17 @@
       }, 100);
       return () => clearInterval(id3);
     }, [anchorMoving]);
+    (0, import_react27.useEffect)(() => {
+      if (!controls.navigation) return;
+      const id3 = setInterval(() => {
+        setDepthHistory((prev) => {
+          const lastDepth = prev[prev.length - 1];
+          const newDepth = clamp2(lastDepth + (Math.random() - 0.5) * 0.6, 2, 15);
+          return [...prev.slice(1), newDepth];
+        });
+      }, 300);
+      return () => clearInterval(id3);
+    }, [controls.navigation]);
     const toggleControl = (0, import_react27.useCallback)((k) => {
       if (k === "anchor") {
         setAnchorModal(true);
@@ -32416,7 +32437,99 @@
             d: "M1798.09 319.87c-4.35,-12.65 -31.56,-22.61 -26.42,-5.52 2.53,29.43 7.74,74.72 -23.19,131.9 -34.39,29.27 5.18,34.93 43.53,16.19 64.03,-24.99 12.21,-119.88 6.08,-142.57zm-498.41 -195.06l0 0 -0.42 0 0 54.51 47.15 0c-0.78,-30.15 -21.5,-54.51 -46.73,-54.51zm-17.11 0.05l0 0c-24.28,1.3 -43.89,25.15 -44.65,54.46l44.65 0 0 -54.46zm-44.67 74.57l0 0 0 51 44.67 0 0 -51 -44.67 0zm61.36 51l0 0 47.17 0 0 -51 -47.17 0 0 51zm488.43 -118.7l0 0c-75.64,39.65 -105.96,79.31 -167.43,107.06 -14.5,6.53 -30.65,12.67 -48.33,18.34l0 -102.15c0,-34.71 -28.38,-63.1 -63.09,-63.1 -34.71,0 -63.1,28.39 -63.1,63.1l0 130.53c-114.9,17.14 -260.31,19.42 -421.05,-2.18 209.11,99.93 576.41,33.58 705.24,-76.57 38.48,-32.89 101.67,-75.25 149.43,-91.4 151.13,-55.09 221.23,-5.03 260.55,84.96 -7.9,31.59 -71.1,31.12 -109.89,46.44 -109.8,30.41 -134.33,31.14 -244.26,11.66 -12.86,-0.26 -32.74,10.03 -27.17,24.4 10.58,216.03 -71.36,208.7 -255.45,232.26 -61.99,2.97 -1.08,-78.65 13.4,-87.72 46.13,-48.5 75.84,-52.86 86.21,-69.64 14.88,-26.72 3.03,-38.46 -31.76,-15.84 -142.22,60.11 -308.64,63.74 -496.17,18.12 -193.15,147.77 -382.49,16.88 -304.72,-13.59 67.62,-23.73 138.17,-42.34 211.83,-55.51l-26.05 -41.91c50.95,-25.54 95,-62.9 135.37,-106.56 212.3,-195.78 446.39,-180.44 696.44,-10.7z"
           }
         ))
-      ))),
+      ), /* @__PURE__ */ import_react27.default.createElement(AnimatePresence, null, controls.navigation && !expandedEngine && /* @__PURE__ */ import_react27.default.createElement(
+        motion.div,
+        {
+          initial: { opacity: 0, x: 50 },
+          animate: { opacity: 1, x: 0 },
+          exit: { opacity: 0, x: 50 },
+          transition: { type: "spring", stiffness: 300, damping: 30 },
+          style: {
+            position: "absolute",
+            top: 42,
+            left: "calc(50% + 85px)",
+            width: 138,
+            height: 76,
+            borderRadius: 16,
+            background: "linear-gradient(145deg, rgba(15,22,35,0.97) 0%, rgba(8,12,22,0.98) 50%, rgba(5,8,15,1) 100%)",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 1px rgba(100,140,200,0.1)",
+            border: "1px solid rgba(80,100,130,0.2)",
+            overflow: "hidden",
+            zIndex: 3
+          }
+        },
+        /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+          position: "absolute",
+          inset: 3,
+          borderRadius: 13,
+          boxShadow: "inset 0 4px 12px rgba(0,0,0,0.6)",
+          pointerEvents: "none"
+        } }),
+        /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+          position: "absolute",
+          top: 6,
+          left: 0,
+          right: 0,
+          textAlign: "center",
+          fontSize: 8,
+          color: "rgba(150,180,210,0.6)",
+          letterSpacing: 1,
+          fontWeight: 500
+        } }, "\u0413\u041B\u0423\u0411\u0418\u041D\u0410"),
+        /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+          position: "absolute",
+          top: 18,
+          left: 8,
+          display: "flex",
+          alignItems: "baseline",
+          gap: 2
+        } }, /* @__PURE__ */ import_react27.default.createElement("span", { style: {
+          fontSize: 22,
+          fontWeight: 400,
+          color: "#50a0ff",
+          textShadow: "0 0 15px rgba(80,160,255,0.4)"
+        } }, depthHistory[depthHistory.length - 1].toFixed(1)), /* @__PURE__ */ import_react27.default.createElement("span", { style: {
+          fontSize: 9,
+          color: "rgba(80,160,255,0.5)"
+        } }, "\u043C")),
+        /* @__PURE__ */ import_react27.default.createElement(
+          "svg",
+          {
+            style: {
+              position: "absolute",
+              bottom: 6,
+              left: 6,
+              right: 6,
+              height: 28
+            },
+            viewBox: "0 0 126 28",
+            preserveAspectRatio: "none"
+          },
+          /* @__PURE__ */ import_react27.default.createElement("line", { x1: "0", y1: "7", x2: "126", y2: "7", stroke: "rgba(80,160,255,0.1)", strokeWidth: "0.5" }),
+          /* @__PURE__ */ import_react27.default.createElement("line", { x1: "0", y1: "14", x2: "126", y2: "14", stroke: "rgba(80,160,255,0.1)", strokeWidth: "0.5" }),
+          /* @__PURE__ */ import_react27.default.createElement("line", { x1: "0", y1: "21", x2: "126", y2: "21", stroke: "rgba(80,160,255,0.1)", strokeWidth: "0.5" }),
+          /* @__PURE__ */ import_react27.default.createElement("defs", null, /* @__PURE__ */ import_react27.default.createElement("linearGradient", { id: "depthGradient", x1: "0%", y1: "0%", x2: "0%", y2: "100%" }, /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "0%", stopColor: "rgba(80,160,255,0.3)" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "100%", stopColor: "rgba(80,160,255,0)" }))),
+          /* @__PURE__ */ import_react27.default.createElement(
+            "path",
+            {
+              d: `M 0 ${(depthHistory[0] - 2) / 13 * 28} ${depthHistory.map((d, i) => `L ${i / (depthHistory.length - 1) * 126} ${(d - 2) / 13 * 28}`).join(" ")} L 126 28 L 0 28 Z`,
+              fill: "url(#depthGradient)"
+            }
+          ),
+          /* @__PURE__ */ import_react27.default.createElement(
+            "path",
+            {
+              d: `M 0 ${(depthHistory[0] - 2) / 13 * 28} ${depthHistory.map((d, i) => `L ${i / (depthHistory.length - 1) * 126} ${(d - 2) / 13 * 28}`).join(" ")}`,
+              fill: "none",
+              stroke: "#50a0ff",
+              strokeWidth: "1.5",
+              strokeLinecap: "round",
+              strokeLinejoin: "round",
+              style: { filter: "drop-shadow(0 0 3px rgba(80,160,255,0.6))" }
+            }
+          )
+        )
+      )))),
       /* @__PURE__ */ import_react27.default.createElement(
         motion.div,
         {
