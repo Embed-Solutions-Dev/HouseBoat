@@ -31586,7 +31586,7 @@
         transition: { duration: 0.3 },
         style: {
           position: "absolute",
-          top: 860,
+          top: 880,
           left: "50%",
           transform: "translateX(-50%)",
           width: "100%",
@@ -31785,7 +31785,7 @@
       ))))), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
         position: "absolute",
         bottom: 80,
-        left: 80,
+        left: 130,
         zIndex: 10
       } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
         display: "flex",
@@ -31818,7 +31818,7 @@
       } }, "500 \u043C"))), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
         position: "absolute",
         bottom: 80,
-        right: 80,
+        right: 130,
         zIndex: 10,
         textAlign: "right"
       } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {

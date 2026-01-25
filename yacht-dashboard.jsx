@@ -1132,7 +1132,7 @@ export default function YachtDashboard() {
             transition={{ duration: 0.3 }}
             style={{
               position: 'absolute',
-              top: 860,
+              top: 880,
               left: '50%',
               transform: 'translateX(-50%)',
               width: '100%',
@@ -1365,7 +1365,7 @@ export default function YachtDashboard() {
               <div style={{
                 position: 'absolute',
                 bottom: 80,
-                left: 80,
+                left: 130,
                 zIndex: 10,
               }}>
                 <div style={{
@@ -1409,7 +1409,7 @@ export default function YachtDashboard() {
               <div style={{
                 position: 'absolute',
                 bottom: 80,
-                right: 80,
+                right: 130,
                 zIndex: 10,
                 textAlign: 'right',
               }}>
