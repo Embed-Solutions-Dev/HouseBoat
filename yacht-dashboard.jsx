@@ -2068,7 +2068,7 @@ export default function YachtDashboard() {
             </div>
           </div>
 
-          <div style={{ position: 'relative', width: 230, height: 127, marginTop: 4 }}>
+          <div style={{ position: 'relative', width: 230, height: 127, marginTop: 16 }}>
 
             {/* Стекляшка - расширяется от центра */}
             {(() => {
@@ -2268,7 +2268,7 @@ export default function YachtDashboard() {
             {/* Лого houseboat - плоское темное */}
             <div style={{
               position: 'absolute',
-              bottom: -58,
+              bottom: -82,
               left: '50%',
               transform: 'translateX(-50%)',
               zIndex: 5,
