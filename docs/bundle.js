@@ -31307,7 +31307,10 @@
     const CameraView = ({ cam, isExpanded, onClick }) => /* @__PURE__ */ import_react27.default.createElement(
       "div",
       {
-        onClick,
+        onPointerDown: (e) => {
+          e.stopPropagation();
+          onClick();
+        },
         style: {
           background: "linear-gradient(180deg, rgba(12,18,28,0.95) 0%, rgba(6,10,18,0.98) 100%)",
           borderRadius: isExpanded ? 24 : 16,
@@ -31317,7 +31320,8 @@
           position: "relative",
           cursor: "pointer",
           height: isExpanded ? "100%" : "auto",
-          aspectRatio: isExpanded ? void 0 : "16/10"
+          aspectRatio: isExpanded ? void 0 : "16/10",
+          touchAction: "manipulation"
         }
       },
       /* @__PURE__ */ import_react27.default.createElement("div", { style: {

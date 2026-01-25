@@ -793,7 +793,10 @@ export default function YachtDashboard() {
   // Компонент камеры
   const CameraView = ({ cam, isExpanded, onClick }) => (
     <div
-      onClick={onClick}
+      onPointerDown={(e) => {
+        e.stopPropagation();
+        onClick();
+      }}
       style={{
         background: 'linear-gradient(180deg, rgba(12,18,28,0.95) 0%, rgba(6,10,18,0.98) 100%)',
         borderRadius: isExpanded ? 24 : 16,
@@ -806,6 +809,7 @@ export default function YachtDashboard() {
         cursor: 'pointer',
         height: isExpanded ? '100%' : 'auto',
         aspectRatio: isExpanded ? undefined : '16/10',
+        touchAction: 'manipulation',
       }}
     >
       {/* Имитация видео */}
