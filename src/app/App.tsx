@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { SPLASH_LOGO_DURATION, SPLASH_TRANSITION_DURATION } from '@/config/constants';
+import { Dashboard } from './layouts/Dashboard';
 
 type Phase = 'logo' | 'transition' | 'ready';
 
@@ -51,23 +52,6 @@ function SplashScreen({ phase }: { phase: Phase }) {
         </h1>
         <p className="text-yacht-secondary">Dashboard v2.0</p>
       </motion.div>
-    </motion.div>
-  );
-}
-
-function Dashboard() {
-  return (
-    <motion.div
-      className="h-screen p-4"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
-      <div className="h-full flex items-center justify-center">
-        <p className="text-yacht-secondary text-xl">
-          Dashboard components coming soon...
-        </p>
-      </div>
     </motion.div>
   );
 }
