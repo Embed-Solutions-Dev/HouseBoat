@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { Tachometer } from './Tachometer';
 import type { EngineCardProps } from '../types';
 
-export const EngineCard = memo(function EngineCard({ id, data, label }: EngineCardProps) {
+export const EngineCard = memo(function EngineCard({ data, label }: EngineCardProps) {
   return (
     <div className="flex flex-col items-center">
       <Tachometer

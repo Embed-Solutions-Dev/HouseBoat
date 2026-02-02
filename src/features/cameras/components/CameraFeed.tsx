@@ -4,7 +4,6 @@ import { cn } from '@/utils/cn';
 import type { CameraFeedProps } from '../types';
 
 export const CameraFeed = memo(function CameraFeed({
-  id,
   feed,
   onClick,
   selected,

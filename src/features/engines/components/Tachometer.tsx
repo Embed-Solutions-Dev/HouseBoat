@@ -126,8 +126,8 @@ export const Tachometer = memo(function Tachometer({
             marginTop: -(r - 20),
             transformOrigin: 'center bottom',
             boxShadow: '0 0 10px rgba(208,48,64,0.5)',
+            rotate: spring,
           }}
-          animate={{ rotate: spring }}
         />
 
         {/* Center hub */}
