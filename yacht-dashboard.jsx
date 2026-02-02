@@ -142,27 +142,28 @@ const TopMetric = memo(function TopMetric({ icon: Icon, value, label, tone = "mu
   );
 });
 
-const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gear, expanded, onToggleExpand }) {
+const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gear, motorHours, fuelLevel, expanded, onToggleExpand }) {
   const faults = side === "Left" ? [] : ["E102 - Temp sensor intermittent"];
   const hasFaults = faults.length > 0;
-  
+  const lowFuel = fuelLevel < 25;
+
   const v = clamp(rpm, 0, 4000);
   const max = 4000;
   const ratio = v / max;
-  
+
   const startAngle = 225;
   const sweep = 270;
   const endAngle = -45;
-  
+
   const mv = useMotionValue(-startAngle);
   const spring = useSpring(mv, { stiffness: 80, damping: 15 });
-  
+
   useEffect(() => {
     const targetAngle = -startAngle + ratio * sweep;
     mv.set(targetAngle);
   }, [ratio, mv]);
 
-  const size = 340;
+  const size = 310;
   const cx = size / 2;
   const cy = size / 2;
   const r = size / 2 - 8;
@@ -170,14 +171,15 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
   const majorStep = 500;
   const minorStep = 100;
   const ticks = [];
-  
+
   for (let val = 0; val <= max; val += minorStep) {
     const t = val / max;
     const angle = (startAngle - t * sweep) * Math.PI / 180;
     const isMajor = val % majorStep === 0;
-    const innerR = isMajor ? r - 18 : r - 10;
+    const isHalf = val % 1000 !== 0 && val % 500 === 0; // половинчатые значения (500, 1500, 2500, 3500)
+    const innerR = isMajor ? (isHalf ? r - 14 : r - 18) : r - 10;
     const outerR = r;
-    
+
     ticks.push({
       x1: cx + innerR * Math.cos(angle),
       y1: cy - innerR * Math.sin(angle),
@@ -185,25 +187,38 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
       y2: cy - outerR * Math.sin(angle),
       isMajor,
       value: val,
-      labelX: cx + (r - 34) * Math.cos(angle),
-      labelY: cy - (r - 34) * Math.sin(angle),
+      labelX: cx + (r - 38) * Math.cos(angle),
+      labelY: cy - (r - 38) * Math.sin(angle),
       isRedZone: val >= max * 0.8,
     });
   }
 
   const redZoneStartAngle = startAngle - 0.8 * sweep;
   const arcR = r - 5;
-  const needleLength = r - 40;
+  const needleLength = r - 20;
+
+  // Fuel arc parameters (bottom arc - 0% left, 100% right)
+  const fuelArcR = r - 5;
+  const fuelStartAngle = -125; // degrees (left side, 0%)
+  const fuelEndAngle = -55; // degrees (right side, 100%)
+  const fuelSweep = 70; // total sweep for fuel arc
+  const fuelRatio = clamp(fuelLevel, 0, 100) / 100;
+  const fuelFilledAngle = fuelStartAngle + fuelRatio * fuelSweep;
+  const fuelColor = lowFuel ? T.textAmber : T.gaugeActive;
 
   return (
     <div style={{ minHeight: 360, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'visible' }}>
-      <div style={{ 
-        position: 'relative', 
-        width: size + 16, 
-        height: size + 16, 
-        borderRadius: '50%', 
+      <div style={{
+        position: 'relative',
+        width: size + 16,
+        height: size + 16,
+        borderRadius: '50%',
         background: 'linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.8)',
+        boxShadow: hasFaults
+          ? '0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.8), 0 0 30px rgba(224,64,80,0.6), 0 0 60px rgba(224,64,80,0.3)'
+          : lowFuel
+            ? '0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.8), 0 0 30px rgba(232,160,48,0.5), 0 0 60px rgba(232,160,48,0.25)'
+            : '0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.8)',
         padding: 8,
       }}>
         <button
@@ -214,10 +229,10 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
             right: 13,
             width: 32,
             height: 32,
-            background: hasFaults 
+            background: hasFaults
               ? 'linear-gradient(145deg, rgba(224,64,80,0.5) 0%, rgba(180,40,60,0.4) 100%)'
               : 'linear-gradient(145deg, rgba(80,110,140,0.4) 0%, rgba(60,90,120,0.3) 100%)',
-            border: hasFaults 
+            border: hasFaults
               ? '1px solid rgba(224,64,80,0.5)'
               : '1px solid rgba(100,130,160,0.3)',
             borderRadius: '50%',
@@ -227,30 +242,31 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: hasFaults 
+            boxShadow: hasFaults
               ? '0 2px 6px rgba(224,64,80,0.3)'
               : '0 2px 6px rgba(0,0,0,0.2)',
           }}
         >
-          <span style={{ 
-            color: hasFaults ? 'rgba(224,64,80,0.9)' : 'rgba(150,180,210,0.6)', 
-            fontSize: 18, 
-            fontWeight: 600, 
+          <span style={{
+            color: hasFaults ? 'rgba(224,64,80,0.9)' : 'rgba(150,180,210,0.6)',
+            fontSize: 18,
+            fontWeight: 600,
             fontStyle: 'italic',
             fontFamily: 'Georgia, serif',
           }}>i</span>
         </button>
-        
-        <div style={{ 
-          position: 'relative', 
-          width: size, 
-          height: size, 
-          borderRadius: '50%', 
-          background: T.cardBg, 
+
+        <div style={{
+          position: 'relative',
+          width: size,
+          height: size,
+          borderRadius: '50%',
+          background: T.cardBg,
           boxShadow: 'inset 0 4px 16px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.2)',
         }}>
-        
+
         <svg viewBox={`0 0 ${size} ${size}`} style={{ position: 'absolute', inset: 0, overflow: 'visible' }}>
+          {/* Main RPM arc background */}
           <path
             d={`M ${cx + arcR * Math.cos(startAngle * Math.PI / 180)} ${cy - arcR * Math.sin(startAngle * Math.PI / 180)} A ${arcR} ${arcR} 0 1 1 ${cx + arcR * Math.cos(endAngle * Math.PI / 180)} ${cy - arcR * Math.sin(endAngle * Math.PI / 180)}`}
             fill="none"
@@ -258,7 +274,8 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
             strokeWidth="4"
             strokeLinecap="round"
           />
-          
+
+          {/* Red zone on RPM arc */}
           <path
             d={`M ${cx + arcR * Math.cos(redZoneStartAngle * Math.PI / 180)} ${cy - arcR * Math.sin(redZoneStartAngle * Math.PI / 180)} A ${arcR} ${arcR} 0 0 1 ${cx + arcR * Math.cos(endAngle * Math.PI / 180)} ${cy - arcR * Math.sin(endAngle * Math.PI / 180)}`}
             fill="none"
@@ -266,7 +283,27 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
             strokeWidth="4"
             strokeLinecap="round"
           />
-          
+
+          {/* Fuel arc background (bottom, closing the circle) */}
+          <path
+            d={`M ${cx + fuelArcR * Math.cos(fuelStartAngle * Math.PI / 180)} ${cy - fuelArcR * Math.sin(fuelStartAngle * Math.PI / 180)} A ${fuelArcR} ${fuelArcR} 0 0 0 ${cx + fuelArcR * Math.cos(fuelEndAngle * Math.PI / 180)} ${cy - fuelArcR * Math.sin(fuelEndAngle * Math.PI / 180)}`}
+            fill="none"
+            stroke={T.gaugeBg}
+            strokeWidth="6"
+            strokeLinecap="round"
+          />
+
+          {/* Fuel arc filled (0% left, 100% right) */}
+          {fuelRatio > 0 && (
+            <path
+              d={`M ${cx + fuelArcR * Math.cos(fuelStartAngle * Math.PI / 180)} ${cy - fuelArcR * Math.sin(fuelStartAngle * Math.PI / 180)} A ${fuelArcR} ${fuelArcR} 0 0 0 ${cx + fuelArcR * Math.cos(fuelFilledAngle * Math.PI / 180)} ${cy - fuelArcR * Math.sin(fuelFilledAngle * Math.PI / 180)}`}
+              fill="none"
+              stroke={fuelColor}
+              strokeWidth="6"
+              strokeLinecap="round"
+            />
+          )}
+
           {ticks.map((tick, i) => (
             <g key={i}>
               <line
@@ -278,12 +315,12 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
                 strokeWidth={tick.isMajor ? 2.5 : 1}
                 strokeLinecap="round"
               />
-              {tick.isMajor && (
+              {tick.value % 1000 === 0 && (
                 <text
                   x={tick.labelX}
                   y={tick.labelY}
-                  fill={tick.isRedZone ? T.gaugeRed : T.textSecondary}
-                  fontSize="13"
+                  fill={tick.isRedZone ? T.gaugeRed : T.textPrimary}
+                  fontSize="24"
                   fontWeight="600"
                   textAnchor="middle"
                   dominantBaseline="middle"
@@ -293,10 +330,10 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
               )}
             </g>
           ))}
-          
+
           <circle cx={cx} cy={cy} r="16" fill="#0a1015" stroke={T.cardBorder} strokeWidth="2" />
         </svg>
-        
+
         <motion.div
           style={{
             position: 'absolute',
@@ -367,39 +404,214 @@ const EngineCard = memo(function EngineCard({ side, tempText, rpm, throttle, gea
             <circle cx="22" cy="22" r="2" fill="#080808" />
           </svg>
         </motion.div>
-        
-        <div style={{ position: 'absolute', top: 90, left: 0, right: 0, textAlign: 'center' }}>
-          <div style={{ fontSize: 14, fontWeight: 600, color: T.textSecondary }}>{side === "Left" ? "Левый" : "Правый"} двигатель</div>
-          <div style={{ fontSize: 11, color: T.textGreen, marginTop: 2 }}>{tempText}</div>
+
+        {/* Throttle on horizontal center line, 66px left of center */}
+        <div style={{ position: 'absolute', top: cy, left: cx - 66, transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
+          <div style={{ fontSize: 9, color: T.textMuted }}>ГАЗ</div>
+          <div style={{ fontSize: 16, fontWeight: 600, color: T.textSecondary }}>{throttle}%</div>
         </div>
-        
-        <div style={{ position: 'absolute', left: 0, right: 0, top: cy + 40, textAlign: 'center' }}>
-          <div style={{ fontSize: 32, fontWeight: 600, color: T.textPrimary, textShadow: '0 0 20px rgba(200,230,255,0.3)', fontVariantNumeric: 'tabular-nums' }}>
-            {rpm.toLocaleString()}
-          </div>
-          <div style={{ fontSize: 10, color: T.textMuted, letterSpacing: 0.5, marginTop: -2 }}>ОБ/МИН</div>
+
+        {/* Motor hours - 66px right of center (same size as throttle) */}
+        <div style={{ position: 'absolute', top: cy, left: cx + 66, transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
+          <div style={{ fontSize: 9, color: T.textMuted }}>МОТОЧАСЫ</div>
+          <div style={{ fontSize: 16, fontWeight: 600, color: T.textSecondary, fontVariantNumeric: 'tabular-nums' }}>{motorHours.toLocaleString()}</div>
         </div>
-        
-        <div style={{ position: 'absolute', bottom: 20, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 32 }}>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 10, color: T.textMuted }}>ГАЗ</div>
-            <div style={{ fontSize: 18, fontWeight: 600, color: T.textPrimary }}>{throttle}%</div>
-          </div>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 10, color: T.textMuted }}>ПЕР.</div>
-            <div style={{ fontSize: 18, fontWeight: 600, color: T.textPrimary }}>{gear}</div>
-          </div>
-          {hasFaults && (
-            <div style={{ display: 'flex', alignItems: 'center', filter: 'drop-shadow(0 0 8px rgba(255,60,60,0.8))' }}>
-              <svg style={{ width: 24, height: 24 }} viewBox="0 0 24 24" fill="none" stroke={T.textRed} strokeWidth="2">
+
+        {/* Status indicator - moved up */}
+        <div style={{ position: 'absolute', bottom: 202, left: '50%', transform: 'translateX(-50%)', textAlign: 'center' }}>
+          {hasFaults ? (
+            <div style={{ filter: 'drop-shadow(0 0 8px rgba(255,60,60,0.8))' }}>
+              <svg style={{ width: 28, height: 28 }} viewBox="0 0 24 24" fill="none" stroke={T.textRed} strokeWidth="2">
                 <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
                 <line x1="12" y1="9" x2="12" y2="13"/>
                 <circle cx="12" cy="17" r="0.6" fill={T.textRed}/>
               </svg>
             </div>
+          ) : (
+            <>
+              <div style={{ fontSize: 11, color: T.textGreen }}>{tempText.split(' · ')[0]}</div>
+              <div style={{ fontSize: 11, color: T.textGreen, marginTop: 2 }}>{tempText.split(' · ')[1]}</div>
+            </>
           )}
         </div>
+
+        {/* RPM multiplier label */}
+        <div style={{ position: 'absolute', bottom: 102, left: '50%', transform: 'translateX(-50%)', textAlign: 'center' }}>
+          <div style={{ fontSize: 10, color: 'rgba(150,160,180,0.6)', fontWeight: 500 }}>×1000 об/мин</div>
+        </div>
+
+        {/* Fuel pump icon at bottom */}
+        <div style={{ position: 'absolute', bottom: 28, left: 0, right: 0, textAlign: 'center' }}>
+          <svg style={{ width: 27, height: 27 }} viewBox="0 0 24 24" fill={lowFuel ? T.textAmber : T.textMuted} stroke="none">
+            <path d="M19.77 7.23l.01-.01-3.72-3.72L15 4.56l2.11 2.11c-.94.36-1.61 1.26-1.61 2.33 0 1.38 1.12 2.5 2.5 2.5.36 0 .69-.08 1-.21v7.21c0 .55-.45 1-1 1s-1-.45-1-1V14c0-1.1-.9-2-2-2h-1V5c0-1.1-.9-2-2-2H6c-1.1 0-2 .9-2 2v16h10v-7.5h1.5v5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V9c0-.69-.28-1.32-.73-1.77zM12 10H6V5h6v5z"/>
+          </svg>
+        </div>
       </div>
+      </div>
+    </div>
+  );
+});
+
+// Мини-версия виджета двигателя (как компас/киль)
+const MiniEngineCard = memo(function MiniEngineCard({ side, rpm, fuelLevel, hasFaults }) {
+  const lowFuel = fuelLevel < 25;
+  const fuelColor = lowFuel ? T.textAmber : T.gaugeActive;
+
+  const v = clamp(rpm, 0, 4000);
+  const max = 4000;
+  const ratio = v / max;
+
+  const startAngle = 225;
+  const sweep = 270;
+
+  const mv = useMotionValue(-startAngle);
+  const spring = useSpring(mv, { stiffness: 80, damping: 15 });
+
+  useEffect(() => {
+    const targetAngle = -startAngle + ratio * sweep;
+    mv.set(targetAngle);
+  }, [ratio, mv]);
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18 }}>
+      {/* Полоска топлива над виджетом */}
+      <div style={{ width: 135, display: 'flex', alignItems: 'center', gap: 6 }}>
+        <svg style={{ width: 14, height: 14, flexShrink: 0 }} viewBox="0 0 24 24" fill={fuelColor} stroke="none">
+          <path d="M19.77 7.23l.01-.01-3.72-3.72L15 4.56l2.11 2.11c-.94.36-1.61 1.26-1.61 2.33 0 1.38 1.12 2.5 2.5 2.5.36 0 .69-.08 1-.21v7.21c0 .55-.45 1-1 1s-1-.45-1-1V14c0-1.1-.9-2-2-2h-1V5c0-1.1-.9-2-2-2H6c-1.1 0-2 .9-2 2v16h10v-7.5h1.5v5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V9c0-.69-.28-1.32-.73-1.77zM12 10H6V5h6v5z"/>
+        </svg>
+        <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'rgba(30,45,60,0.6)', border: '1px solid rgba(80,100,120,0.3)', overflow: 'hidden' }}>
+          <div style={{ width: `${fuelLevel}%`, height: '100%', background: `linear-gradient(90deg, ${fuelColor} 0%, ${fuelColor}88 100%)`, borderRadius: 2 }} />
+        </div>
+        <div style={{ fontSize: 10, color: fuelColor, width: 28, textAlign: 'right' }}>{fuelLevel}%</div>
+      </div>
+
+      {/* Мини тахометр */}
+      <div style={{
+        width: 135,
+        height: 135,
+        borderRadius: '50%',
+        background: 'linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)',
+        boxShadow: hasFaults
+          ? '0 4px 16px rgba(0,0,0,0.5), 0 0 20px rgba(224,64,80,0.7), 0 0 40px rgba(224,64,80,0.4)'
+          : lowFuel
+            ? '0 4px 16px rgba(0,0,0,0.5), 0 0 20px rgba(232,160,48,0.6), 0 0 40px rgba(232,160,48,0.3)'
+            : '0 4px 16px rgba(0,0,0,0.5)',
+        padding: 5,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <div style={{
+          width: '100%',
+          height: '100%',
+          borderRadius: '50%',
+          background: 'linear-gradient(145deg, rgba(10,15,25,0.98) 0%, rgba(5,8,15,1) 100%)',
+          position: 'relative',
+          overflow: 'hidden',
+        }}>
+          {/* Шкала */}
+          <svg viewBox="0 0 100 100" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
+            {/* Мелкие риски каждые 100 об/мин */}
+            {Array.from({ length: 41 }).map((_, i) => {
+              const val = i * 100;
+              const t = val / max;
+              const angle = (startAngle - t * sweep) * Math.PI / 180;
+              const isMajor = val % 1000 === 0;
+              const isMedium = val % 500 === 0 && !isMajor;
+              const r1 = isMajor ? 42 : isMedium ? 43.5 : 45;
+              const r2 = 46;
+              const isRedZone = val >= max * 0.8;
+              return (
+                <line
+                  key={i}
+                  x1={50 + r1 * Math.cos(angle)}
+                  y1={50 - r1 * Math.sin(angle)}
+                  x2={50 + r2 * Math.cos(angle)}
+                  y2={50 - r2 * Math.sin(angle)}
+                  stroke={isRedZone ? (isMajor ? 'rgba(224,80,96,1)' : isMedium ? 'rgba(224,80,96,0.85)' : 'rgba(224,80,96,0.6)') : isMajor ? 'rgba(200,210,230,0.9)' : isMedium ? 'rgba(180,190,210,0.7)' : 'rgba(150,165,185,0.5)'}
+                  strokeWidth={isMajor ? 1.5 : isMedium ? 1 : 0.75}
+                  strokeLinecap="round"
+                />
+              );
+            })}
+            {/* Цифры 0-4 */}
+            {[0, 1, 2, 3, 4].map((num) => {
+              const t = (num * 1000) / max;
+              const angle = (startAngle - t * sweep) * Math.PI / 180;
+              const isRedZone = num >= 4 * 0.8;
+              return (
+                <text
+                  key={num}
+                  x={50 + 35 * Math.cos(angle)}
+                  y={50 - 35 * Math.sin(angle)}
+                  fill={isRedZone ? 'rgba(224,80,96,0.9)' : 'rgba(200,210,230,0.9)'}
+                  fontSize="9"
+                  fontWeight="600"
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                >
+                  {num}
+                </text>
+              );
+            })}
+            {/* Надпись x1000 */}
+            <text
+              x="50"
+              y="66"
+              fill="rgba(150,160,180,0.6)"
+              fontSize="6"
+              fontWeight="500"
+              textAnchor="middle"
+            >
+              ×1000 об/м
+            </text>
+          </svg>
+
+          {/* Стрелка */}
+          <motion.div
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              width: 3,
+              height: 35,
+              marginLeft: -1.5,
+              marginTop: -35,
+              background: 'linear-gradient(180deg, #e04050 0%, #c03040 100%)',
+              borderRadius: 2,
+              transformOrigin: 'center bottom',
+              boxShadow: '0 0 6px rgba(224,64,80,0.6)',
+              rotate: spring,
+            }}
+          />
+
+          {/* Центральная пипка */}
+          <div style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 12,
+            height: 12,
+            borderRadius: '50%',
+            background: 'radial-gradient(circle at 35% 35%, #ffffff 0%, #d0d0d0 30%, #909090 70%, #606060 100%)',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.4)',
+          }} />
+
+          {/* Статус внизу: ОК или ошибка */}
+          {hasFaults ? (
+            <div style={{ position: 'absolute', bottom: 12, left: '50%', transform: 'translateX(-50%)' }}>
+              <svg style={{ width: 20, height: 20 }} viewBox="0 0 24 24" fill="none" stroke={T.textRed} strokeWidth="2">
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <circle cx="12" cy="17" r="0.6" fill={T.textRed}/>
+              </svg>
+            </div>
+          ) : (
+            <div style={{ position: 'absolute', bottom: 16, left: '50%', transform: 'translateX(-50%)', fontSize: 11, fontWeight: 600, color: T.textGreen }}>ОК</div>
+          )}
+
+        </div>
       </div>
     </div>
   );
@@ -409,13 +621,14 @@ const controlItems = [
   { key: "power", label: "Питание", icon: Power },
   { key: "runLight", label: "Ходовые", icon: LightRunning },
   { key: "parkLight", label: "Стоян. огонь", icon: LightParking },
+  { key: "navigation", label: "Навигация", icon: Navigation2 },
   { key: "thruster", label: "Подрулька", icon: BowThruster },
   { key: "anchor", label: "Якорь", icon: Anchor },
   { key: "generator", label: "Генератор", icon: Generator },
 ];
 
 export default function YachtDashboard() {
-  const [loadingPhase, setLoadingPhase] = useState('logo'); // 'logo' | 'transition' | 'done'
+  const [loadingPhase, setLoadingPhase] = useState('logo'); // 'logo' | 'transition' | 'systemCheck' | 'done'
   const [expandedEngine, setExpandedEngine] = useState(null);
   const [expandedSection, setExpandedSection] = useState(null);
   const [expandedCamera, setExpandedCamera] = useState(null);
@@ -432,18 +645,31 @@ export default function YachtDashboard() {
   const [batteryV, setBatteryV] = useState(24.7);
   const [rudderDeg, setRudderDeg] = useState(-6);
   const [statusOk] = useState(true);
-  const [controls, setControls] = useState({ power: true, generator: false, thruster: false, parkLight: false, runLight: true, anchor: false });
+  const [controls, setControls] = useState({ power: true, generator: false, thruster: false, parkLight: false, runLight: true, anchor: false, navigation: false });
   const [anchorModal, setAnchorModal] = useState(false);
   const [anchorPosition, setAnchorPosition] = useState(0);
   const [anchorMoving, setAnchorMoving] = useState(null);
+  const [depthHistory, setDepthHistory] = useState(() => {
+    // Инициализируем историю глубины (последние 40 точек)
+    const initial = [];
+    let depth = 8.5;
+    for (let i = 0; i < 40; i++) {
+      depth += (Math.random() - 0.5) * 0.8;
+      depth = Math.max(2, Math.min(15, depth));
+      initial.push(depth);
+    }
+    return initial;
+  });
 
   // Анимация загрузки
   useEffect(() => {
     const timer1 = setTimeout(() => setLoadingPhase('transition'), 2800);
-    const timer2 = setTimeout(() => setLoadingPhase('done'), 3400);
+    const timer2 = setTimeout(() => setLoadingPhase('systemCheck'), 3400);
+    const timer3 = setTimeout(() => setLoadingPhase('done'), 7200);
     return () => {
       clearTimeout(timer1);
       clearTimeout(timer2);
+      clearTimeout(timer3);
     };
   }, []);
 
@@ -481,8 +707,6 @@ export default function YachtDashboard() {
         { label: 'Напряжение АКБ', value: '12.6', unit: 'В', status: 'ok' },
         { label: 'Ток АКБ', value: '+15', unit: 'А', status: 'normal' },
         { label: 'Температура АКБ', value: '24', unit: '°C', status: 'normal' },
-        { label: 'Мощность генератора', value: '0', unit: 'кВт', status: 'normal' },
-        { label: 'Нагрузка генератора', value: '0', unit: '%', status: 'normal' },
         { label: 'Напряжение берега', value: '—', unit: '', status: 'off' },
         { label: 'Ток берега', value: '—', unit: '', status: 'off' },
         { label: 'Мощность солнца', value: '2.1', unit: 'кВт', status: 'ok' },
@@ -490,12 +714,12 @@ export default function YachtDashboard() {
       ]
     },
     tanks: {
-      title: 'ЁМКОСТИ',
+      title: 'БАКИ',
       containers: [
         { name: 'Пресная', subname: 'вода', level: 65, status: 'ok' },
         { name: 'Серые', subname: 'воды', level: 42, status: 'normal' },
         { name: 'Чёрные', subname: 'воды', level: 28, status: 'normal' },
-        { name: 'Септик', subname: '', level: 87, status: 'critical' },
+        { name: 'Топливо', subname: 'ген.', level: 45, status: 'normal' },
       ],
       metrics: [
         { label: 'Давление воды', value: '2.4', unit: 'бар', status: 'normal' },
@@ -515,7 +739,7 @@ export default function YachtDashboard() {
     },
   };
 
-  const sectionKeys = ['fuel', 'weather', 'electric', 'tanks', 'safety'];
+  const sectionKeys = ['weather', 'electric', 'tanks', 'safety'];
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -545,6 +769,19 @@ export default function YachtDashboard() {
     return () => clearInterval(id);
   }, [anchorMoving]);
 
+  // Обновление данных глубины для эхолота
+  useEffect(() => {
+    if (!controls.navigation) return;
+    const id = setInterval(() => {
+      setDepthHistory(prev => {
+        const lastDepth = prev[prev.length - 1];
+        const newDepth = clamp(lastDepth + (Math.random() - 0.5) * 0.6, 2, 15);
+        return [...prev.slice(1), newDepth];
+      });
+    }, 300);
+    return () => clearInterval(id);
+  }, [controls.navigation]);
+
   const toggleControl = useCallback((k) => {
     if (k === 'anchor') {
       setAnchorModal(true);
@@ -555,20 +792,24 @@ export default function YachtDashboard() {
 
   // Компонент камеры
   const CameraView = ({ cam, isExpanded, onClick }) => (
-    <motion.div 
-      layout
-      onClick={onClick}
+    <div
+      onPointerDown={(e) => {
+        e.stopPropagation();
+        onClick();
+      }}
       style={{
         background: 'linear-gradient(180deg, rgba(12,18,28,0.95) 0%, rgba(6,10,18,0.98) 100%)',
         borderRadius: isExpanded ? 24 : 16,
         border: '1px solid rgba(60,80,100,0.2)',
-        boxShadow: isExpanded 
+        boxShadow: isExpanded
           ? '0 20px 60px rgba(0,0,0,0.8), inset 0 1px 0 rgba(100,130,160,0.08)'
           : '0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(100,130,160,0.08)',
         overflow: 'hidden',
         position: 'relative',
         cursor: 'pointer',
-        aspectRatio: isExpanded ? '16/9' : '16/10',
+        height: isExpanded ? '100%' : 'auto',
+        aspectRatio: isExpanded ? undefined : '16/10',
+        touchAction: 'manipulation',
       }}
     >
       {/* Имитация видео */}
@@ -579,6 +820,7 @@ export default function YachtDashboard() {
         right: 0,
         bottom: 0,
         background: 'linear-gradient(135deg, rgba(20,30,45,1) 0%, rgba(15,22,35,1) 100%)',
+        pointerEvents: 'none',
       }}>
         {/* Горизонт воды */}
         <div style={{
@@ -589,7 +831,7 @@ export default function YachtDashboard() {
           bottom: 0,
           background: 'linear-gradient(180deg, rgba(25,40,60,0.8) 0%, rgba(15,25,40,0.9) 100%)',
         }} />
-        
+
         {/* Волны на воде */}
         <motion.div
           animate={{ x: [0, -30, 0], opacity: [0.3, 0.5, 0.3] }}
@@ -630,7 +872,7 @@ export default function YachtDashboard() {
             filter: 'blur(1px)',
           }}
         />
-        
+
         {/* Блики на воде */}
         <motion.div
           animate={{ opacity: [0.1, 0.3, 0.1], scale: [1, 1.2, 1] }}
@@ -658,7 +900,7 @@ export default function YachtDashboard() {
             filter: 'blur(2px)',
           }}
         />
-        
+
         {/* Шум камеры */}
         <div style={{
           position: 'absolute',
@@ -670,7 +912,7 @@ export default function YachtDashboard() {
           background: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E")`,
         }} />
       </div>
-      
+
       {/* Метка камеры */}
       <div style={{
         position: 'absolute',
@@ -679,6 +921,7 @@ export default function YachtDashboard() {
         display: 'flex',
         alignItems: 'center',
         gap: isExpanded ? 10 : 6,
+        pointerEvents: 'none',
       }}>
         <div style={{
           width: isExpanded ? 10 : 6,
@@ -719,10 +962,11 @@ export default function YachtDashboard() {
         color: 'rgba(255,255,255,0.6)',
         textShadow: '0 1px 3px rgba(0,0,0,0.9)',
         letterSpacing: '0.5px',
+        pointerEvents: 'none',
       }}>
         {cam.label}
       </div>
-      
+
       {/* Временная метка */}
       <div style={{
         position: 'absolute',
@@ -732,10 +976,11 @@ export default function YachtDashboard() {
         fontFamily: 'monospace',
         color: 'rgba(255,255,255,0.5)',
         textShadow: '0 1px 3px rgba(0,0,0,0.9)',
+        pointerEvents: 'none',
       }}>
         {new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
       </div>
-      
+
       {/* Рамка фокуса */}
       <div style={{
         position: 'absolute',
@@ -746,35 +991,14 @@ export default function YachtDashboard() {
         height: isExpanded ? 120 : 50,
         border: '1px solid rgba(255,255,255,0.15)',
         borderRadius: 2,
+        pointerEvents: 'none',
       }}>
         <div style={{ position: 'absolute', top: -1, left: -1, width: isExpanded ? 16 : 8, height: isExpanded ? 16 : 8, borderTop: '2px solid rgba(255,255,255,0.4)', borderLeft: '2px solid rgba(255,255,255,0.4)' }} />
         <div style={{ position: 'absolute', top: -1, right: -1, width: isExpanded ? 16 : 8, height: isExpanded ? 16 : 8, borderTop: '2px solid rgba(255,255,255,0.4)', borderRight: '2px solid rgba(255,255,255,0.4)' }} />
         <div style={{ position: 'absolute', bottom: -1, left: -1, width: isExpanded ? 16 : 8, height: isExpanded ? 16 : 8, borderBottom: '2px solid rgba(255,255,255,0.4)', borderLeft: '2px solid rgba(255,255,255,0.4)' }} />
         <div style={{ position: 'absolute', bottom: -1, right: -1, width: isExpanded ? 16 : 8, height: isExpanded ? 16 : 8, borderBottom: '2px solid rgba(255,255,255,0.4)', borderRight: '2px solid rgba(255,255,255,0.4)' }} />
       </div>
-      
-      {/* Кнопка закрытия для развёрнутого вида */}
-      {isExpanded && (
-        <div style={{
-          position: 'absolute',
-          top: 16,
-          right: 20,
-          width: 36,
-          height: 36,
-          borderRadius: '50%',
-          background: 'rgba(0,0,0,0.5)',
-          border: '1px solid rgba(255,255,255,0.2)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-        }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" strokeWidth="2">
-            <path d="M18 6L6 18M6 6l12 12" />
-          </svg>
-        </div>
-      )}
-    </motion.div>
+    </div>
   );
 
   const cameras = [
@@ -785,7 +1009,7 @@ export default function YachtDashboard() {
   ];
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, background: T.pageBg }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 16, background: T.pageBg, overflow: 'hidden', position: 'relative' }}>
       
       {/* Экран загрузки */}
       <AnimatePresence>
@@ -807,9 +1031,135 @@ export default function YachtDashboard() {
               justifyContent: 'center',
             }}
           >
+            {/* Экран проверки систем */}
+            {loadingPhase === 'systemCheck' && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4 }}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 24,
+                }}
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  style={{
+                    fontSize: 20,
+                    fontWeight: 500,
+                    color: T.textPrimary,
+                    letterSpacing: '0.15em',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  Запуск системы
+                </motion.div>
+
+                <div style={{
+                  width: 280,
+                  height: 1,
+                  background: 'linear-gradient(90deg, transparent, rgba(100,160,220,0.4), transparent)',
+                }} />
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {[
+                    { label: 'Система питания', delay: 0.2 },
+                    { label: 'Сеть и датчики', delay: 0.6 },
+                    { label: 'Левый двигатель', delay: 1.0 },
+                    { label: 'Правый двигатель', delay: 1.4 },
+                    { label: 'Рулевое управление', delay: 1.8 },
+                    { label: 'Навигация', delay: 2.2 },
+                    { label: 'Системы безопасности', delay: 2.6 },
+                  ].map((item, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, delay: item.delay }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 12,
+                        fontSize: 15,
+                        color: T.textSecondary,
+                      }}
+                    >
+                      <motion.div
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{
+                          duration: 0.25,
+                          delay: item.delay + 0.15,
+                          type: 'spring',
+                          stiffness: 400,
+                          damping: 15
+                        }}
+                        style={{
+                          width: 18,
+                          height: 18,
+                          borderRadius: '50%',
+                          background: 'rgba(61,200,140,0.15)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <motion.svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 12 12"
+                          initial={{ pathLength: 0 }}
+                          animate={{ pathLength: 1 }}
+                          transition={{ duration: 0.2, delay: item.delay + 0.2 }}
+                        >
+                          <motion.path
+                            d="M 2 6 L 5 9 L 10 3"
+                            fill="none"
+                            stroke={T.textGreen}
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            initial={{ pathLength: 0 }}
+                            animate={{ pathLength: 1 }}
+                            transition={{ duration: 0.2, delay: item.delay + 0.2 }}
+                          />
+                        </motion.svg>
+                      </motion.div>
+                      <span>{item.label}</span>
+                    </motion.div>
+                  ))}
+                </div>
+
+                <div style={{
+                  width: 280,
+                  height: 1,
+                  background: 'linear-gradient(90deg, transparent, rgba(100,160,220,0.4), transparent)',
+                  marginTop: 4,
+                }} />
+
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: [0, 1, 0.5, 1] }}
+                  transition={{ duration: 1.2, delay: 3.0, repeat: Infinity, repeatDelay: 0.3 }}
+                  style={{
+                    fontSize: 14,
+                    color: T.textSecondary,
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  Запуск панели управления...
+                </motion.div>
+              </motion.div>
+            )}
+
+            {/* Логотип */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
-              animate={loadingPhase === 'transition' ? {
+              animate={loadingPhase === 'transition' || loadingPhase === 'systemCheck' ? {
                 opacity: 0,
                 scale: 0.9,
               } : {
@@ -817,7 +1167,7 @@ export default function YachtDashboard() {
                 scale: 1,
               }}
               transition={{ duration: loadingPhase === 'transition' ? 0.6 : 0.8, ease: "easeOut" }}
-              style={{ position: 'relative' }}
+              style={{ position: loadingPhase === 'systemCheck' ? 'absolute' : 'relative', marginTop: -20 }}
             >
               <svg width="280" height="180" viewBox="600 -100 1620 750" style={{ overflow: 'visible' }}>
                 <defs>
@@ -875,581 +1225,400 @@ export default function YachtDashboard() {
         )}
       </AnimatePresence>
 
-      {/* Полноэкранная камера */}
+      {/* Камеры видеонаблюдения - плитка 2x2 или 1 раскрытая */}
+      <div style={{
+        width: '100%',
+        maxWidth: 1048,
+        marginBottom: 16,
+        position: 'relative',
+      }}>
+        {/* Сетка 2x2 - скрывается когда камера раскрыта */}
+        <motion.div
+          animate={{ opacity: expandedCamera !== null ? 0 : 1 }}
+          transition={{ duration: 0.2 }}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: 12,
+            pointerEvents: expandedCamera !== null ? 'none' : 'auto',
+          }}
+        >
+          {cameras.map((cam, idx) => (
+            <CameraView
+              key={idx}
+              cam={cam}
+              isExpanded={false}
+              onClick={() => setExpandedCamera(idx)}
+            />
+          ))}
+        </motion.div>
+
+        {/* Раскрытая камера - поверх сетки */}
+        <AnimatePresence>
+          {expandedCamera !== null && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                zIndex: 10,
+              }}
+            >
+              <CameraView
+                cam={cameras[expandedCamera]}
+                isExpanded={true}
+                onClick={() => setExpandedCamera(null)}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Навигация - фоновый слой, появляется при нажатии кнопки Навигация */}
       <AnimatePresence>
-        {expandedCamera !== null && (
+        {controls.navigation && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             style={{
+              position: 'absolute',
+              top: 680,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: '100%',
+              maxWidth: 1048,
+              zIndex: 1,
+              pointerEvents: 'none',
+            }}
+          >
+            <div style={{ width: '100%', position: 'relative', overflow: 'hidden' }}>
+              <div style={{
+                overflow: 'hidden',
+                height: 700,
+                position: 'relative',
+                WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 70%)',
+                maskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 70%)',
+              }}>
+                {/* Анимированная карта */}
+                <motion.div
+                  animate={{ y: [0, 200] }}
+                  transition={{ duration: 80, repeat: Infinity, ease: "linear" }}
+                  style={{
+                    position: 'absolute',
+                    top: -300,
+                    left: -200,
+                    width: 'calc(100% + 400px)',
+                    height: 'calc(100% + 700px)',
+                  }}
+                >
+                  <svg width="100%" height="100%" style={{ position: 'absolute', top: 0, left: 0 }}>
+                    <defs>
+                      {/* Сетка мелкая */}
+                      <pattern id="gridPatternNav" width="30" height="30" patternUnits="userSpaceOnUse">
+                        <path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(40,70,100,0.05)" strokeWidth="0.5"/>
+                      </pattern>
+                      {/* Сетка крупная */}
+                      <pattern id="gridPatternLargeNav" width="150" height="150" patternUnits="userSpaceOnUse">
+                        <path d="M 150 0 L 0 0 0 150" fill="none" stroke="rgba(40,70,100,0.08)" strokeWidth="0.5"/>
+                      </pattern>
+                    </defs>
+
+                    {/* Сетка координат */}
+                    <rect width="100%" height="100%" fill="url(#gridPatternNav)" />
+                    <rect width="100%" height="100%" fill="url(#gridPatternLargeNav)" />
+
+                    {/* Главная река - вертикально, плавные кривые */}
+                    <path
+                      d="M 760 -100 C 730 50 720 150 740 300 C 760 450 710 550 720 700 C 730 850 750 1000 740 1150 C 730 1300 760 1400 750 1550"
+                      fill="none"
+                      stroke="rgba(25,45,70,0.35)"
+                      strokeWidth="80"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M 760 -100 C 730 50 720 150 740 300 C 760 450 710 550 720 700 C 730 850 750 1000 740 1150 C 730 1300 760 1400 750 1550"
+                      fill="none"
+                      stroke="rgba(20,38,60,0.5)"
+                      strokeWidth="50"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M 760 -100 C 730 50 720 150 740 300 C 760 450 710 550 720 700 C 730 850 750 1000 740 1150 C 730 1300 760 1400 750 1550"
+                      fill="none"
+                      stroke="rgba(15,30,50,0.6)"
+                      strokeWidth="25"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+
+                    {/* Приток слева - плавный */}
+                    <path
+                      d="M 150 280 C 250 290 350 320 450 330 C 550 340 650 370 730 410"
+                      fill="none"
+                      stroke="rgba(25,45,70,0.3)"
+                      strokeWidth="45"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M 150 280 C 250 290 350 320 450 330 C 550 340 650 370 730 410"
+                      fill="none"
+                      stroke="rgba(20,38,60,0.45)"
+                      strokeWidth="28"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+
+                    {/* Приток справа сверху - плавный */}
+                    <path
+                      d="M 1250 80 C 1150 120 1050 160 950 200 C 850 240 820 300 780 360"
+                      fill="none"
+                      stroke="rgba(25,45,70,0.3)"
+                      strokeWidth="40"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M 1250 80 C 1150 120 1050 160 950 200 C 850 240 820 300 780 360"
+                      fill="none"
+                      stroke="rgba(20,38,60,0.45)"
+                      strokeWidth="24"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+
+                    {/* Озеро слева */}
+                    <ellipse cx="300" cy="650" rx="120" ry="80" fill="rgba(20,38,60,0.4)" />
+                    <ellipse cx="300" cy="650" rx="90" ry="55" fill="rgba(15,30,50,0.5)" />
+
+                    {/* Малое озеро */}
+                    <ellipse cx="1100" cy="500" rx="70" ry="50" fill="rgba(20,38,60,0.35)" />
+                    <ellipse cx="1100" cy="500" rx="50" ry="32" fill="rgba(15,30,50,0.45)" />
+
+                    {/* Приток к озеру - плавный */}
+                    <path
+                      d="M 380 640 C 450 620 530 610 600 630 C 670 650 720 710 760 780"
+                      fill="none"
+                      stroke="rgba(25,45,70,0.25)"
+                      strokeWidth="30"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M 380 640 C 450 620 530 610 600 630 C 670 650 720 710 760 780"
+                      fill="none"
+                      stroke="rgba(20,38,60,0.4)"
+                      strokeWidth="18"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+
+                    {/* Ещё один приток справа снизу - плавный */}
+                    <path
+                      d="M 1200 780 C 1100 790 1000 800 900 830 C 800 860 790 920 780 990"
+                      fill="none"
+                      stroke="rgba(25,45,70,0.28)"
+                      strokeWidth="35"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M 1200 780 C 1100 790 1000 800 900 830 C 800 860 790 920 780 990"
+                      fill="none"
+                      stroke="rgba(20,38,60,0.42)"
+                      strokeWidth="20"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+
+                    {/* Маленький пруд */}
+                    <ellipse cx="500" cy="900" rx="45" ry="35" fill="rgba(20,38,60,0.35)" />
+
+                    {/* Маршрут - пунктир, плавный - по центру */}
+                    <path
+                      d="M 720 -50 C 700 100 710 250 715 400 C 720 550 705 700 710 850 C 715 1000 720 1150 712 1300 C 705 1450 718 1500 715 1600"
+                      fill="none"
+                      stroke="rgba(100,160,220,0.3)"
+                      strokeWidth="2"
+                      strokeDasharray="12 8"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </motion.div>
+
+                {/* Хаусбот - стеклянный синий треугольник */}
+                <div style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  zIndex: 5,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  {/* Расходящиеся круги - от центра треугольника */}
+                  {[0, 1, 2, 3].map((i) => (
+                    <motion.div
+                      key={i}
+                      animate={{
+                        scale: [0.5, 4],
+                        opacity: [0, 0.5, 0.3, 0]
+                      }}
+                      transition={{
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: "linear",
+                        delay: i * 1,
+                        times: [0, 0.1, 0.5, 1]
+                      }}
+                      style={{
+                        position: 'absolute',
+                        width: 30,
+                        height: 30,
+                        borderRadius: '50%',
+                        border: '1px solid rgba(80,160,255,0.6)',
+                        pointerEvents: 'none',
+                      }}
+                    />
+                  ))}
+
+                  {/* Треугольник - направлен вверх */}
+                  <div style={{ filter: 'drop-shadow(0 0 20px rgba(80,160,255,0.5))' }}>
+                    <svg width="32" height="40" viewBox="0 0 32 40">
+                      <defs>
+                        <linearGradient id="glassGradNav" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="rgba(120,180,255,0.85)" />
+                          <stop offset="50%" stopColor="rgba(80,140,220,0.65)" />
+                          <stop offset="100%" stopColor="rgba(60,120,200,0.75)" />
+                        </linearGradient>
+                      </defs>
+                      <path
+                        d="M 16 2 L 30 36 L 16 30 L 2 36 Z"
+                        fill="url(#glassGradNav)"
+                        stroke="rgba(150,200,255,0.7)"
+                        strokeWidth="1"
+                      />
+                      {/* Блик */}
+                      <path
+                        d="M 16 6 L 12 28 L 16 26 Z"
+                        fill="rgba(200,230,255,0.25)"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              {/* Масштаб - слева внизу */}
+              <div style={{
+                position: 'absolute',
+                bottom: 192,
+                left: 172,
+                zIndex: 10,
+              }}>
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 4,
+                }}>
+                  <div style={{
+                    width: 80,
+                    height: 4,
+                    background: 'rgba(150,180,210,0.6)',
+                    borderRadius: 2,
+                    position: 'relative',
+                  }}>
+                    <div style={{
+                      position: 'absolute',
+                      left: 0,
+                      top: -2,
+                      width: 2,
+                      height: 8,
+                      background: 'rgba(150,180,210,0.6)',
+                    }} />
+                    <div style={{
+                      position: 'absolute',
+                      right: 0,
+                      top: -2,
+                      width: 2,
+                      height: 8,
+                      background: 'rgba(150,180,210,0.6)',
+                    }} />
+                  </div>
+                  <span style={{
+                    fontSize: 9,
+                    color: 'rgba(150,180,210,0.7)',
+                    fontWeight: 500,
+                  }}>500 м</span>
+                </div>
+              </div>
+
+              {/* Координаты - справа внизу */}
+              <div style={{
+                position: 'absolute',
+                bottom: 192,
+                right: 172,
+                zIndex: 10,
+                textAlign: 'right',
+              }}>
+                <div style={{
+                  fontSize: 10,
+                  fontFamily: 'monospace',
+                  color: 'rgba(150,180,210,0.7)',
+                  fontWeight: 500,
+                  lineHeight: 1.4,
+                }}>
+                  <div>52°22'14.3"N</div>
+                  <div>4°53'28.7"E</div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: loadingPhase === 'done' ? 1 : 0, y: loadingPhase === 'done' ? 0 : 30 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        style={{ width: '100%', maxWidth: 1048, marginBottom: 16, position: 'relative', height: 88 }}
+      >
+        {/* Backdrop для закрытия раскрытого виджета */}
+        {expandedSection && (
+          <div
+            onClick={() => setExpandedSection(null)}
+            style={{
               position: 'fixed',
               top: 0,
               left: 0,
               right: 0,
               bottom: 0,
-              background: 'rgba(0,0,0,0.9)',
-              zIndex: 1000,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 40,
+              zIndex: 99,
             }}
-            onClick={() => setExpandedCamera(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              style={{ width: '100%', maxWidth: 1400 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <CameraView 
-                cam={cameras[expandedCamera]} 
-                isExpanded={true} 
-                onClick={() => setExpandedCamera(null)}
-              />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Камеры видеонаблюдения */}
-      <div style={{ 
-        width: '100%', 
-        maxWidth: 1152, 
-        marginBottom: 20, 
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: 16,
-      }}>
-        {cameras.map((cam, idx) => (
-          <CameraView 
-            key={idx}
-            cam={cam} 
-            isExpanded={false} 
-            onClick={() => setExpandedCamera(idx)}
           />
-        ))}
-      </div>
-
-      {/* Виджет карты */}
-      <motion.div 
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: loadingPhase === 'done' ? 1 : 0, y: loadingPhase === 'done' ? 0 : 30 }}
-        transition={{ duration: 0.6, delay: 0.1 }}
-        style={{ width: '100%', maxWidth: 1152, marginBottom: -60, position: 'relative', zIndex: 0 }}
-      >
-        <div style={{
-          overflow: 'visible',
-          height: 500,
-          position: 'relative',
-          WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 70%)',
-          maskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 70%)',
-        }}>
-          {/* Анимированная карта */}
-          <motion.div
-            animate={{ y: [0, 200] }}
-            transition={{ duration: 80, repeat: Infinity, ease: "linear" }}
-            style={{
-              position: 'absolute',
-              top: -300,
-              left: -200,
-              width: 'calc(100% + 400px)',
-              height: 'calc(100% + 700px)',
-            }}
-          >
-            <svg width="100%" height="100%" style={{ position: 'absolute', top: 0, left: 0 }}>
-              <defs>
-                {/* Сетка мелкая */}
-                <pattern id="gridPattern" width="30" height="30" patternUnits="userSpaceOnUse">
-                  <path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(40,70,100,0.05)" strokeWidth="0.5"/>
-                </pattern>
-                {/* Сетка крупная */}
-                <pattern id="gridPatternLarge" width="150" height="150" patternUnits="userSpaceOnUse">
-                  <path d="M 150 0 L 0 0 0 150" fill="none" stroke="rgba(40,70,100,0.08)" strokeWidth="0.5"/>
-                </pattern>
-              </defs>
-              
-              {/* Сетка координат */}
-              <rect width="100%" height="100%" fill="url(#gridPattern)" />
-              <rect width="100%" height="100%" fill="url(#gridPatternLarge)" />
-              
-              {/* Главная река - вертикально, плавные кривые */}
-              <path 
-                d="M 810 -100 C 780 50 770 150 790 300 C 810 450 760 550 770 700 C 780 850 800 1000 790 1150 C 780 1300 810 1400 800 1550" 
-                fill="none" 
-                stroke="rgba(25,45,70,0.35)" 
-                strokeWidth="80"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path 
-                d="M 810 -100 C 780 50 770 150 790 300 C 810 450 760 550 770 700 C 780 850 800 1000 790 1150 C 780 1300 810 1400 800 1550" 
-                fill="none" 
-                stroke="rgba(20,38,60,0.5)" 
-                strokeWidth="50"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path 
-                d="M 810 -100 C 780 50 770 150 790 300 C 810 450 760 550 770 700 C 780 850 800 1000 790 1150 C 780 1300 810 1400 800 1550" 
-                fill="none" 
-                stroke="rgba(15,30,50,0.6)" 
-                strokeWidth="25"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              
-              {/* Приток слева - плавный */}
-              <path 
-                d="M 150 280 C 250 290 350 320 450 330 C 550 340 650 370 730 410" 
-                fill="none" 
-                stroke="rgba(25,45,70,0.3)" 
-                strokeWidth="45"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path 
-                d="M 150 280 C 250 290 350 320 450 330 C 550 340 650 370 730 410" 
-                fill="none" 
-                stroke="rgba(20,38,60,0.45)" 
-                strokeWidth="28"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              
-              {/* Приток справа сверху - плавный */}
-              <path 
-                d="M 1250 80 C 1150 120 1050 160 950 200 C 850 240 820 300 780 360" 
-                fill="none" 
-                stroke="rgba(25,45,70,0.3)" 
-                strokeWidth="40"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path 
-                d="M 1250 80 C 1150 120 1050 160 950 200 C 850 240 820 300 780 360" 
-                fill="none" 
-                stroke="rgba(20,38,60,0.45)" 
-                strokeWidth="24"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              
-              {/* Озеро слева */}
-              <ellipse cx="300" cy="650" rx="120" ry="80" fill="rgba(20,38,60,0.4)" />
-              <ellipse cx="300" cy="650" rx="90" ry="55" fill="rgba(15,30,50,0.5)" />
-              
-              {/* Малое озеро */}
-              <ellipse cx="1100" cy="500" rx="70" ry="50" fill="rgba(20,38,60,0.35)" />
-              <ellipse cx="1100" cy="500" rx="50" ry="32" fill="rgba(15,30,50,0.45)" />
-              
-              {/* Приток к озеру - плавный */}
-              <path 
-                d="M 380 640 C 450 620 530 610 600 630 C 670 650 720 710 760 780" 
-                fill="none" 
-                stroke="rgba(25,45,70,0.25)" 
-                strokeWidth="30"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path 
-                d="M 380 640 C 450 620 530 610 600 630 C 670 650 720 710 760 780" 
-                fill="none" 
-                stroke="rgba(20,38,60,0.4)" 
-                strokeWidth="18"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              
-              {/* Ещё один приток справа снизу - плавный */}
-              <path 
-                d="M 1200 780 C 1100 790 1000 800 900 830 C 800 860 790 920 780 990" 
-                fill="none" 
-                stroke="rgba(25,45,70,0.28)" 
-                strokeWidth="35"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path 
-                d="M 1200 780 C 1100 790 1000 800 900 830 C 800 860 790 920 780 990" 
-                fill="none" 
-                stroke="rgba(20,38,60,0.42)" 
-                strokeWidth="20"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              
-              {/* Маленький пруд */}
-              <ellipse cx="500" cy="900" rx="45" ry="35" fill="rgba(20,38,60,0.35)" />
-              
-              {/* Маршрут - пунктир, плавный - по центру */}
-              <path 
-                d="M 780 -50 C 760 100 770 250 775 400 C 780 550 765 700 770 850 C 775 1000 780 1150 772 1300 C 765 1450 778 1500 775 1600" 
-                fill="none" 
-                stroke="rgba(100,160,220,0.3)" 
-                strokeWidth="2"
-                strokeDasharray="12 8"
-                strokeLinecap="round"
-              />
-            </svg>
-          </motion.div>
-          
-          {/* Хаусбот - стеклянный синий треугольник */}
-          <div style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            zIndex: 5,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-            {/* Расходящиеся круги - от центра треугольника */}
-            {[0, 1, 2, 3].map((i) => (
-              <motion.div
-                key={i}
-                animate={{ 
-                  scale: [0.5, 4], 
-                  opacity: [0, 0.5, 0.3, 0]
-                }}
-                transition={{ 
-                  duration: 4, 
-                  repeat: Infinity, 
-                  ease: "linear",
-                  delay: i * 1,
-                  times: [0, 0.1, 0.5, 1]
-                }}
-                style={{
-                  position: 'absolute',
-                  width: 30,
-                  height: 30,
-                  borderRadius: '50%',
-                  border: '1px solid rgba(80,160,255,0.6)',
-                  pointerEvents: 'none',
-                }}
-              />
-            ))}
-            
-            {/* Треугольник - направлен вверх */}
-            <div style={{ filter: 'drop-shadow(0 0 20px rgba(80,160,255,0.5))' }}>
-              <svg width="32" height="40" viewBox="0 0 32 40">
-                <defs>
-                  <linearGradient id="glassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="rgba(120,180,255,0.85)" />
-                    <stop offset="50%" stopColor="rgba(80,140,220,0.65)" />
-                    <stop offset="100%" stopColor="rgba(60,120,200,0.75)" />
-                  </linearGradient>
-                </defs>
-                <path 
-                  d="M 16 2 L 30 36 L 16 30 L 2 36 Z" 
-                  fill="url(#glassGrad)"
-                  stroke="rgba(150,200,255,0.7)"
-                  strokeWidth="1"
-                />
-                {/* Блик */}
-                <path 
-                  d="M 16 6 L 12 28 L 16 26 Z" 
-                  fill="rgba(200,230,255,0.25)"
-                />
-              </svg>
-            </div>
-          </div>
-        </div>
-        
-        {/* Компас - слева внизу над масштабом */}
-        <div style={{
-          position: 'absolute',
-          bottom: 120,
-          left: 20,
-          zIndex: 10,
-        }}>
-          <div style={{
-            width: 120,
-            height: 120,
-            borderRadius: '50%',
-            background: 'linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
-            padding: 5,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-            <div style={{
-              width: '100%',
-              height: '100%',
-              borderRadius: '50%',
-              background: 'linear-gradient(145deg, rgba(10,15,25,0.98) 0%, rgba(5,8,15,1) 100%)',
-              position: 'relative',
-            }}>
-              <motion.div 
-                style={{ 
-                  position: 'absolute', 
-                  inset: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }} 
-                animate={{ rotate: -heading }} 
-                transition={{ type: "spring", stiffness: 120, damping: 18 }}
-              >
-                <svg viewBox="0 0 100 100" style={{ width: '100%', height: '100%' }}>
-                  {Array.from({ length: 36 }).map((_, i) => {
-                    const angle = (i * 10) * Math.PI / 180;
-                    const isMajor = i % 9 === 0;
-                    const r1 = isMajor ? 38 : 42;
-                    const r2 = 48;
-                    return (
-                      <line
-                        key={i}
-                        x1={50 + r1 * Math.sin(angle)}
-                        y1={50 - r1 * Math.cos(angle)}
-                        x2={50 + r2 * Math.sin(angle)}
-                        y2={50 - r2 * Math.cos(angle)}
-                        stroke={isMajor ? 'rgba(200,210,230,0.8)' : 'rgba(150,160,180,0.4)'}
-                        strokeWidth={isMajor ? 2 : 1}
-                      />
-                    );
-                  })}
-                  <text x="50" y="20" fill="rgba(200,210,230,0.6)" fontSize="9" fontWeight="500" textAnchor="middle" dominantBaseline="middle">С</text>
-                  <text x="50" y="80" fill="rgba(200,210,230,0.6)" fontSize="9" fontWeight="500" textAnchor="middle" dominantBaseline="middle" transform="rotate(180 50 80)">Ю</text>
-                  <text x="80" y="50" fill="rgba(200,210,230,0.6)" fontSize="9" fontWeight="500" textAnchor="middle" dominantBaseline="middle" transform="rotate(90 80 50)">В</text>
-                  <text x="20" y="50" fill="rgba(200,210,230,0.6)" fontSize="9" fontWeight="500" textAnchor="middle" dominantBaseline="middle" transform="rotate(-90 20 50)">З</text>
-                </svg>
-              </motion.div>
-              <div style={{
-                position: 'absolute',
-                top: -20,
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: 0,
-                height: 0,
-                borderLeft: '6px solid transparent',
-                borderRight: '6px solid transparent',
-                borderTop: '10px solid #d44050',
-                filter: 'drop-shadow(0 0 4px rgba(212,64,80,0.6))',
-              }} />
-              <div style={{
-                position: 'absolute',
-                top: 4,
-                left: 15,
-                right: 15,
-                height: 30,
-                borderRadius: '50%',
-                background: 'linear-gradient(180deg, rgba(150,180,220,0.15) 0%, transparent 100%)',
-                pointerEvents: 'none',
-              }} />
-            </div>
-          </div>
-        </div>
-        
-        {/* Киль - справа внизу над координатами */}
-        <div style={{
-          position: 'absolute',
-          bottom: 120,
-          right: 20,
-          zIndex: 10,
-        }}>
-          <div style={{
-            width: 120,
-            height: 120,
-            borderRadius: '50%',
-            background: 'linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
-            padding: 5,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-            <div style={{
-              width: '100%',
-              height: '100%',
-              borderRadius: '50%',
-              background: 'linear-gradient(145deg, rgba(10,15,25,0.98) 0%, rgba(5,8,15,1) 100%)',
-              position: 'relative',
-              overflow: 'hidden',
-            }}>
-              <svg viewBox="0 0 100 100" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
-                {Array.from({ length: 19 }).map((_, i) => {
-                  const deg = -45 + i * 5;
-                  const angle = (deg + 90) * Math.PI / 180;
-                  const isMajor = deg % 15 === 0;
-                  const r1 = isMajor ? 38 : 40;
-                  const r2 = 46;
-                  return (
-                    <line
-                      key={i}
-                      x1={50 + r1 * Math.cos(angle)}
-                      y1={50 + r1 * Math.sin(angle)}
-                      x2={50 + r2 * Math.cos(angle)}
-                      y2={50 + r2 * Math.sin(angle)}
-                      stroke={isMajor ? 'rgba(200,210,230,0.8)' : 'rgba(150,160,180,0.4)'}
-                      strokeWidth={isMajor ? 2 : 1}
-                      strokeLinecap="round"
-                    />
-                  );
-                })}
-              </svg>
-              
-              {/* Иконка кораблика сверху - вид сверху */}
-              <svg 
-                viewBox="0 0 24 32" 
-                style={{ 
-                  position: 'absolute', 
-                  top: 20, 
-                  left: '50%', 
-                  transform: 'translateX(-50%)',
-                  width: 30, 
-                  height: 40,
-                  opacity: 0.35,
-                }}
-              >
-                {/* Корпус лодки - вид сверху */}
-                <path 
-                  d="M12 1 L18 8 L19 22 Q12 30 5 22 L6 8 Z" 
-                  fill="rgba(150,180,210,0.6)"
-                  stroke="rgba(150,180,210,0.8)"
-                  strokeWidth="0.5"
-                />
-                {/* Кабина/рубка */}
-                <ellipse 
-                  cx="12" 
-                  cy="14" 
-                  rx="4" 
-                  ry="6" 
-                  fill="rgba(100,130,160,0.5)"
-                />
-              </svg>
-              
-              <motion.div
-                style={{
-                  position: 'absolute',
-                  top: 50,
-                  left: '50%',
-                  width: 4,
-                  height: 42,
-                  marginLeft: -2,
-                  background: 'linear-gradient(90deg, #a03040 0%, #d04050 25%, #e85060 50%, #d04050 75%, #a03040 100%)',
-                  transformOrigin: 'top center',
-                  borderRadius: 2,
-                  boxShadow: '0 2px 8px rgba(212,64,80,0.5), 0 0 12px rgba(212,64,80,0.3)',
-                }}
-                animate={{ rotate: rudderDeg }}
-                transition={{ type: "spring", stiffness: 150, damping: 20 }}
-              />
-              
-              <div style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: 14,
-                height: 14,
-                borderRadius: '50%',
-                background: 'radial-gradient(circle at 35% 35%, #ffffff 0%, #d0d0d0 30%, #909090 70%, #606060 100%)',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
-              }} />
-              
-              <div style={{
-                position: 'absolute',
-                top: 4,
-                left: 15,
-                right: 15,
-                height: 30,
-                borderRadius: '50%',
-                background: 'linear-gradient(180deg, rgba(150,180,220,0.15) 0%, transparent 100%)',
-                pointerEvents: 'none',
-              }} />
-            </div>
-          </div>
-        </div>
-        
-        {/* Масштаб - слева внизу */}
-        <div style={{
-          position: 'absolute',
-          bottom: 80,
-          left: 20,
-          zIndex: 10,
-        }}>
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 4,
-          }}>
-            <div style={{
-              width: 80,
-              height: 4,
-              background: 'rgba(150,180,210,0.6)',
-              borderRadius: 2,
-              position: 'relative',
-            }}>
-              <div style={{
-                position: 'absolute',
-                left: 0,
-                top: -2,
-                width: 2,
-                height: 8,
-                background: 'rgba(150,180,210,0.6)',
-              }} />
-              <div style={{
-                position: 'absolute',
-                right: 0,
-                top: -2,
-                width: 2,
-                height: 8,
-                background: 'rgba(150,180,210,0.6)',
-              }} />
-            </div>
-            <span style={{
-              fontSize: 9,
-              color: 'rgba(150,180,210,0.7)',
-              fontWeight: 500,
-            }}>500 м</span>
-          </div>
-        </div>
-        
-        {/* Координаты - справа внизу */}
-        <div style={{
-          position: 'absolute',
-          bottom: 80,
-          right: 20,
-          zIndex: 10,
-          textAlign: 'right',
-        }}>
-          <div style={{
-            fontSize: 10,
-            fontFamily: 'monospace',
-            color: 'rgba(150,180,210,0.7)',
-            fontWeight: 500,
-            lineHeight: 1.4,
-          }}>
-            <div>52°22'14.3"N</div>
-            <div>4°53'28.7"E</div>
-          </div>
-        </div>
-      </motion.div>
-
-      <motion.div 
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: loadingPhase === 'done' ? 1 : 0, y: loadingPhase === 'done' ? 0 : 30 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-        style={{ width: '100%', maxWidth: 1152, marginBottom: 20, position: 'relative', height: 102 }}
-      >
+        )}
         {/* Верхняя панель - 5 разделов */}
-        <motion.div 
+        <motion.div
           animate={{
-            height: expandedSection ? 380 : 102,
+            height: expandedSection ? 380 : 88,
           }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          onClick={() => expandedSection && setExpandedSection(null)}
           style={{
             background: 'linear-gradient(180deg, rgba(12,18,28,0.95) 0%, rgba(6,10,18,0.98) 100%)',
             borderRadius: 20,
             border: '1px solid rgba(60,80,100,0.2)',
-            boxShadow: expandedSection 
+            boxShadow: expandedSection
               ? '0 16px 64px rgba(0,0,0,0.6), inset 0 1px 0 rgba(100,130,160,0.08)'
               : '0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(100,130,160,0.08)',
             overflow: 'hidden',
@@ -1458,6 +1627,7 @@ export default function YachtDashboard() {
             left: 0,
             right: 0,
             zIndex: expandedSection ? 100 : 1,
+            cursor: expandedSection ? 'pointer' : 'default',
           }}
         >
           {/* Тонкий блик сверху */}
@@ -1482,172 +1652,14 @@ export default function YachtDashboard() {
                   borderRight: '1px solid rgba(80,100,120,0.2)',
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                <div style={{ marginBottom: 20 }}>
                   <div style={{ fontSize: 14, color: T.textSecondary, letterSpacing: 0.5, fontWeight: 500 }}>
                     {sectionData[expandedSection]?.title}
                   </div>
-                  <button
-                    onClick={() => setExpandedSection(null)}
-                    style={{
-                      padding: '6px 16px',
-                      background: 'rgba(80,110,140,0.2)',
-                      border: '1px solid rgba(100,130,160,0.3)',
-                      borderRadius: 12,
-                      color: 'rgba(150,180,210,0.7)',
-                      fontSize: 11,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    Закрыть
-                  </button>
                 </div>
                 
-                {/* Кастомное отображение для топлива */}
-                {expandedSection === 'fuel' ? (
-                  <div style={{ display: 'flex', gap: 32, flex: 1, alignItems: 'stretch' }}>
-                    {/* Баки слева - flex: 1.5 */}
-                    <div style={{ flex: 1.5, display: 'flex', gap: 24, alignItems: 'flex-start', justifyContent: 'center', paddingTop: 8 }}>
-                      {sectionData.fuel.tanks.map((tank, idx) => (
-                        <motion.div
-                          key={idx}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.05 * idx }}
-                          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}
-                        >
-                          {/* Название над баком */}
-                          <div style={{ textAlign: 'center', marginBottom: 2 }}>
-                            <div style={{ fontSize: 11, fontWeight: 500, color: T.textSecondary }}>{tank.name}</div>
-                            <div style={{ fontSize: 9, color: T.textMuted }}>{tank.subname}</div>
-                          </div>
-                          {/* Бак */}
-                          <div style={{
-                            width: 64,
-                            height: 160,
-                            borderRadius: 12,
-                            background: 'rgba(20,30,45,0.8)',
-                            border: `1px solid ${
-                              tank.status === 'warn' ? 'rgba(220,160,60,0.4)' :
-                              tank.status === 'critical' ? 'rgba(224,64,80,0.4)' :
-                              'rgba(80,100,120,0.3)'
-                            }`,
-                            position: 'relative',
-                            overflow: 'hidden',
-                            boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.3)',
-                          }}>
-                            {/* Уровень топлива */}
-                            <motion.div 
-                              initial={{ height: 0 }}
-                              animate={{ height: `${tank.level}%` }}
-                              transition={{ delay: 0.1 + idx * 0.1, duration: 0.8, ease: "easeOut" }}
-                              style={{
-                                position: 'absolute',
-                                bottom: 0,
-                                left: 0,
-                                right: 0,
-                                background: tank.status === 'warn' 
-                                  ? 'linear-gradient(180deg, rgba(220,160,60,0.7) 0%, rgba(180,120,40,0.5) 100%)'
-                                  : tank.status === 'critical'
-                                  ? 'linear-gradient(180deg, rgba(224,64,80,0.7) 0%, rgba(180,40,60,0.5) 100%)'
-                                  : 'linear-gradient(180deg, rgba(61,200,140,0.6) 0%, rgba(40,160,110,0.4) 100%)',
-                                borderRadius: '0 0 11px 11px',
-                              }}
-                            />
-                            {/* Блик */}
-                            <div style={{
-                              position: 'absolute',
-                              top: 0,
-                              left: 0,
-                              right: '60%',
-                              bottom: 0,
-                              background: 'linear-gradient(90deg, rgba(255,255,255,0.05) 0%, transparent 100%)',
-                              borderRadius: '12px 0 0 12px',
-                            }} />
-                          </div>
-                          {/* Процент под шкалой */}
-                          <div style={{ 
-                            fontSize: 18, 
-                            fontWeight: 600, 
-                            color: tank.status === 'warn' ? 'rgba(220,160,60,0.9)' :
-                                   tank.status === 'critical' ? T.textRed :
-                                   T.textPrimary,
-                          }}>
-                            {tank.level}%
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
-                    
-                    {/* Вертикальный разделитель */}
-                    <div style={{ width: 1, background: 'linear-gradient(180deg, transparent 5%, rgba(80,100,120,0.3) 50%, transparent 95%)' }} />
-                    
-                    {/* Метрики справа - выровнены по шкалам */}
-                    <div style={{ 
-                      display: 'flex',
-                      flexDirection: 'column',
-                      flex: 1,
-                      paddingTop: 8, /* такой же как у контейнера баков */
-                    }}>
-                      {/* Пустое место под названия баков */}
-                      <div style={{ height: 34 }} />
-                      
-                      {/* Контейнер метрик - высота как у шкал */}
-                      <div style={{ 
-                        height: 160, 
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
-                      }}>
-                        {/* Верхний ряд - Расход */}
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
-                          {sectionData.fuel.metrics.slice(0, 2).map((metric, idx) => (
-                            <motion.div
-                              key={idx}
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: 0.15 + 0.05 * idx }}
-                              style={{
-                                padding: '12px 14px',
-                                background: 'rgba(30,45,60,0.4)',
-                                border: '1px solid rgba(80,100,120,0.3)',
-                                borderRadius: 12,
-                              }}
-                            >
-                              <div style={{ fontSize: 10, color: T.textMuted, marginBottom: 4 }}>{metric.label}</div>
-                              <div style={{ fontSize: 18, fontWeight: 600, color: T.textPrimary }}>
-                                {metric.value}
-                                <span style={{ fontSize: 11, fontWeight: 400, marginLeft: 4, color: T.textMuted }}>{metric.unit}</span>
-                              </div>
-                            </motion.div>
-                          ))}
-                        </div>
-                        {/* Нижний ряд - Израсходовано */}
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
-                          {sectionData.fuel.metrics.slice(2, 4).map((metric, idx) => (
-                            <motion.div
-                              key={idx}
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: 0.25 + 0.05 * idx }}
-                              style={{
-                                padding: '12px 14px',
-                                background: 'rgba(30,45,60,0.4)',
-                                border: '1px solid rgba(80,100,120,0.3)',
-                                borderRadius: 12,
-                              }}
-                            >
-                              <div style={{ fontSize: 10, color: T.textMuted, marginBottom: 4 }}>{metric.label}</div>
-                              <div style={{ fontSize: 18, fontWeight: 600, color: T.textPrimary }}>
-                                {metric.value}
-                                <span style={{ fontSize: 11, fontWeight: 400, marginLeft: 4, color: T.textMuted }}>{metric.unit}</span>
-                              </div>
-                            </motion.div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ) : expandedSection === 'tanks' ? (
+                {/* Кастомное отображение для ёмкостей */}
+                {expandedSection === 'tanks' ? (
                   /* Кастомное отображение для ёмкостей */
                   <div style={{ display: 'flex', gap: 32, flex: 1, alignItems: 'stretch' }}>
                     {/* Баки слева - flex: 1.5 */}
@@ -1885,7 +1897,7 @@ export default function YachtDashboard() {
                         )}
                         {key === 'tanks' && (
                           <>
-                            <div style={{ fontSize: 9, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 6 }}>ЁМКОСТИ</div>
+                            <div style={{ fontSize: 9, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 6 }}>БАКИ</div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, width: '75%' }}>
                               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                                 <div style={{ fontSize: 8, color: T.textMuted, width: 28 }}>вода</div>
@@ -1895,11 +1907,11 @@ export default function YachtDashboard() {
                                 <div style={{ fontSize: 9, color: T.textSecondary, width: 24, textAlign: 'right' }}>65%</div>
                               </div>
                               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                <div style={{ fontSize: 8, color: T.textMuted, width: 28 }}>септик</div>
-                                <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'rgba(30,45,60,0.6)', border: '1px solid rgba(224,64,80,0.4)', overflow: 'hidden' }}>
-                                  <div style={{ width: '87%', height: '100%', background: 'linear-gradient(90deg, rgba(224,64,80,0.8) 0%, rgba(224,64,80,0.6) 100%)', borderRadius: 2 }} />
+                                <div style={{ fontSize: 8, color: T.textMuted, width: 28 }}>ген.</div>
+                                <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'rgba(30,45,60,0.6)', border: '1px solid rgba(80,100,120,0.3)', overflow: 'hidden' }}>
+                                  <div style={{ width: '45%', height: '100%', background: 'linear-gradient(90deg, rgba(61,200,140,0.7) 0%, rgba(61,200,140,0.5) 100%)', borderRadius: 2 }} />
                                 </div>
-                                <div style={{ fontSize: 9, color: T.textRed, width: 24, textAlign: 'right' }}>87%</div>
+                                <div style={{ fontSize: 9, color: T.textSecondary, width: 24, textAlign: 'right' }}>45%</div>
                               </div>
                             </div>
                           </>
@@ -1931,43 +1943,10 @@ export default function YachtDashboard() {
           ) : (
             /* Свёрнутый вид */
             <div style={{ display: 'flex', alignItems: 'stretch' }}>
-              {/* ТОПЛИВО */}
-              <div 
-                onClick={() => setExpandedSection('fuel')}
-                style={{ flex: 1, height: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 12, cursor: 'pointer' }}
-              >
-                <div style={{ fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 8 }}>ТОПЛИВО</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 5, width: '80%' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <div style={{ fontSize: 8, color: T.textMuted, width: 32 }}>ЛЕВ.</div>
-                    <div style={{ flex: 1, height: 7, borderRadius: 4, background: 'rgba(30,45,60,0.6)', border: '1px solid rgba(80,100,120,0.3)', overflow: 'hidden' }}>
-                      <div style={{ width: '78%', height: '100%', background: 'linear-gradient(90deg, rgba(61,200,140,0.7) 0%, rgba(61,200,140,0.5) 100%)', borderRadius: 3 }} />
-                    </div>
-                    <div style={{ fontSize: 10, color: T.textSecondary, width: 28, textAlign: 'right' }}>78%</div>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <div style={{ fontSize: 8, color: T.textMuted, width: 32 }}>ПРАВ.</div>
-                    <div style={{ flex: 1, height: 7, borderRadius: 4, background: 'rgba(30,45,60,0.6)', border: '1px solid rgba(80,100,120,0.3)', overflow: 'hidden' }}>
-                      <div style={{ width: '72%', height: '100%', background: 'linear-gradient(90deg, rgba(61,200,140,0.7) 0%, rgba(61,200,140,0.5) 100%)', borderRadius: 3 }} />
-                    </div>
-                    <div style={{ fontSize: 10, color: T.textSecondary, width: 28, textAlign: 'right' }}>72%</div>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <div style={{ fontSize: 8, color: T.textMuted, width: 32 }}>ГЕН.</div>
-                    <div style={{ flex: 1, height: 7, borderRadius: 4, background: 'rgba(30,45,60,0.6)', border: '1px solid rgba(80,100,120,0.3)', overflow: 'hidden' }}>
-                      <div style={{ width: '45%', height: '100%', background: 'linear-gradient(90deg, rgba(220,160,60,0.7) 0%, rgba(220,160,60,0.5) 100%)', borderRadius: 3 }} />
-                    </div>
-                    <div style={{ fontSize: 10, color: T.textSecondary, width: 28, textAlign: 'right' }}>45%</div>
-                  </div>
-                </div>
-              </div>
-              
-              <div style={{ width: 1, background: 'linear-gradient(180deg, transparent 10%, rgba(80,100,120,0.3) 50%, transparent 90%)' }} />
-              
               {/* ПОГОДА */}
               <div 
                 onClick={() => setExpandedSection('weather')}
-                style={{ flex: 1, height: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 12, cursor: 'pointer' }}
+                style={{ flex: 1, height: 85, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 10, cursor: 'pointer' }}
               >
                 <div style={{ fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 16 }}>ПОГОДА</div>
                 <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
@@ -1989,9 +1968,9 @@ export default function YachtDashboard() {
               <div style={{ width: 1, background: 'linear-gradient(180deg, transparent 10%, rgba(80,100,120,0.3) 50%, transparent 90%)' }} />
               
               {/* ЭЛЕКТРИКА */}
-              <div 
+              <div
                 onClick={() => setExpandedSection('electric')}
-                style={{ flex: 1, height: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 12, cursor: 'pointer' }}
+                style={{ flex: 1, height: 85, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 10, cursor: 'pointer' }}
               >
                 <div style={{ fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 16 }}>ЭЛЕКТРИКА</div>
                 <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
@@ -2005,15 +1984,15 @@ export default function YachtDashboard() {
                   </div>
                 </div>
               </div>
-              
+
               <div style={{ width: 1, background: 'linear-gradient(180deg, transparent 10%, rgba(80,100,120,0.3) 50%, transparent 90%)' }} />
-              
-              {/* ЁМКОСТИ */}
+
+              {/* БАКИ */}
               <div 
                 onClick={() => setExpandedSection('tanks')}
-                style={{ flex: 1, height: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 12, cursor: 'pointer' }}
+                style={{ flex: 1, height: 85, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 10, cursor: 'pointer' }}
               >
-                <div style={{ fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 16 }}>ЁМКОСТИ</div>
+                <div style={{ fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 16 }}>БАКИ</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6, width: '70%' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <div style={{ fontSize: 9, color: T.textMuted, width: 36 }}>вода</div>
@@ -2023,11 +2002,11 @@ export default function YachtDashboard() {
                     <div style={{ fontSize: 11, color: T.textSecondary, width: 28, textAlign: 'right' }}>65%</div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <div style={{ fontSize: 9, color: T.textMuted, width: 36 }}>септик</div>
-                    <div style={{ flex: 1, height: 8, borderRadius: 4, background: 'rgba(30,45,60,0.6)', border: '1px solid rgba(224,64,80,0.4)', overflow: 'hidden' }}>
-                      <div style={{ width: '87%', height: '100%', background: 'linear-gradient(90deg, rgba(224,64,80,0.8) 0%, rgba(224,64,80,0.6) 100%)', borderRadius: 3 }} />
+                    <div style={{ fontSize: 9, color: T.textMuted, width: 36 }}>ген.</div>
+                    <div style={{ flex: 1, height: 8, borderRadius: 4, background: 'rgba(30,45,60,0.6)', border: '1px solid rgba(80,100,120,0.3)', overflow: 'hidden' }}>
+                      <div style={{ width: '45%', height: '100%', background: 'linear-gradient(90deg, rgba(61,200,140,0.7) 0%, rgba(61,200,140,0.5) 100%)', borderRadius: 3 }} />
                     </div>
-                    <div style={{ fontSize: 11, color: T.textRed, width: 28, textAlign: 'right' }}>87%</div>
+                    <div style={{ fontSize: 11, color: T.textSecondary, width: 28, textAlign: 'right' }}>45%</div>
                   </div>
                 </div>
               </div>
@@ -2037,7 +2016,7 @@ export default function YachtDashboard() {
               {/* БЕЗОПАСНОСТЬ */}
               <div 
                 onClick={() => setExpandedSection('safety')}
-                style={{ flex: 1, height: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 12, cursor: 'pointer' }}
+                style={{ flex: 1, height: 85, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 10, cursor: 'pointer' }}
               >
                 <div style={{ fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 24 }}>БЕЗОПАСНОСТЬ</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -2056,44 +2035,253 @@ export default function YachtDashboard() {
         </motion.div>
       </motion.div>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: loadingPhase === 'done' ? 1 : 0, y: loadingPhase === 'done' ? 0 : 30 }}
         transition={{ duration: 0.6, delay: 0.3 }}
-        style={{ width: '100%', maxWidth: 1200, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, overflow: 'visible' }}
+        style={{ width: '100%', maxWidth: 1048, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, position: 'relative' }}
       >
-        <div style={{ marginRight: -92, paddingTop: 20 }}>
-          <EngineCard side="Left" tempText="Темп 82°C · Масло ОК" rpm={Math.round(rpmLeft)} throttle={Math.round(throttleLeft)} gear={gearLeft} expanded={false} onToggleExpand={() => setExpandedEngine("Left")} />
-        </div>
+        {/* Левый двигатель - обычный */}
+        <motion.div
+          animate={{
+            opacity: controls.navigation ? 0 : 1,
+            scale: controls.navigation ? 0.5 : 1,
+            x: controls.navigation ? -170 : 0,
+          }}
+          transition={{ type: "spring", stiffness: 200, damping: 25 }}
+          style={{ marginRight: -50, paddingTop: 16, pointerEvents: controls.navigation ? 'none' : 'auto' }}
+        >
+          <EngineCard side="Left" tempText="Темп 82°C · Масло ОК" rpm={Math.round(rpmLeft)} throttle={Math.round(throttleLeft)} gear={gearLeft} motorHours={1247} fuelLevel={75} expanded={false} onToggleExpand={() => setExpandedEngine("Left")} />
+        </motion.div>
 
-        <div style={{ height: 400, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ position: 'relative', width: 230, height: 190 }}>
-            
+        <div style={{ height: 340, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 16 }}>
+          {/* Компас и Киль над стекляшкой */}
+          <div style={{ display: 'flex', gap: 30, marginBottom: 16 }}>
+            {/* Компас */}
+            <motion.div
+              animate={{
+                x: controls.navigation ? -374 : 0,
+              }}
+              transition={{ type: "spring", stiffness: 200, damping: 25 }}
+              style={{
+              width: 135,
+              height: 135,
+              borderRadius: '50%',
+              background: 'linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
+              padding: 5,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <div style={{
+                width: '100%',
+                height: '100%',
+                borderRadius: '50%',
+                background: 'linear-gradient(145deg, rgba(10,15,25,0.98) 0%, rgba(5,8,15,1) 100%)',
+                position: 'relative',
+              }}>
+                <motion.div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  animate={{ rotate: -heading }}
+                  transition={{ type: "spring", stiffness: 120, damping: 18 }}
+                >
+                  <svg viewBox="0 0 100 100" style={{ width: '100%', height: '100%' }}>
+                    {Array.from({ length: 36 }).map((_, i) => {
+                      const angle = (i * 10) * Math.PI / 180;
+                      const isMajor = i % 9 === 0;
+                      const r1 = isMajor ? 38 : 42;
+                      const r2 = 48;
+                      return (
+                        <line
+                          key={i}
+                          x1={50 + r1 * Math.sin(angle)}
+                          y1={50 - r1 * Math.cos(angle)}
+                          x2={50 + r2 * Math.sin(angle)}
+                          y2={50 - r2 * Math.cos(angle)}
+                          stroke={isMajor ? 'rgba(200,210,230,0.8)' : 'rgba(150,160,180,0.4)'}
+                          strokeWidth={isMajor ? 2 : 1}
+                        />
+                      );
+                    })}
+                    <text x="50" y="20" fill="rgba(200,210,230,0.6)" fontSize="9" fontWeight="500" textAnchor="middle" dominantBaseline="middle">С</text>
+                    <text x="50" y="80" fill="rgba(200,210,230,0.6)" fontSize="9" fontWeight="500" textAnchor="middle" dominantBaseline="middle" transform="rotate(180 50 80)">Ю</text>
+                    <text x="80" y="50" fill="rgba(200,210,230,0.6)" fontSize="9" fontWeight="500" textAnchor="middle" dominantBaseline="middle" transform="rotate(90 80 50)">В</text>
+                    <text x="20" y="50" fill="rgba(200,210,230,0.6)" fontSize="9" fontWeight="500" textAnchor="middle" dominantBaseline="middle" transform="rotate(-90 20 50)">З</text>
+                  </svg>
+                </motion.div>
+                <div style={{
+                  position: 'absolute',
+                  top: -18,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  width: 0,
+                  height: 0,
+                  borderLeft: '7px solid transparent',
+                  borderRight: '7px solid transparent',
+                  borderTop: '11px solid #d44050',
+                  filter: 'drop-shadow(0 0 4px rgba(212,64,80,0.6))',
+                }} />
+              </div>
+            </motion.div>
+
+            {/* Киль */}
+            <motion.div
+              animate={{
+                x: controls.navigation ? 374 : 0,
+              }}
+              transition={{ type: "spring", stiffness: 200, damping: 25 }}
+              style={{
+              width: 135,
+              height: 135,
+              borderRadius: '50%',
+              background: 'linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
+              padding: 5,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <div style={{
+                width: '100%',
+                height: '100%',
+                borderRadius: '50%',
+                background: 'linear-gradient(145deg, rgba(10,15,25,0.98) 0%, rgba(5,8,15,1) 100%)',
+                position: 'relative',
+                overflow: 'hidden',
+              }}>
+                <svg viewBox="0 0 100 100" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
+                  {Array.from({ length: 19 }).map((_, i) => {
+                    const deg = -45 + i * 5;
+                    const angle = (deg + 90) * Math.PI / 180;
+                    const isMajor = deg % 15 === 0;
+                    const r1 = isMajor ? 38 : 40;
+                    const r2 = 46;
+                    return (
+                      <line
+                        key={i}
+                        x1={50 + r1 * Math.cos(angle)}
+                        y1={50 + r1 * Math.sin(angle)}
+                        x2={50 + r2 * Math.cos(angle)}
+                        y2={50 + r2 * Math.sin(angle)}
+                        stroke={isMajor ? 'rgba(200,210,230,0.8)' : 'rgba(150,160,180,0.4)'}
+                        strokeWidth={isMajor ? 2 : 1}
+                        strokeLinecap="round"
+                      />
+                    );
+                  })}
+                </svg>
+                <svg
+                  viewBox="0 0 24 32"
+                  style={{
+                    position: 'absolute',
+                    top: 22,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: 33,
+                    height: 45,
+                    opacity: 0.35,
+                  }}
+                >
+                  <path
+                    d="M12 1 L18 8 L19 22 Q12 30 5 22 L6 8 Z"
+                    fill="rgba(150,180,210,0.6)"
+                    stroke="rgba(150,180,210,0.8)"
+                    strokeWidth="0.5"
+                  />
+                  <ellipse
+                    cx="12"
+                    cy="14"
+                    rx="4"
+                    ry="6"
+                    fill="rgba(100,130,160,0.5)"
+                  />
+                </svg>
+                <motion.div
+                  style={{
+                    position: 'absolute',
+                    top: 57,
+                    left: '50%',
+                    width: 4,
+                    height: 48,
+                    marginLeft: -2,
+                    background: 'linear-gradient(90deg, #a03040 0%, #d04050 25%, #e85060 50%, #d04050 75%, #a03040 100%)',
+                    borderRadius: 2,
+                    transformOrigin: 'center top',
+                    boxShadow: '0 0 8px rgba(224,80,96,0.5)',
+                  }}
+                  animate={{ rotate: rudderDeg }}
+                  transition={{ type: "spring", stiffness: 100, damping: 15 }}
+                />
+                {/* Центральная пипка */}
+                <div style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  width: 14,
+                  height: 14,
+                  borderRadius: '50%',
+                  background: 'radial-gradient(circle at 35% 35%, #ffffff 0%, #d0d0d0 30%, #909090 70%, #606060 100%)',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
+                }} />
+              </div>
+            </motion.div>
+          </div>
+
+          <div style={{ position: 'relative', width: 230, height: 127, marginTop: 22 }}>
+
+            {/* Backdrop для закрытия развернутой стекляшки */}
+            {expandedEngine && (
+              <div
+                onClick={() => setExpandedEngine(null)}
+                style={{
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  zIndex: 29,
+                }}
+              />
+            )}
+
             {/* Стекляшка - расширяется от центра */}
             {(() => {
               const expandedFaults = expandedEngine === "Left" ? [] : ["E102 - Датчик температуры", "E045 - Низкое давление масла"];
               const hasExpandedFaults = expandedFaults.length > 0;
               const expandedWidth = hasExpandedFaults ? 580 : 380;
-              const expandedHeight = 380;
+              const expandedHeight = 300;
               const collapsedWidth = 230;
-              const collapsedHeight = 190;
-              
+              const collapsedHeight = 127;
+              const miniWidth = 115;
+              const miniHeight = 63.5;
+
+              const isNavMode = controls.navigation && !expandedEngine;
+
               return (
-            <motion.div 
+            <motion.div
               animate={{
                 width: expandedEngine ? expandedWidth : collapsedWidth,
                 height: expandedEngine ? expandedHeight : collapsedHeight,
                 x: expandedEngine ? -expandedWidth / 2 : -collapsedWidth / 2,
-                y: expandedEngine ? -expandedHeight / 2 : -collapsedHeight / 2,
+                y: expandedEngine ? -expandedHeight / 2 - 60 : isNavMode ? 22 : -collapsedHeight / 2,
+                scale: isNavMode ? 0.6 : 1,
               }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              style={{ 
+              style={{
                 position: 'absolute',
                 top: '50%',
                 left: '50%',
-                width: collapsedWidth, 
+                width: collapsedWidth,
                 height: collapsedHeight,
-                borderRadius: 42,
+                borderRadius: 28,
                 background: 'linear-gradient(145deg, rgba(15,22,35,0.97) 0%, rgba(8,12,22,0.98) 50%, rgba(5,8,15,1) 100%)',
                 boxShadow: '0 12px 40px rgba(0,0,0,0.6), 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 1px rgba(100,140,200,0.1), inset 0 -2px 10px rgba(0,0,0,0.5)',
                 border: '1px solid rgba(80,100,130,0.2)',
@@ -2103,18 +2291,18 @@ export default function YachtDashboard() {
             >
               <div style={{
                 position: 'absolute',
-                inset: 6,
-                borderRadius: 36,
-                boxShadow: 'inset 0 8px 30px rgba(0,0,0,0.8), inset 0 2px 10px rgba(0,5,15,0.5)',
+                inset: 4,
+                borderRadius: 24,
+                boxShadow: 'inset 0 6px 20px rgba(0,0,0,0.8), inset 0 2px 8px rgba(0,5,15,0.5)',
                 pointerEvents: 'none',
               }} />
-              
+
               <div style={{
                 position: 'absolute',
                 top: 0,
-                left: 15,
-                right: 15,
-                height: 60,
+                left: 12,
+                right: 12,
+                height: 40,
                 borderRadius: '0 0 50% 50%',
                 background: 'linear-gradient(180deg, rgba(180,210,255,0.12) 0%, rgba(150,180,220,0.05) 40%, transparent 100%)',
                 pointerEvents: 'none',
@@ -2131,10 +2319,10 @@ export default function YachtDashboard() {
               }}>
                 {expandedEngine ? (
                   <>
-                    <div style={{ fontSize: 16, fontWeight: 600, color: hasExpandedFaults ? T.textRed : T.textSecondary, marginBottom: 20 }}>
+                    <div style={{ fontSize: 16, fontWeight: 600, color: hasExpandedFaults ? T.textRed : T.textSecondary, marginBottom: 36 }}>
                       {expandedEngine === "Left" ? "Левый" : "Правый"} двигатель
                     </div>
-                    
+
                     <div style={{ display: 'flex', width: '100%', flex: 1, position: 'relative', alignItems: 'flex-start' }}>
                       {/* Левая часть - показания (всегда 50% или 100% без ошибок) */}
                       <div style={{ 
@@ -2211,22 +2399,6 @@ export default function YachtDashboard() {
                         </div>
                       )}
                     </div>
-                    
-                    <button
-                      onClick={() => setExpandedEngine(null)}
-                      style={{
-                        marginTop: 16,
-                        padding: '10px 28px',
-                        background: 'rgba(80,110,140,0.2)',
-                        border: '1px solid rgba(100,130,160,0.3)',
-                        borderRadius: 20,
-                        color: 'rgba(150,180,210,0.7)',
-                        fontSize: 12,
-                        cursor: 'pointer',
-                      }}
-                    >
-                      Закрыть
-                    </button>
                   </>
                 ) : (
                   <>
@@ -2256,7 +2428,7 @@ export default function YachtDashboard() {
               <div style={{
                 position: 'absolute',
                 inset: 0,
-                borderRadius: 42,
+                borderRadius: 28,
                 border: '1px solid rgba(150,180,220,0.08)',
                 pointerEvents: 'none',
               }} />
@@ -2265,33 +2437,202 @@ export default function YachtDashboard() {
             })()}
             
             {/* Лого houseboat - плоское темное */}
-            <div style={{
-              position: 'absolute',
-              bottom: -94,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: 5,
-            }}>
-              <svg width="105" height="68" viewBox="600 -100 1620 750" style={{ opacity: 0.6 }}>
-                <path 
-                  fill="#2a3a4a" 
+            <motion.div
+              animate={{ opacity: controls.navigation ? 0 : 1 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              style={{
+                position: 'absolute',
+                bottom: -66,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                zIndex: 5,
+              }}
+            >
+              <svg width="75" height="48" viewBox="600 -100 1620 750" style={{ opacity: 0.6 }}>
+                <path
+                  fill="#2a3a4a"
                   d="M1798.09 319.87c-4.35,-12.65 -31.56,-22.61 -26.42,-5.52 2.53,29.43 7.74,74.72 -23.19,131.9 -34.39,29.27 5.18,34.93 43.53,16.19 64.03,-24.99 12.21,-119.88 6.08,-142.57zm-498.41 -195.06l0 0 -0.42 0 0 54.51 47.15 0c-0.78,-30.15 -21.5,-54.51 -46.73,-54.51zm-17.11 0.05l0 0c-24.28,1.3 -43.89,25.15 -44.65,54.46l44.65 0 0 -54.46zm-44.67 74.57l0 0 0 51 44.67 0 0 -51 -44.67 0zm61.36 51l0 0 47.17 0 0 -51 -47.17 0 0 51zm488.43 -118.7l0 0c-75.64,39.65 -105.96,79.31 -167.43,107.06 -14.5,6.53 -30.65,12.67 -48.33,18.34l0 -102.15c0,-34.71 -28.38,-63.1 -63.09,-63.1 -34.71,0 -63.1,28.39 -63.1,63.1l0 130.53c-114.9,17.14 -260.31,19.42 -421.05,-2.18 209.11,99.93 576.41,33.58 705.24,-76.57 38.48,-32.89 101.67,-75.25 149.43,-91.4 151.13,-55.09 221.23,-5.03 260.55,84.96 -7.9,31.59 -71.1,31.12 -109.89,46.44 -109.8,30.41 -134.33,31.14 -244.26,11.66 -12.86,-0.26 -32.74,10.03 -27.17,24.4 10.58,216.03 -71.36,208.7 -255.45,232.26 -61.99,2.97 -1.08,-78.65 13.4,-87.72 46.13,-48.5 75.84,-52.86 86.21,-69.64 14.88,-26.72 3.03,-38.46 -31.76,-15.84 -142.22,60.11 -308.64,63.74 -496.17,18.12 -193.15,147.77 -382.49,16.88 -304.72,-13.59 67.62,-23.73 138.17,-42.34 211.83,-55.51l-26.05 -41.91c50.95,-25.54 95,-62.9 135.37,-106.56 212.3,-195.78 446.39,-180.44 696.44,-10.7z"
                 />
               </svg>
-            </div>
+            </motion.div>
+
+            {/* Виджет глубины (эхолот) - появляется при навигации */}
+            <AnimatePresence>
+              {controls.navigation && !expandedEngine && (
+                <motion.div
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 50 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  style={{
+                    position: 'absolute',
+                    top: 110,
+                    left: 'calc(50% + 85px)',
+                    width: 138,
+                    height: 76,
+                    borderRadius: 16,
+                    background: 'linear-gradient(145deg, rgba(15,22,35,0.97) 0%, rgba(8,12,22,0.98) 50%, rgba(5,8,15,1) 100%)',
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 1px rgba(100,140,200,0.1)',
+                    border: '1px solid rgba(80,100,130,0.2)',
+                    overflow: 'hidden',
+                    zIndex: 3,
+                  }}
+                >
+                  {/* Внутренняя тень */}
+                  <div style={{
+                    position: 'absolute',
+                    inset: 3,
+                    borderRadius: 13,
+                    boxShadow: 'inset 0 4px 12px rgba(0,0,0,0.6)',
+                    pointerEvents: 'none',
+                  }} />
+
+                  {/* Заголовок */}
+                  <div style={{
+                    position: 'absolute',
+                    top: 6,
+                    left: 0,
+                    right: 0,
+                    textAlign: 'center',
+                    fontSize: 8,
+                    color: 'rgba(150,180,210,0.6)',
+                    letterSpacing: 1,
+                    fontWeight: 500,
+                  }}>
+                    ГЛУБИНА
+                  </div>
+
+                  {/* Текущая глубина */}
+                  <div style={{
+                    position: 'absolute',
+                    top: 18,
+                    left: 8,
+                    display: 'flex',
+                    alignItems: 'baseline',
+                    gap: 2,
+                  }}>
+                    <span style={{
+                      fontSize: 22,
+                      fontWeight: 400,
+                      color: '#50a0ff',
+                      textShadow: '0 0 15px rgba(80,160,255,0.4)',
+                    }}>
+                      {depthHistory[depthHistory.length - 1].toFixed(1)}
+                    </span>
+                    <span style={{
+                      fontSize: 9,
+                      color: 'rgba(80,160,255,0.5)',
+                    }}>
+                      м
+                    </span>
+                  </div>
+
+                  {/* График глубины */}
+                  <svg
+                    style={{
+                      position: 'absolute',
+                      bottom: 6,
+                      left: 6,
+                      right: 6,
+                      height: 28,
+                    }}
+                    viewBox="0 0 126 28"
+                    preserveAspectRatio="none"
+                  >
+                    {/* Линии сетки */}
+                    <line x1="0" y1="7" x2="126" y2="7" stroke="rgba(80,160,255,0.1)" strokeWidth="0.5" />
+                    <line x1="0" y1="14" x2="126" y2="14" stroke="rgba(80,160,255,0.1)" strokeWidth="0.5" />
+                    <line x1="0" y1="21" x2="126" y2="21" stroke="rgba(80,160,255,0.1)" strokeWidth="0.5" />
+
+                    {/* Градиент для заливки под графиком */}
+                    <defs>
+                      <linearGradient id="depthGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stopColor="rgba(80,160,255,0.3)" />
+                        <stop offset="100%" stopColor="rgba(80,160,255,0)" />
+                      </linearGradient>
+                    </defs>
+
+                    {/* Заливка под графиком */}
+                    <path
+                      d={`M 0 ${((depthHistory[0] - 2) / 13) * 28} ${depthHistory.map((d, i) => `L ${(i / (depthHistory.length - 1)) * 126} ${((d - 2) / 13) * 28}`).join(' ')} L 126 28 L 0 28 Z`}
+                      fill="url(#depthGradient)"
+                    />
+
+                    {/* Линия графика */}
+                    <path
+                      d={`M 0 ${((depthHistory[0] - 2) / 13) * 28} ${depthHistory.map((d, i) => `L ${(i / (depthHistory.length - 1)) * 126} ${((d - 2) / 13) * 28}`).join(' ')}`}
+                      fill="none"
+                      stroke="#50a0ff"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      style={{ filter: 'drop-shadow(0 0 3px rgba(80,160,255,0.6))' }}
+                    />
+                  </svg>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 
-        <div style={{ marginLeft: -92, paddingTop: 20 }}>
-          <EngineCard side="Right" tempText="Темп 81°C · Масло ОК" rpm={Math.round(rpmRight)} throttle={Math.round(throttleRight)} gear={gearRight} expanded={false} onToggleExpand={() => setExpandedEngine("Right")} />
-        </div>
+        {/* Правый двигатель - обычный */}
+        <motion.div
+          animate={{
+            opacity: controls.navigation ? 0 : 1,
+            scale: controls.navigation ? 0.5 : 1,
+            x: controls.navigation ? 170 : 0,
+          }}
+          transition={{ type: "spring", stiffness: 200, damping: 25 }}
+          style={{ marginLeft: -50, paddingTop: 16, pointerEvents: controls.navigation ? 'none' : 'auto' }}
+        >
+          <EngineCard side="Right" tempText="Темп 81°C · Масло ОК" rpm={Math.round(rpmRight)} throttle={Math.round(throttleRight)} gear={gearRight} motorHours={1198} fuelLevel={18} expanded={false} onToggleExpand={() => setExpandedEngine("Right")} />
+        </motion.div>
+
+        {/* Мини двигатели в углах - появляются при навигации */}
+        <AnimatePresence>
+          {controls.navigation && (
+            <>
+              {/* Левый мини-двигатель - выровнен по левому краю нижней панели */}
+              <motion.div
+                initial={{ opacity: 0, x: -100, y: 100 }}
+                animate={{ opacity: 1, x: 0, y: 0 }}
+                exit={{ opacity: 0, x: -100, y: 100 }}
+                transition={{ type: "spring", stiffness: 200, damping: 25 }}
+                style={{
+                  position: 'absolute',
+                  bottom: 4,
+                  left: 0,
+                  zIndex: 50,
+                }}
+              >
+                <MiniEngineCard side="Left" rpm={Math.round(rpmLeft)} fuelLevel={75} hasFaults={false} />
+              </motion.div>
+
+              {/* Правый мини-двигатель - выровнен по правому краю нижней панели */}
+              <motion.div
+                initial={{ opacity: 0, x: 100, y: 100 }}
+                animate={{ opacity: 1, x: 0, y: 0 }}
+                exit={{ opacity: 0, x: 100, y: 100 }}
+                transition={{ type: "spring", stiffness: 200, damping: 25 }}
+                style={{
+                  position: 'absolute',
+                  bottom: 4,
+                  right: 0,
+                  zIndex: 50,
+                }}
+              >
+                <MiniEngineCard side="Right" rpm={Math.round(rpmRight)} fuelLevel={18} hasFaults={true} />
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
       </motion.div>
 
       <motion.div 
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: loadingPhase === 'done' ? 1 : 0, y: loadingPhase === 'done' ? 0 : 30 }}
         transition={{ duration: 0.6, delay: 0.5 }}
-        style={{ width: '100%', maxWidth: 1152, marginTop: 20 }}
+        style={{ width: '100%', maxWidth: 1048, marginTop: 16 }}
       >
         {/* Глубокая стеклянная панель в стиле Mercedes */}
         <div style={{
@@ -2312,9 +2653,11 @@ export default function YachtDashboard() {
               const Icon = it.icon;
               const on = controls[it.key];
               const isAnchor = it.key === 'anchor';
+              const isNavigation = it.key === 'navigation';
               const anchorDeployed = isAnchor && anchorPosition > 0;
               const buttonOn = isAnchor ? anchorDeployed : on;
-              const buttonColor = isAnchor && anchorDeployed ? T.textRed : T.textGreen;
+              const navBlue = '#50a0ff';
+              const buttonColor = isAnchor && anchorDeployed ? T.textRed : isNavigation ? navBlue : T.textGreen;
               return (
                 <React.Fragment key={it.key}>
                   <button
@@ -2328,10 +2671,12 @@ export default function YachtDashboard() {
                       justifyContent: 'center',
                       gap: 6,
                       border: 'none',
-                      background: buttonOn 
+                      background: buttonOn
                         ? isAnchor && anchorDeployed
                           ? 'linear-gradient(180deg, rgba(100,40,50,0.3) 0%, rgba(60,20,30,0.2) 100%)'
-                          : 'linear-gradient(180deg, rgba(40,100,80,0.3) 0%, rgba(20,60,50,0.2) 100%)'
+                          : isNavigation
+                            ? 'linear-gradient(180deg, rgba(40,80,140,0.3) 0%, rgba(20,50,100,0.2) 100%)'
+                            : 'linear-gradient(180deg, rgba(40,100,80,0.3) 0%, rgba(20,60,50,0.2) 100%)'
                         : 'transparent',
                       cursor: 'pointer',
                       position: 'relative',
@@ -2345,7 +2690,7 @@ export default function YachtDashboard() {
                         right: '20%',
                         height: 2,
                         background: buttonColor,
-                        boxShadow: `0 0 12px ${isAnchor && anchorDeployed ? 'rgba(224,64,80,0.8)' : 'rgba(61,200,140,0.8)'}`,
+                        boxShadow: `0 0 12px ${isAnchor && anchorDeployed ? 'rgba(224,64,80,0.8)' : isNavigation ? 'rgba(80,160,255,0.8)' : 'rgba(61,200,140,0.8)'}`,
                         borderRadius: 1,
                       }} />
                     )}

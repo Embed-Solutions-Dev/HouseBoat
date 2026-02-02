@@ -30783,6 +30783,7 @@
     pointerRed: "#d03040"
   };
   var Anchor = (p) => /* @__PURE__ */ import_react27.default.createElement("svg", { ...p, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" }, /* @__PURE__ */ import_react27.default.createElement("circle", { cx: "12", cy: "5", r: "3" }), /* @__PURE__ */ import_react27.default.createElement("line", { x1: "12", x2: "12", y1: "22", y2: "8" }), /* @__PURE__ */ import_react27.default.createElement("path", { d: "M5 12H2a10 10 0 0 0 20 0h-3" }));
+  var Navigation2 = (p) => /* @__PURE__ */ import_react27.default.createElement("svg", { ...p, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" }, /* @__PURE__ */ import_react27.default.createElement("polygon", { points: "12 2 19 21 12 17 5 21 12 2" }));
   var Power = (p) => /* @__PURE__ */ import_react27.default.createElement("svg", { ...p, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "M12 2v10" }), /* @__PURE__ */ import_react27.default.createElement("path", { d: "M18.4 6.6a9 9 0 1 1-12.77.04" }));
   var Generator = (p) => /* @__PURE__ */ import_react27.default.createElement("svg", { ...p, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" }, /* @__PURE__ */ import_react27.default.createElement("rect", { x: "2", y: "6", width: "20", height: "12", rx: "2" }), /* @__PURE__ */ import_react27.default.createElement("path", { d: "M6 12h.01" }), /* @__PURE__ */ import_react27.default.createElement("path", { d: "M10 12h.01" }), /* @__PURE__ */ import_react27.default.createElement("path", { d: "M14 12h4" }), /* @__PURE__ */ import_react27.default.createElement("path", { d: "M6 10v4" }));
   var BowThruster = (p) => /* @__PURE__ */ import_react27.default.createElement("svg", { ...p, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" }, /* @__PURE__ */ import_react27.default.createElement("circle", { cx: "12", cy: "12", r: "9" }), /* @__PURE__ */ import_react27.default.createElement("path", { d: "M12 6v12" }), /* @__PURE__ */ import_react27.default.createElement("path", { d: "M8 9l4 3-4 3" }), /* @__PURE__ */ import_react27.default.createElement("path", { d: "M16 9l-4 3 4 3" }));
@@ -30813,9 +30814,10 @@
       justifyContent: "center"
     } }, /* @__PURE__ */ import_react27.default.createElement(Icon, { style: { width: 22, height: 22, color: tone === "ok" ? T.textGreen : T.textSecondary } })), /* @__PURE__ */ import_react27.default.createElement("div", null, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 20, fontWeight: 600, color: T.textPrimary } }, value), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textMuted, marginTop: 2 } }, label)));
   });
-  var EngineCard = (0, import_react27.memo)(function EngineCard2({ side, tempText, rpm, throttle, gear, expanded, onToggleExpand }) {
+  var EngineCard = (0, import_react27.memo)(function EngineCard2({ side, tempText, rpm, throttle, gear, motorHours, fuelLevel, expanded, onToggleExpand }) {
     const faults = side === "Left" ? [] : ["E102 - Temp sensor intermittent"];
     const hasFaults = faults.length > 0;
+    const lowFuel = fuelLevel < 25;
     const v = clamp2(rpm, 0, 4e3);
     const max = 4e3;
     const ratio = v / max;
@@ -30828,7 +30830,7 @@
       const targetAngle = -startAngle + ratio * sweep;
       mv.set(targetAngle);
     }, [ratio, mv]);
-    const size = 340;
+    const size = 310;
     const cx = size / 2;
     const cy = size / 2;
     const r = size / 2 - 8;
@@ -30839,7 +30841,8 @@
       const t = val / max;
       const angle = (startAngle - t * sweep) * Math.PI / 180;
       const isMajor = val % majorStep === 0;
-      const innerR = isMajor ? r - 18 : r - 10;
+      const isHalf = val % 1e3 !== 0 && val % 500 === 0;
+      const innerR = isMajor ? isHalf ? r - 14 : r - 18 : r - 10;
       const outerR = r;
       ticks.push({
         x1: cx + innerR * Math.cos(angle),
@@ -30848,21 +30851,28 @@
         y2: cy - outerR * Math.sin(angle),
         isMajor,
         value: val,
-        labelX: cx + (r - 34) * Math.cos(angle),
-        labelY: cy - (r - 34) * Math.sin(angle),
+        labelX: cx + (r - 38) * Math.cos(angle),
+        labelY: cy - (r - 38) * Math.sin(angle),
         isRedZone: val >= max * 0.8
       });
     }
     const redZoneStartAngle = startAngle - 0.8 * sweep;
     const arcR = r - 5;
-    const needleLength = r - 40;
+    const needleLength = r - 20;
+    const fuelArcR = r - 5;
+    const fuelStartAngle = -125;
+    const fuelEndAngle = -55;
+    const fuelSweep = 70;
+    const fuelRatio = clamp2(fuelLevel, 0, 100) / 100;
+    const fuelFilledAngle = fuelStartAngle + fuelRatio * fuelSweep;
+    const fuelColor = lowFuel ? T.textAmber : T.gaugeActive;
     return /* @__PURE__ */ import_react27.default.createElement("div", { style: { minHeight: 360, display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
       position: "relative",
       width: size + 16,
       height: size + 16,
       borderRadius: "50%",
       background: "linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)",
-      boxShadow: "0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.8)",
+      boxShadow: hasFaults ? "0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.8), 0 0 30px rgba(224,64,80,0.6), 0 0 60px rgba(224,64,80,0.3)" : lowFuel ? "0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.8), 0 0 30px rgba(232,160,48,0.5), 0 0 60px rgba(232,160,48,0.25)" : "0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.8)",
       padding: 8
     } }, /* @__PURE__ */ import_react27.default.createElement(
       "button",
@@ -30918,6 +30928,24 @@
         strokeWidth: "4",
         strokeLinecap: "round"
       }
+    ), /* @__PURE__ */ import_react27.default.createElement(
+      "path",
+      {
+        d: `M ${cx + fuelArcR * Math.cos(fuelStartAngle * Math.PI / 180)} ${cy - fuelArcR * Math.sin(fuelStartAngle * Math.PI / 180)} A ${fuelArcR} ${fuelArcR} 0 0 0 ${cx + fuelArcR * Math.cos(fuelEndAngle * Math.PI / 180)} ${cy - fuelArcR * Math.sin(fuelEndAngle * Math.PI / 180)}`,
+        fill: "none",
+        stroke: T.gaugeBg,
+        strokeWidth: "6",
+        strokeLinecap: "round"
+      }
+    ), fuelRatio > 0 && /* @__PURE__ */ import_react27.default.createElement(
+      "path",
+      {
+        d: `M ${cx + fuelArcR * Math.cos(fuelStartAngle * Math.PI / 180)} ${cy - fuelArcR * Math.sin(fuelStartAngle * Math.PI / 180)} A ${fuelArcR} ${fuelArcR} 0 0 0 ${cx + fuelArcR * Math.cos(fuelFilledAngle * Math.PI / 180)} ${cy - fuelArcR * Math.sin(fuelFilledAngle * Math.PI / 180)}`,
+        fill: "none",
+        stroke: fuelColor,
+        strokeWidth: "6",
+        strokeLinecap: "round"
+      }
     ), ticks.map((tick, i) => /* @__PURE__ */ import_react27.default.createElement("g", { key: i }, /* @__PURE__ */ import_react27.default.createElement(
       "line",
       {
@@ -30929,13 +30957,13 @@
         strokeWidth: tick.isMajor ? 2.5 : 1,
         strokeLinecap: "round"
       }
-    ), tick.isMajor && /* @__PURE__ */ import_react27.default.createElement(
+    ), tick.value % 1e3 === 0 && /* @__PURE__ */ import_react27.default.createElement(
       "text",
       {
         x: tick.labelX,
         y: tick.labelY,
-        fill: tick.isRedZone ? T.gaugeRed : T.textSecondary,
-        fontSize: "13",
+        fill: tick.isRedZone ? T.gaugeRed : T.textPrimary,
+        fontSize: "24",
         fontWeight: "600",
         textAnchor: "middle",
         dominantBaseline: "middle"
@@ -31004,12 +31032,125 @@
         }),
         /* @__PURE__ */ import_react27.default.createElement("circle", { cx: "22", cy: "22", r: "2", fill: "#080808" })
       )
-    ), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", top: 90, left: 0, right: 0, textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 14, fontWeight: 600, color: T.textSecondary } }, side === "Left" ? "\u041B\u0435\u0432\u044B\u0439" : "\u041F\u0440\u0430\u0432\u044B\u0439", " \u0434\u0432\u0438\u0433\u0430\u0442\u0435\u043B\u044C"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textGreen, marginTop: 2 } }, tempText)), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", left: 0, right: 0, top: cy + 40, textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 32, fontWeight: 600, color: T.textPrimary, textShadow: "0 0 20px rgba(200,230,255,0.3)", fontVariantNumeric: "tabular-nums" } }, rpm.toLocaleString()), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textMuted, letterSpacing: 0.5, marginTop: -2 } }, "\u041E\u0411/\u041C\u0418\u041D")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", bottom: 20, left: 0, right: 0, display: "flex", justifyContent: "center", gap: 32 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textMuted } }, "\u0413\u0410\u0417"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 18, fontWeight: 600, color: T.textPrimary } }, throttle, "%")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textMuted } }, "\u041F\u0415\u0420."), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 18, fontWeight: 600, color: T.textPrimary } }, gear)), hasFaults && /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "center", filter: "drop-shadow(0 0 8px rgba(255,60,60,0.8))" } }, /* @__PURE__ */ import_react27.default.createElement("svg", { style: { width: 24, height: 24 }, viewBox: "0 0 24 24", fill: "none", stroke: T.textRed, strokeWidth: "2" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" }), /* @__PURE__ */ import_react27.default.createElement("line", { x1: "12", y1: "9", x2: "12", y2: "13" }), /* @__PURE__ */ import_react27.default.createElement("circle", { cx: "12", cy: "17", r: "0.6", fill: T.textRed })))))));
+    ), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", top: cy, left: cx - 66, transform: "translate(-50%, -50%)", textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted } }, "\u0413\u0410\u0417"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 16, fontWeight: 600, color: T.textSecondary } }, throttle, "%")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", top: cy, left: cx + 66, transform: "translate(-50%, -50%)", textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted } }, "\u041C\u041E\u0422\u041E\u0427\u0410\u0421\u042B"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 16, fontWeight: 600, color: T.textSecondary, fontVariantNumeric: "tabular-nums" } }, motorHours.toLocaleString())), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", bottom: 202, left: "50%", transform: "translateX(-50%)", textAlign: "center" } }, hasFaults ? /* @__PURE__ */ import_react27.default.createElement("div", { style: { filter: "drop-shadow(0 0 8px rgba(255,60,60,0.8))" } }, /* @__PURE__ */ import_react27.default.createElement("svg", { style: { width: 28, height: 28 }, viewBox: "0 0 24 24", fill: "none", stroke: T.textRed, strokeWidth: "2" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" }), /* @__PURE__ */ import_react27.default.createElement("line", { x1: "12", y1: "9", x2: "12", y2: "13" }), /* @__PURE__ */ import_react27.default.createElement("circle", { cx: "12", cy: "17", r: "0.6", fill: T.textRed }))) : /* @__PURE__ */ import_react27.default.createElement(import_react27.default.Fragment, null, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textGreen } }, tempText.split(" \xB7 ")[0]), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textGreen, marginTop: 2 } }, tempText.split(" \xB7 ")[1]))), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", bottom: 102, left: "50%", transform: "translateX(-50%)", textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: "rgba(150,160,180,0.6)", fontWeight: 500 } }, "\xD71000 \u043E\u0431/\u043C\u0438\u043D")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", bottom: 28, left: 0, right: 0, textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("svg", { style: { width: 27, height: 27 }, viewBox: "0 0 24 24", fill: lowFuel ? T.textAmber : T.textMuted, stroke: "none" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "M19.77 7.23l.01-.01-3.72-3.72L15 4.56l2.11 2.11c-.94.36-1.61 1.26-1.61 2.33 0 1.38 1.12 2.5 2.5 2.5.36 0 .69-.08 1-.21v7.21c0 .55-.45 1-1 1s-1-.45-1-1V14c0-1.1-.9-2-2-2h-1V5c0-1.1-.9-2-2-2H6c-1.1 0-2 .9-2 2v16h10v-7.5h1.5v5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V9c0-.69-.28-1.32-.73-1.77zM12 10H6V5h6v5z" }))))));
+  });
+  var MiniEngineCard = (0, import_react27.memo)(function MiniEngineCard2({ side, rpm, fuelLevel, hasFaults }) {
+    const lowFuel = fuelLevel < 25;
+    const fuelColor = lowFuel ? T.textAmber : T.gaugeActive;
+    const v = clamp2(rpm, 0, 4e3);
+    const max = 4e3;
+    const ratio = v / max;
+    const startAngle = 225;
+    const sweep = 270;
+    const mv = useMotionValue(-startAngle);
+    const spring2 = useSpring(mv, { stiffness: 80, damping: 15 });
+    (0, import_react27.useEffect)(() => {
+      const targetAngle = -startAngle + ratio * sweep;
+      mv.set(targetAngle);
+    }, [ratio, mv]);
+    return /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", gap: 18 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: 135, display: "flex", alignItems: "center", gap: 6 } }, /* @__PURE__ */ import_react27.default.createElement("svg", { style: { width: 14, height: 14, flexShrink: 0 }, viewBox: "0 0 24 24", fill: fuelColor, stroke: "none" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "M19.77 7.23l.01-.01-3.72-3.72L15 4.56l2.11 2.11c-.94.36-1.61 1.26-1.61 2.33 0 1.38 1.12 2.5 2.5 2.5.36 0 .69-.08 1-.21v7.21c0 .55-.45 1-1 1s-1-.45-1-1V14c0-1.1-.9-2-2-2h-1V5c0-1.1-.9-2-2-2H6c-1.1 0-2 .9-2 2v16h10v-7.5h1.5v5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V9c0-.69-.28-1.32-.73-1.77zM12 10H6V5h6v5z" })), /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1, height: 6, borderRadius: 3, background: "rgba(30,45,60,0.6)", border: "1px solid rgba(80,100,120,0.3)", overflow: "hidden" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: `${fuelLevel}%`, height: "100%", background: `linear-gradient(90deg, ${fuelColor} 0%, ${fuelColor}88 100%)`, borderRadius: 2 } })), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: fuelColor, width: 28, textAlign: "right" } }, fuelLevel, "%")), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+      width: 135,
+      height: 135,
+      borderRadius: "50%",
+      background: "linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)",
+      boxShadow: hasFaults ? "0 4px 16px rgba(0,0,0,0.5), 0 0 20px rgba(224,64,80,0.7), 0 0 40px rgba(224,64,80,0.4)" : lowFuel ? "0 4px 16px rgba(0,0,0,0.5), 0 0 20px rgba(232,160,48,0.6), 0 0 40px rgba(232,160,48,0.3)" : "0 4px 16px rgba(0,0,0,0.5)",
+      padding: 5,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center"
+    } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+      width: "100%",
+      height: "100%",
+      borderRadius: "50%",
+      background: "linear-gradient(145deg, rgba(10,15,25,0.98) 0%, rgba(5,8,15,1) 100%)",
+      position: "relative",
+      overflow: "hidden"
+    } }, /* @__PURE__ */ import_react27.default.createElement("svg", { viewBox: "0 0 100 100", style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%" } }, Array.from({ length: 41 }).map((_, i) => {
+      const val = i * 100;
+      const t = val / max;
+      const angle = (startAngle - t * sweep) * Math.PI / 180;
+      const isMajor = val % 1e3 === 0;
+      const isMedium = val % 500 === 0 && !isMajor;
+      const r1 = isMajor ? 42 : isMedium ? 43.5 : 45;
+      const r2 = 46;
+      const isRedZone = val >= max * 0.8;
+      return /* @__PURE__ */ import_react27.default.createElement(
+        "line",
+        {
+          key: i,
+          x1: 50 + r1 * Math.cos(angle),
+          y1: 50 - r1 * Math.sin(angle),
+          x2: 50 + r2 * Math.cos(angle),
+          y2: 50 - r2 * Math.sin(angle),
+          stroke: isRedZone ? isMajor ? "rgba(224,80,96,1)" : isMedium ? "rgba(224,80,96,0.85)" : "rgba(224,80,96,0.6)" : isMajor ? "rgba(200,210,230,0.9)" : isMedium ? "rgba(180,190,210,0.7)" : "rgba(150,165,185,0.5)",
+          strokeWidth: isMajor ? 1.5 : isMedium ? 1 : 0.75,
+          strokeLinecap: "round"
+        }
+      );
+    }), [0, 1, 2, 3, 4].map((num) => {
+      const t = num * 1e3 / max;
+      const angle = (startAngle - t * sweep) * Math.PI / 180;
+      const isRedZone = num >= 4 * 0.8;
+      return /* @__PURE__ */ import_react27.default.createElement(
+        "text",
+        {
+          key: num,
+          x: 50 + 35 * Math.cos(angle),
+          y: 50 - 35 * Math.sin(angle),
+          fill: isRedZone ? "rgba(224,80,96,0.9)" : "rgba(200,210,230,0.9)",
+          fontSize: "9",
+          fontWeight: "600",
+          textAnchor: "middle",
+          dominantBaseline: "middle"
+        },
+        num
+      );
+    }), /* @__PURE__ */ import_react27.default.createElement(
+      "text",
+      {
+        x: "50",
+        y: "66",
+        fill: "rgba(150,160,180,0.6)",
+        fontSize: "6",
+        fontWeight: "500",
+        textAnchor: "middle"
+      },
+      "\xD71000 \u043E\u0431/\u043C"
+    )), /* @__PURE__ */ import_react27.default.createElement(
+      motion.div,
+      {
+        style: {
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          width: 3,
+          height: 35,
+          marginLeft: -1.5,
+          marginTop: -35,
+          background: "linear-gradient(180deg, #e04050 0%, #c03040 100%)",
+          borderRadius: 2,
+          transformOrigin: "center bottom",
+          boxShadow: "0 0 6px rgba(224,64,80,0.6)",
+          rotate: spring2
+        }
+      }
+    ), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      width: 12,
+      height: 12,
+      borderRadius: "50%",
+      background: "radial-gradient(circle at 35% 35%, #ffffff 0%, #d0d0d0 30%, #909090 70%, #606060 100%)",
+      boxShadow: "0 2px 4px rgba(0,0,0,0.4)"
+    } }), hasFaults ? /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)" } }, /* @__PURE__ */ import_react27.default.createElement("svg", { style: { width: 20, height: 20 }, viewBox: "0 0 24 24", fill: "none", stroke: T.textRed, strokeWidth: "2" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" }), /* @__PURE__ */ import_react27.default.createElement("line", { x1: "12", y1: "9", x2: "12", y2: "13" }), /* @__PURE__ */ import_react27.default.createElement("circle", { cx: "12", cy: "17", r: "0.6", fill: T.textRed }))) : /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", bottom: 16, left: "50%", transform: "translateX(-50%)", fontSize: 11, fontWeight: 600, color: T.textGreen } }, "\u041E\u041A"))));
   });
   var controlItems = [
     { key: "power", label: "\u041F\u0438\u0442\u0430\u043D\u0438\u0435", icon: Power },
     { key: "runLight", label: "\u0425\u043E\u0434\u043E\u0432\u044B\u0435", icon: LightRunning },
     { key: "parkLight", label: "\u0421\u0442\u043E\u044F\u043D. \u043E\u0433\u043E\u043D\u044C", icon: LightParking },
+    { key: "navigation", label: "\u041D\u0430\u0432\u0438\u0433\u0430\u0446\u0438\u044F", icon: Navigation2 },
     { key: "thruster", label: "\u041F\u043E\u0434\u0440\u0443\u043B\u044C\u043A\u0430", icon: BowThruster },
     { key: "anchor", label: "\u042F\u043A\u043E\u0440\u044C", icon: Anchor },
     { key: "generator", label: "\u0413\u0435\u043D\u0435\u0440\u0430\u0442\u043E\u0440", icon: Generator }
@@ -31032,16 +31173,28 @@
     const [batteryV, setBatteryV] = (0, import_react27.useState)(24.7);
     const [rudderDeg, setRudderDeg] = (0, import_react27.useState)(-6);
     const [statusOk] = (0, import_react27.useState)(true);
-    const [controls, setControls] = (0, import_react27.useState)({ power: true, generator: false, thruster: false, parkLight: false, runLight: true, anchor: false });
+    const [controls, setControls] = (0, import_react27.useState)({ power: true, generator: false, thruster: false, parkLight: false, runLight: true, anchor: false, navigation: false });
     const [anchorModal, setAnchorModal] = (0, import_react27.useState)(false);
     const [anchorPosition, setAnchorPosition] = (0, import_react27.useState)(0);
     const [anchorMoving, setAnchorMoving] = (0, import_react27.useState)(null);
+    const [depthHistory, setDepthHistory] = (0, import_react27.useState)(() => {
+      const initial = [];
+      let depth = 8.5;
+      for (let i = 0; i < 40; i++) {
+        depth += (Math.random() - 0.5) * 0.8;
+        depth = Math.max(2, Math.min(15, depth));
+        initial.push(depth);
+      }
+      return initial;
+    });
     (0, import_react27.useEffect)(() => {
       const timer1 = setTimeout(() => setLoadingPhase("transition"), 2800);
-      const timer2 = setTimeout(() => setLoadingPhase("done"), 3400);
+      const timer2 = setTimeout(() => setLoadingPhase("systemCheck"), 3400);
+      const timer3 = setTimeout(() => setLoadingPhase("done"), 7200);
       return () => {
         clearTimeout(timer1);
         clearTimeout(timer2);
+        clearTimeout(timer3);
       };
     }, []);
     const anchorDepthMeters = anchorPosition / 100 * 25;
@@ -31076,8 +31229,6 @@
           { label: "\u041D\u0430\u043F\u0440\u044F\u0436\u0435\u043D\u0438\u0435 \u0410\u041A\u0411", value: "12.6", unit: "\u0412", status: "ok" },
           { label: "\u0422\u043E\u043A \u0410\u041A\u0411", value: "+15", unit: "\u0410", status: "normal" },
           { label: "\u0422\u0435\u043C\u043F\u0435\u0440\u0430\u0442\u0443\u0440\u0430 \u0410\u041A\u0411", value: "24", unit: "\xB0C", status: "normal" },
-          { label: "\u041C\u043E\u0449\u043D\u043E\u0441\u0442\u044C \u0433\u0435\u043D\u0435\u0440\u0430\u0442\u043E\u0440\u0430", value: "0", unit: "\u043A\u0412\u0442", status: "normal" },
-          { label: "\u041D\u0430\u0433\u0440\u0443\u0437\u043A\u0430 \u0433\u0435\u043D\u0435\u0440\u0430\u0442\u043E\u0440\u0430", value: "0", unit: "%", status: "normal" },
           { label: "\u041D\u0430\u043F\u0440\u044F\u0436\u0435\u043D\u0438\u0435 \u0431\u0435\u0440\u0435\u0433\u0430", value: "\u2014", unit: "", status: "off" },
           { label: "\u0422\u043E\u043A \u0431\u0435\u0440\u0435\u0433\u0430", value: "\u2014", unit: "", status: "off" },
           { label: "\u041C\u043E\u0449\u043D\u043E\u0441\u0442\u044C \u0441\u043E\u043B\u043D\u0446\u0430", value: "2.1", unit: "\u043A\u0412\u0442", status: "ok" },
@@ -31085,12 +31236,12 @@
         ]
       },
       tanks: {
-        title: "\u0401\u041C\u041A\u041E\u0421\u0422\u0418",
+        title: "\u0411\u0410\u041A\u0418",
         containers: [
           { name: "\u041F\u0440\u0435\u0441\u043D\u0430\u044F", subname: "\u0432\u043E\u0434\u0430", level: 65, status: "ok" },
           { name: "\u0421\u0435\u0440\u044B\u0435", subname: "\u0432\u043E\u0434\u044B", level: 42, status: "normal" },
           { name: "\u0427\u0451\u0440\u043D\u044B\u0435", subname: "\u0432\u043E\u0434\u044B", level: 28, status: "normal" },
-          { name: "\u0421\u0435\u043F\u0442\u0438\u043A", subname: "", level: 87, status: "critical" }
+          { name: "\u0422\u043E\u043F\u043B\u0438\u0432\u043E", subname: "\u0433\u0435\u043D.", level: 45, status: "normal" }
         ],
         metrics: [
           { label: "\u0414\u0430\u0432\u043B\u0435\u043D\u0438\u0435 \u0432\u043E\u0434\u044B", value: "2.4", unit: "\u0431\u0430\u0440", status: "normal" },
@@ -31109,7 +31260,7 @@
         ]
       }
     };
-    const sectionKeys = ["fuel", "weather", "electric", "tanks", "safety"];
+    const sectionKeys = ["weather", "electric", "tanks", "safety"];
     (0, import_react27.useEffect)(() => {
       const id3 = setInterval(() => {
         setHeading((h) => normDeg(h + 0.4));
@@ -31135,6 +31286,17 @@
       }, 100);
       return () => clearInterval(id3);
     }, [anchorMoving]);
+    (0, import_react27.useEffect)(() => {
+      if (!controls.navigation) return;
+      const id3 = setInterval(() => {
+        setDepthHistory((prev) => {
+          const lastDepth = prev[prev.length - 1];
+          const newDepth = clamp2(lastDepth + (Math.random() - 0.5) * 0.6, 2, 15);
+          return [...prev.slice(1), newDepth];
+        });
+      }, 300);
+      return () => clearInterval(id3);
+    }, [controls.navigation]);
     const toggleControl = (0, import_react27.useCallback)((k) => {
       if (k === "anchor") {
         setAnchorModal(true);
@@ -31143,10 +31305,12 @@
       setControls((p) => ({ ...p, [k]: !p[k] }));
     }, []);
     const CameraView = ({ cam, isExpanded, onClick }) => /* @__PURE__ */ import_react27.default.createElement(
-      motion.div,
+      "div",
       {
-        layout: true,
-        onClick,
+        onPointerDown: (e) => {
+          e.stopPropagation();
+          onClick();
+        },
         style: {
           background: "linear-gradient(180deg, rgba(12,18,28,0.95) 0%, rgba(6,10,18,0.98) 100%)",
           borderRadius: isExpanded ? 24 : 16,
@@ -31155,7 +31319,9 @@
           overflow: "hidden",
           position: "relative",
           cursor: "pointer",
-          aspectRatio: isExpanded ? "16/9" : "16/10"
+          height: isExpanded ? "100%" : "auto",
+          aspectRatio: isExpanded ? void 0 : "16/10",
+          touchAction: "manipulation"
         }
       },
       /* @__PURE__ */ import_react27.default.createElement("div", { style: {
@@ -31164,7 +31330,8 @@
         left: 0,
         right: 0,
         bottom: 0,
-        background: "linear-gradient(135deg, rgba(20,30,45,1) 0%, rgba(15,22,35,1) 100%)"
+        background: "linear-gradient(135deg, rgba(20,30,45,1) 0%, rgba(15,22,35,1) 100%)",
+        pointerEvents: "none"
       } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
         position: "absolute",
         top: "45%",
@@ -31262,7 +31429,8 @@
         left: isExpanded ? 20 : 10,
         display: "flex",
         alignItems: "center",
-        gap: isExpanded ? 10 : 6
+        gap: isExpanded ? 10 : 6,
+        pointerEvents: "none"
       } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
         width: isExpanded ? 10 : 6,
         height: isExpanded ? 10 : 6,
@@ -31296,7 +31464,8 @@
         fontWeight: 600,
         color: "rgba(255,255,255,0.6)",
         textShadow: "0 1px 3px rgba(0,0,0,0.9)",
-        letterSpacing: "0.5px"
+        letterSpacing: "0.5px",
+        pointerEvents: "none"
       } }, cam.label),
       /* @__PURE__ */ import_react27.default.createElement("div", { style: {
         position: "absolute",
@@ -31305,7 +31474,8 @@
         fontSize: isExpanded ? 14 : 9,
         fontFamily: "monospace",
         color: "rgba(255,255,255,0.5)",
-        textShadow: "0 1px 3px rgba(0,0,0,0.9)"
+        textShadow: "0 1px 3px rgba(0,0,0,0.9)",
+        pointerEvents: "none"
       } }, (/* @__PURE__ */ new Date()).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit", second: "2-digit" })),
       /* @__PURE__ */ import_react27.default.createElement("div", { style: {
         position: "absolute",
@@ -31315,22 +31485,9 @@
         width: isExpanded ? 120 : 50,
         height: isExpanded ? 120 : 50,
         border: "1px solid rgba(255,255,255,0.15)",
-        borderRadius: 2
-      } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", top: -1, left: -1, width: isExpanded ? 16 : 8, height: isExpanded ? 16 : 8, borderTop: "2px solid rgba(255,255,255,0.4)", borderLeft: "2px solid rgba(255,255,255,0.4)" } }), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", top: -1, right: -1, width: isExpanded ? 16 : 8, height: isExpanded ? 16 : 8, borderTop: "2px solid rgba(255,255,255,0.4)", borderRight: "2px solid rgba(255,255,255,0.4)" } }), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", bottom: -1, left: -1, width: isExpanded ? 16 : 8, height: isExpanded ? 16 : 8, borderBottom: "2px solid rgba(255,255,255,0.4)", borderLeft: "2px solid rgba(255,255,255,0.4)" } }), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", bottom: -1, right: -1, width: isExpanded ? 16 : 8, height: isExpanded ? 16 : 8, borderBottom: "2px solid rgba(255,255,255,0.4)", borderRight: "2px solid rgba(255,255,255,0.4)" } })),
-      isExpanded && /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-        position: "absolute",
-        top: 16,
-        right: 20,
-        width: 36,
-        height: 36,
-        borderRadius: "50%",
-        background: "rgba(0,0,0,0.5)",
-        border: "1px solid rgba(255,255,255,0.2)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        cursor: "pointer"
-      } }, /* @__PURE__ */ import_react27.default.createElement("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "rgba(255,255,255,0.8)", strokeWidth: "2" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "M18 6L6 18M6 6l12 12" })))
+        borderRadius: 2,
+        pointerEvents: "none"
+      } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", top: -1, left: -1, width: isExpanded ? 16 : 8, height: isExpanded ? 16 : 8, borderTop: "2px solid rgba(255,255,255,0.4)", borderLeft: "2px solid rgba(255,255,255,0.4)" } }), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", top: -1, right: -1, width: isExpanded ? 16 : 8, height: isExpanded ? 16 : 8, borderTop: "2px solid rgba(255,255,255,0.4)", borderRight: "2px solid rgba(255,255,255,0.4)" } }), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", bottom: -1, left: -1, width: isExpanded ? 16 : 8, height: isExpanded ? 16 : 8, borderBottom: "2px solid rgba(255,255,255,0.4)", borderLeft: "2px solid rgba(255,255,255,0.4)" } }), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "absolute", bottom: -1, right: -1, width: isExpanded ? 16 : 8, height: isExpanded ? 16 : 8, borderBottom: "2px solid rgba(255,255,255,0.4)", borderRight: "2px solid rgba(255,255,255,0.4)" } }))
     );
     const cameras = [
       { label: "\u041D\u041E\u0421", angle: 0 },
@@ -31338,7 +31495,7 @@
       { label: "\u041A\u041E\u0420\u041C\u0410", angle: 180 },
       { label: "\u041B\u0415\u0412\u042B\u0419 \u0411\u041E\u0420\u0422", angle: 270 }
     ];
-    return /* @__PURE__ */ import_react27.default.createElement("div", { style: { minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24, background: T.pageBg } }, /* @__PURE__ */ import_react27.default.createElement(AnimatePresence, null, loadingPhase !== "done" && /* @__PURE__ */ import_react27.default.createElement(
+    return /* @__PURE__ */ import_react27.default.createElement("div", { style: { minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 16, background: T.pageBg, overflow: "hidden", position: "relative" } }, /* @__PURE__ */ import_react27.default.createElement(AnimatePresence, null, loadingPhase !== "done" && /* @__PURE__ */ import_react27.default.createElement(
       motion.div,
       {
         initial: { opacity: 1 },
@@ -31357,11 +31514,139 @@
           justifyContent: "center"
         }
       },
+      loadingPhase === "systemCheck" && /* @__PURE__ */ import_react27.default.createElement(
+        motion.div,
+        {
+          initial: { opacity: 0 },
+          animate: { opacity: 1 },
+          transition: { duration: 0.4 },
+          style: {
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 24
+          }
+        },
+        /* @__PURE__ */ import_react27.default.createElement(
+          motion.div,
+          {
+            initial: { opacity: 0, y: -10 },
+            animate: { opacity: 1, y: 0 },
+            transition: { duration: 0.3 },
+            style: {
+              fontSize: 20,
+              fontWeight: 500,
+              color: T.textPrimary,
+              letterSpacing: "0.15em",
+              textTransform: "uppercase"
+            }
+          },
+          "\u0417\u0430\u043F\u0443\u0441\u043A \u0441\u0438\u0441\u0442\u0435\u043C\u044B"
+        ),
+        /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+          width: 280,
+          height: 1,
+          background: "linear-gradient(90deg, transparent, rgba(100,160,220,0.4), transparent)"
+        } }),
+        /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 12 } }, [
+          { label: "\u0421\u0438\u0441\u0442\u0435\u043C\u0430 \u043F\u0438\u0442\u0430\u043D\u0438\u044F", delay: 0.2 },
+          { label: "\u0421\u0435\u0442\u044C \u0438 \u0434\u0430\u0442\u0447\u0438\u043A\u0438", delay: 0.6 },
+          { label: "\u041B\u0435\u0432\u044B\u0439 \u0434\u0432\u0438\u0433\u0430\u0442\u0435\u043B\u044C", delay: 1 },
+          { label: "\u041F\u0440\u0430\u0432\u044B\u0439 \u0434\u0432\u0438\u0433\u0430\u0442\u0435\u043B\u044C", delay: 1.4 },
+          { label: "\u0420\u0443\u043B\u0435\u0432\u043E\u0435 \u0443\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435", delay: 1.8 },
+          { label: "\u041D\u0430\u0432\u0438\u0433\u0430\u0446\u0438\u044F", delay: 2.2 },
+          { label: "\u0421\u0438\u0441\u0442\u0435\u043C\u044B \u0431\u0435\u0437\u043E\u043F\u0430\u0441\u043D\u043E\u0441\u0442\u0438", delay: 2.6 }
+        ].map((item, idx) => /* @__PURE__ */ import_react27.default.createElement(
+          motion.div,
+          {
+            key: idx,
+            initial: { opacity: 0, x: -20 },
+            animate: { opacity: 1, x: 0 },
+            transition: { duration: 0.3, delay: item.delay },
+            style: {
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              fontSize: 15,
+              color: T.textSecondary
+            }
+          },
+          /* @__PURE__ */ import_react27.default.createElement(
+            motion.div,
+            {
+              initial: { scale: 0, opacity: 0 },
+              animate: { scale: 1, opacity: 1 },
+              transition: {
+                duration: 0.25,
+                delay: item.delay + 0.15,
+                type: "spring",
+                stiffness: 400,
+                damping: 15
+              },
+              style: {
+                width: 18,
+                height: 18,
+                borderRadius: "50%",
+                background: "rgba(61,200,140,0.15)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+              }
+            },
+            /* @__PURE__ */ import_react27.default.createElement(
+              motion.svg,
+              {
+                width: "12",
+                height: "12",
+                viewBox: "0 0 12 12",
+                initial: { pathLength: 0 },
+                animate: { pathLength: 1 },
+                transition: { duration: 0.2, delay: item.delay + 0.2 }
+              },
+              /* @__PURE__ */ import_react27.default.createElement(
+                motion.path,
+                {
+                  d: "M 2 6 L 5 9 L 10 3",
+                  fill: "none",
+                  stroke: T.textGreen,
+                  strokeWidth: "1.5",
+                  strokeLinecap: "round",
+                  strokeLinejoin: "round",
+                  initial: { pathLength: 0 },
+                  animate: { pathLength: 1 },
+                  transition: { duration: 0.2, delay: item.delay + 0.2 }
+                }
+              )
+            )
+          ),
+          /* @__PURE__ */ import_react27.default.createElement("span", null, item.label)
+        ))),
+        /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+          width: 280,
+          height: 1,
+          background: "linear-gradient(90deg, transparent, rgba(100,160,220,0.4), transparent)",
+          marginTop: 4
+        } }),
+        /* @__PURE__ */ import_react27.default.createElement(
+          motion.div,
+          {
+            initial: { opacity: 0 },
+            animate: { opacity: [0, 1, 0.5, 1] },
+            transition: { duration: 1.2, delay: 3, repeat: Infinity, repeatDelay: 0.3 },
+            style: {
+              fontSize: 14,
+              color: T.textSecondary,
+              letterSpacing: "0.05em"
+            }
+          },
+          "\u0417\u0430\u043F\u0443\u0441\u043A \u043F\u0430\u043D\u0435\u043B\u0438 \u0443\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u044F..."
+        )
+      ),
       /* @__PURE__ */ import_react27.default.createElement(
         motion.div,
         {
           initial: { opacity: 0, scale: 0.95 },
-          animate: loadingPhase === "transition" ? {
+          animate: loadingPhase === "transition" || loadingPhase === "systemCheck" ? {
             opacity: 0,
             scale: 0.9
           } : {
@@ -31369,7 +31654,7 @@
             scale: 1
           },
           transition: { duration: loadingPhase === "transition" ? 0.6 : 0.8, ease: "easeOut" },
-          style: { position: "relative" }
+          style: { position: loadingPhase === "systemCheck" ? "absolute" : "relative", marginTop: -20 }
         },
         /* @__PURE__ */ import_react27.default.createElement("svg", { width: "280", height: "180", viewBox: "600 -100 1620 750", style: { overflow: "visible" } }, /* @__PURE__ */ import_react27.default.createElement("defs", null, /* @__PURE__ */ import_react27.default.createElement("linearGradient", { id: "loadingLogoGradient", x1: "0%", y1: "0%", x2: "0%", y2: "100%" }, /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "0%", stopColor: "#5a6a7a" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "50%", stopColor: "#4a5a6a" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "100%", stopColor: "#3a4a5a" })), /* @__PURE__ */ import_react27.default.createElement("linearGradient", { id: "topShineGradient", x1: "0%", y1: "0%", x2: "100%", y2: "0%" }, /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "0%", stopColor: "rgba(255,255,255,0)" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "20%", stopColor: "rgba(255,255,255,0)" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "35%", stopColor: "rgba(255,255,255,0.15)" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "45%", stopColor: "rgba(255,255,255,0.35)" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "50%", stopColor: "rgba(255,255,255,0.45)" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "55%", stopColor: "rgba(255,255,255,0.35)" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "65%", stopColor: "rgba(255,255,255,0.15)" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "80%", stopColor: "rgba(255,255,255,0)" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "100%", stopColor: "rgba(255,255,255,0)" })), /* @__PURE__ */ import_react27.default.createElement("linearGradient", { id: "topFadeMask", x1: "0%", y1: "0%", x2: "0%", y2: "100%" }, /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "0%", stopColor: "white" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "30%", stopColor: "white" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "60%", stopColor: "black" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "100%", stopColor: "black" })), /* @__PURE__ */ import_react27.default.createElement("mask", { id: "topOnlyMask" }, /* @__PURE__ */ import_react27.default.createElement("rect", { x: "500", y: "-200", width: "1800", height: "900", fill: "url(#topFadeMask)" })), /* @__PURE__ */ import_react27.default.createElement("clipPath", { id: "logoClipPath" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "M1798.09 319.87c-4.35,-12.65 -31.56,-22.61 -26.42,-5.52 2.53,29.43 7.74,74.72 -23.19,131.9 -34.39,29.27 5.18,34.93 43.53,16.19 64.03,-24.99 12.21,-119.88 6.08,-142.57zm-498.41 -195.06l0 0 -0.42 0 0 54.51 47.15 0c-0.78,-30.15 -21.5,-54.51 -46.73,-54.51zm-17.11 0.05l0 0c-24.28,1.3 -43.89,25.15 -44.65,54.46l44.65 0 0 -54.46zm-44.67 74.57l0 0 0 51 44.67 0 0 -51 -44.67 0zm61.36 51l0 0 47.17 0 0 -51 -47.17 0 0 51zm488.43 -118.7l0 0c-75.64,39.65 -105.96,79.31 -167.43,107.06 -14.5,6.53 -30.65,12.67 -48.33,18.34l0 -102.15c0,-34.71 -28.38,-63.1 -63.09,-63.1 -34.71,0 -63.1,28.39 -63.1,63.1l0 130.53c-114.9,17.14 -260.31,19.42 -421.05,-2.18 209.11,99.93 576.41,33.58 705.24,-76.57 38.48,-32.89 101.67,-75.25 149.43,-91.4 151.13,-55.09 221.23,-5.03 260.55,84.96 -7.9,31.59 -71.1,31.12 -109.89,46.44 -109.8,30.41 -134.33,31.14 -244.26,11.66 -12.86,-0.26 -32.74,10.03 -27.17,24.4 10.58,216.03 -71.36,208.7 -255.45,232.26 -61.99,2.97 -1.08,-78.65 13.4,-87.72 46.13,-48.5 75.84,-52.86 86.21,-69.64 14.88,-26.72 3.03,-38.46 -31.76,-15.84 -142.22,60.11 -308.64,63.74 -496.17,18.12 -193.15,147.77 -382.49,16.88 -304.72,-13.59 67.62,-23.73 138.17,-42.34 211.83,-55.51l-26.05 -41.91c50.95,-25.54 95,-62.9 135.37,-106.56 212.3,-195.78 446.39,-180.44 696.44,-10.7z" }))), /* @__PURE__ */ import_react27.default.createElement(
           "path",
@@ -31392,7 +31677,57 @@
           }
         )))
       )
-    )), /* @__PURE__ */ import_react27.default.createElement(AnimatePresence, null, expandedCamera !== null && /* @__PURE__ */ import_react27.default.createElement(
+    )), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+      width: "100%",
+      maxWidth: 1048,
+      marginBottom: 16,
+      position: "relative"
+    } }, /* @__PURE__ */ import_react27.default.createElement(
+      motion.div,
+      {
+        animate: { opacity: expandedCamera !== null ? 0 : 1 },
+        transition: { duration: 0.2 },
+        style: {
+          display: "grid",
+          gridTemplateColumns: "repeat(2, 1fr)",
+          gap: 12,
+          pointerEvents: expandedCamera !== null ? "none" : "auto"
+        }
+      },
+      cameras.map((cam, idx) => /* @__PURE__ */ import_react27.default.createElement(
+        CameraView,
+        {
+          key: idx,
+          cam,
+          isExpanded: false,
+          onClick: () => setExpandedCamera(idx)
+        }
+      ))
+    ), /* @__PURE__ */ import_react27.default.createElement(AnimatePresence, null, expandedCamera !== null && /* @__PURE__ */ import_react27.default.createElement(
+      motion.div,
+      {
+        initial: { opacity: 0 },
+        animate: { opacity: 1 },
+        exit: { opacity: 0 },
+        transition: { duration: 0.15 },
+        style: {
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 10
+        }
+      },
+      /* @__PURE__ */ import_react27.default.createElement(
+        CameraView,
+        {
+          cam: cameras[expandedCamera],
+          isExpanded: true,
+          onClick: () => setExpandedCamera(null)
+        }
+      )
+    ))), /* @__PURE__ */ import_react27.default.createElement(AnimatePresence, null, controls.navigation && /* @__PURE__ */ import_react27.default.createElement(
       motion.div,
       {
         initial: { opacity: 0 },
@@ -31400,65 +31735,19 @@
         exit: { opacity: 0 },
         transition: { duration: 0.3 },
         style: {
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: "rgba(0,0,0,0.9)",
-          zIndex: 1e3,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: 40
-        },
-        onClick: () => setExpandedCamera(null)
+          position: "absolute",
+          top: 680,
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "100%",
+          maxWidth: 1048,
+          zIndex: 1,
+          pointerEvents: "none"
+        }
       },
-      /* @__PURE__ */ import_react27.default.createElement(
-        motion.div,
-        {
-          initial: { scale: 0.8, opacity: 0 },
-          animate: { scale: 1, opacity: 1 },
-          exit: { scale: 0.8, opacity: 0 },
-          transition: { type: "spring", stiffness: 300, damping: 30 },
-          style: { width: "100%", maxWidth: 1400 },
-          onClick: (e) => e.stopPropagation()
-        },
-        /* @__PURE__ */ import_react27.default.createElement(
-          CameraView,
-          {
-            cam: cameras[expandedCamera],
-            isExpanded: true,
-            onClick: () => setExpandedCamera(null)
-          }
-        )
-      )
-    )), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-      width: "100%",
-      maxWidth: 1152,
-      marginBottom: 20,
-      display: "grid",
-      gridTemplateColumns: "repeat(4, 1fr)",
-      gap: 16
-    } }, cameras.map((cam, idx) => /* @__PURE__ */ import_react27.default.createElement(
-      CameraView,
-      {
-        key: idx,
-        cam,
-        isExpanded: false,
-        onClick: () => setExpandedCamera(idx)
-      }
-    ))), /* @__PURE__ */ import_react27.default.createElement(
-      motion.div,
-      {
-        initial: { opacity: 0, y: 30 },
-        animate: { opacity: loadingPhase === "done" ? 1 : 0, y: loadingPhase === "done" ? 0 : 30 },
-        transition: { duration: 0.6, delay: 0.1 },
-        style: { width: "100%", maxWidth: 1152, marginBottom: -60, position: "relative", zIndex: 0 }
-      },
-      /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-        overflow: "visible",
-        height: 500,
+      /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "100%", position: "relative", overflow: "hidden" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+        overflow: "hidden",
+        height: 700,
         position: "relative",
         WebkitMaskImage: "radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 70%)",
         maskImage: "radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 70%)"
@@ -31475,10 +31764,10 @@
             height: "calc(100% + 700px)"
           }
         },
-        /* @__PURE__ */ import_react27.default.createElement("svg", { width: "100%", height: "100%", style: { position: "absolute", top: 0, left: 0 } }, /* @__PURE__ */ import_react27.default.createElement("defs", null, /* @__PURE__ */ import_react27.default.createElement("pattern", { id: "gridPattern", width: "30", height: "30", patternUnits: "userSpaceOnUse" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "M 30 0 L 0 0 0 30", fill: "none", stroke: "rgba(40,70,100,0.05)", strokeWidth: "0.5" })), /* @__PURE__ */ import_react27.default.createElement("pattern", { id: "gridPatternLarge", width: "150", height: "150", patternUnits: "userSpaceOnUse" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "M 150 0 L 0 0 0 150", fill: "none", stroke: "rgba(40,70,100,0.08)", strokeWidth: "0.5" }))), /* @__PURE__ */ import_react27.default.createElement("rect", { width: "100%", height: "100%", fill: "url(#gridPattern)" }), /* @__PURE__ */ import_react27.default.createElement("rect", { width: "100%", height: "100%", fill: "url(#gridPatternLarge)" }), /* @__PURE__ */ import_react27.default.createElement(
+        /* @__PURE__ */ import_react27.default.createElement("svg", { width: "100%", height: "100%", style: { position: "absolute", top: 0, left: 0 } }, /* @__PURE__ */ import_react27.default.createElement("defs", null, /* @__PURE__ */ import_react27.default.createElement("pattern", { id: "gridPatternNav", width: "30", height: "30", patternUnits: "userSpaceOnUse" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "M 30 0 L 0 0 0 30", fill: "none", stroke: "rgba(40,70,100,0.05)", strokeWidth: "0.5" })), /* @__PURE__ */ import_react27.default.createElement("pattern", { id: "gridPatternLargeNav", width: "150", height: "150", patternUnits: "userSpaceOnUse" }, /* @__PURE__ */ import_react27.default.createElement("path", { d: "M 150 0 L 0 0 0 150", fill: "none", stroke: "rgba(40,70,100,0.08)", strokeWidth: "0.5" }))), /* @__PURE__ */ import_react27.default.createElement("rect", { width: "100%", height: "100%", fill: "url(#gridPatternNav)" }), /* @__PURE__ */ import_react27.default.createElement("rect", { width: "100%", height: "100%", fill: "url(#gridPatternLargeNav)" }), /* @__PURE__ */ import_react27.default.createElement(
           "path",
           {
-            d: "M 810 -100 C 780 50 770 150 790 300 C 810 450 760 550 770 700 C 780 850 800 1000 790 1150 C 780 1300 810 1400 800 1550",
+            d: "M 760 -100 C 730 50 720 150 740 300 C 760 450 710 550 720 700 C 730 850 750 1000 740 1150 C 730 1300 760 1400 750 1550",
             fill: "none",
             stroke: "rgba(25,45,70,0.35)",
             strokeWidth: "80",
@@ -31488,7 +31777,7 @@
         ), /* @__PURE__ */ import_react27.default.createElement(
           "path",
           {
-            d: "M 810 -100 C 780 50 770 150 790 300 C 810 450 760 550 770 700 C 780 850 800 1000 790 1150 C 780 1300 810 1400 800 1550",
+            d: "M 760 -100 C 730 50 720 150 740 300 C 760 450 710 550 720 700 C 730 850 750 1000 740 1150 C 730 1300 760 1400 750 1550",
             fill: "none",
             stroke: "rgba(20,38,60,0.5)",
             strokeWidth: "50",
@@ -31498,7 +31787,7 @@
         ), /* @__PURE__ */ import_react27.default.createElement(
           "path",
           {
-            d: "M 810 -100 C 780 50 770 150 790 300 C 810 450 760 550 770 700 C 780 850 800 1000 790 1150 C 780 1300 810 1400 800 1550",
+            d: "M 760 -100 C 730 50 720 150 740 300 C 760 450 710 550 720 700 C 730 850 750 1000 740 1150 C 730 1300 760 1400 750 1550",
             fill: "none",
             stroke: "rgba(15,30,50,0.6)",
             strokeWidth: "25",
@@ -31588,7 +31877,7 @@
         ), /* @__PURE__ */ import_react27.default.createElement("ellipse", { cx: "500", cy: "900", rx: "45", ry: "35", fill: "rgba(20,38,60,0.35)" }), /* @__PURE__ */ import_react27.default.createElement(
           "path",
           {
-            d: "M 780 -50 C 760 100 770 250 775 400 C 780 550 765 700 770 850 C 775 1000 780 1150 772 1300 C 765 1450 778 1500 775 1600",
+            d: "M 720 -50 C 700 100 710 250 715 400 C 720 550 705 700 710 850 C 715 1000 720 1150 712 1300 C 705 1450 718 1500 715 1600",
             fill: "none",
             stroke: "rgba(100,160,220,0.3)",
             strokeWidth: "2",
@@ -31629,11 +31918,11 @@
             pointerEvents: "none"
           }
         }
-      )), /* @__PURE__ */ import_react27.default.createElement("div", { style: { filter: "drop-shadow(0 0 20px rgba(80,160,255,0.5))" } }, /* @__PURE__ */ import_react27.default.createElement("svg", { width: "32", height: "40", viewBox: "0 0 32 40" }, /* @__PURE__ */ import_react27.default.createElement("defs", null, /* @__PURE__ */ import_react27.default.createElement("linearGradient", { id: "glassGrad", x1: "0%", y1: "0%", x2: "100%", y2: "100%" }, /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "0%", stopColor: "rgba(120,180,255,0.85)" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "50%", stopColor: "rgba(80,140,220,0.65)" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "100%", stopColor: "rgba(60,120,200,0.75)" }))), /* @__PURE__ */ import_react27.default.createElement(
+      )), /* @__PURE__ */ import_react27.default.createElement("div", { style: { filter: "drop-shadow(0 0 20px rgba(80,160,255,0.5))" } }, /* @__PURE__ */ import_react27.default.createElement("svg", { width: "32", height: "40", viewBox: "0 0 32 40" }, /* @__PURE__ */ import_react27.default.createElement("defs", null, /* @__PURE__ */ import_react27.default.createElement("linearGradient", { id: "glassGradNav", x1: "0%", y1: "0%", x2: "100%", y2: "100%" }, /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "0%", stopColor: "rgba(120,180,255,0.85)" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "50%", stopColor: "rgba(80,140,220,0.65)" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "100%", stopColor: "rgba(60,120,200,0.75)" }))), /* @__PURE__ */ import_react27.default.createElement(
         "path",
         {
           d: "M 16 2 L 30 36 L 16 30 L 2 36 Z",
-          fill: "url(#glassGrad)",
+          fill: "url(#glassGradNav)",
           stroke: "rgba(150,200,255,0.7)",
           strokeWidth: "1"
         }
@@ -31643,196 +31932,10 @@
           d: "M 16 6 L 12 28 L 16 26 Z",
           fill: "rgba(200,230,255,0.25)"
         }
-      ))))),
-      /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+      ))))), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
         position: "absolute",
-        bottom: 120,
-        left: 20,
-        zIndex: 10
-      } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-        width: 120,
-        height: 120,
-        borderRadius: "50%",
-        background: "linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)",
-        boxShadow: "0 4px 16px rgba(0,0,0,0.5)",
-        padding: 5,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center"
-      } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-        width: "100%",
-        height: "100%",
-        borderRadius: "50%",
-        background: "linear-gradient(145deg, rgba(10,15,25,0.98) 0%, rgba(5,8,15,1) 100%)",
-        position: "relative"
-      } }, /* @__PURE__ */ import_react27.default.createElement(
-        motion.div,
-        {
-          style: {
-            position: "absolute",
-            inset: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center"
-          },
-          animate: { rotate: -heading },
-          transition: { type: "spring", stiffness: 120, damping: 18 }
-        },
-        /* @__PURE__ */ import_react27.default.createElement("svg", { viewBox: "0 0 100 100", style: { width: "100%", height: "100%" } }, Array.from({ length: 36 }).map((_, i) => {
-          const angle = i * 10 * Math.PI / 180;
-          const isMajor = i % 9 === 0;
-          const r1 = isMajor ? 38 : 42;
-          const r2 = 48;
-          return /* @__PURE__ */ import_react27.default.createElement(
-            "line",
-            {
-              key: i,
-              x1: 50 + r1 * Math.sin(angle),
-              y1: 50 - r1 * Math.cos(angle),
-              x2: 50 + r2 * Math.sin(angle),
-              y2: 50 - r2 * Math.cos(angle),
-              stroke: isMajor ? "rgba(200,210,230,0.8)" : "rgba(150,160,180,0.4)",
-              strokeWidth: isMajor ? 2 : 1
-            }
-          );
-        }), /* @__PURE__ */ import_react27.default.createElement("text", { x: "50", y: "20", fill: "rgba(200,210,230,0.6)", fontSize: "9", fontWeight: "500", textAnchor: "middle", dominantBaseline: "middle" }, "\u0421"), /* @__PURE__ */ import_react27.default.createElement("text", { x: "50", y: "80", fill: "rgba(200,210,230,0.6)", fontSize: "9", fontWeight: "500", textAnchor: "middle", dominantBaseline: "middle", transform: "rotate(180 50 80)" }, "\u042E"), /* @__PURE__ */ import_react27.default.createElement("text", { x: "80", y: "50", fill: "rgba(200,210,230,0.6)", fontSize: "9", fontWeight: "500", textAnchor: "middle", dominantBaseline: "middle", transform: "rotate(90 80 50)" }, "\u0412"), /* @__PURE__ */ import_react27.default.createElement("text", { x: "20", y: "50", fill: "rgba(200,210,230,0.6)", fontSize: "9", fontWeight: "500", textAnchor: "middle", dominantBaseline: "middle", transform: "rotate(-90 20 50)" }, "\u0417"))
-      ), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-        position: "absolute",
-        top: -20,
-        left: "50%",
-        transform: "translateX(-50%)",
-        width: 0,
-        height: 0,
-        borderLeft: "6px solid transparent",
-        borderRight: "6px solid transparent",
-        borderTop: "10px solid #d44050",
-        filter: "drop-shadow(0 0 4px rgba(212,64,80,0.6))"
-      } }), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-        position: "absolute",
-        top: 4,
-        left: 15,
-        right: 15,
-        height: 30,
-        borderRadius: "50%",
-        background: "linear-gradient(180deg, rgba(150,180,220,0.15) 0%, transparent 100%)",
-        pointerEvents: "none"
-      } })))),
-      /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-        position: "absolute",
-        bottom: 120,
-        right: 20,
-        zIndex: 10
-      } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-        width: 120,
-        height: 120,
-        borderRadius: "50%",
-        background: "linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)",
-        boxShadow: "0 4px 16px rgba(0,0,0,0.5)",
-        padding: 5,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center"
-      } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-        width: "100%",
-        height: "100%",
-        borderRadius: "50%",
-        background: "linear-gradient(145deg, rgba(10,15,25,0.98) 0%, rgba(5,8,15,1) 100%)",
-        position: "relative",
-        overflow: "hidden"
-      } }, /* @__PURE__ */ import_react27.default.createElement("svg", { viewBox: "0 0 100 100", style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%" } }, Array.from({ length: 19 }).map((_, i) => {
-        const deg = -45 + i * 5;
-        const angle = (deg + 90) * Math.PI / 180;
-        const isMajor = deg % 15 === 0;
-        const r1 = isMajor ? 38 : 40;
-        const r2 = 46;
-        return /* @__PURE__ */ import_react27.default.createElement(
-          "line",
-          {
-            key: i,
-            x1: 50 + r1 * Math.cos(angle),
-            y1: 50 + r1 * Math.sin(angle),
-            x2: 50 + r2 * Math.cos(angle),
-            y2: 50 + r2 * Math.sin(angle),
-            stroke: isMajor ? "rgba(200,210,230,0.8)" : "rgba(150,160,180,0.4)",
-            strokeWidth: isMajor ? 2 : 1,
-            strokeLinecap: "round"
-          }
-        );
-      })), /* @__PURE__ */ import_react27.default.createElement(
-        "svg",
-        {
-          viewBox: "0 0 24 32",
-          style: {
-            position: "absolute",
-            top: 20,
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: 30,
-            height: 40,
-            opacity: 0.35
-          }
-        },
-        /* @__PURE__ */ import_react27.default.createElement(
-          "path",
-          {
-            d: "M12 1 L18 8 L19 22 Q12 30 5 22 L6 8 Z",
-            fill: "rgba(150,180,210,0.6)",
-            stroke: "rgba(150,180,210,0.8)",
-            strokeWidth: "0.5"
-          }
-        ),
-        /* @__PURE__ */ import_react27.default.createElement(
-          "ellipse",
-          {
-            cx: "12",
-            cy: "14",
-            rx: "4",
-            ry: "6",
-            fill: "rgba(100,130,160,0.5)"
-          }
-        )
-      ), /* @__PURE__ */ import_react27.default.createElement(
-        motion.div,
-        {
-          style: {
-            position: "absolute",
-            top: 50,
-            left: "50%",
-            width: 4,
-            height: 42,
-            marginLeft: -2,
-            background: "linear-gradient(90deg, #a03040 0%, #d04050 25%, #e85060 50%, #d04050 75%, #a03040 100%)",
-            transformOrigin: "top center",
-            borderRadius: 2,
-            boxShadow: "0 2px 8px rgba(212,64,80,0.5), 0 0 12px rgba(212,64,80,0.3)"
-          },
-          animate: { rotate: rudderDeg },
-          transition: { type: "spring", stiffness: 150, damping: 20 }
-        }
-      ), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        width: 14,
-        height: 14,
-        borderRadius: "50%",
-        background: "radial-gradient(circle at 35% 35%, #ffffff 0%, #d0d0d0 30%, #909090 70%, #606060 100%)",
-        boxShadow: "0 2px 6px rgba(0,0,0,0.4)"
-      } }), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-        position: "absolute",
-        top: 4,
-        left: 15,
-        right: 15,
-        height: 30,
-        borderRadius: "50%",
-        background: "linear-gradient(180deg, rgba(150,180,220,0.15) 0%, transparent 100%)",
-        pointerEvents: "none"
-      } })))),
-      /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-        position: "absolute",
-        bottom: 80,
-        left: 20,
+        bottom: 192,
+        left: 172,
         zIndex: 10
       } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
         display: "flex",
@@ -31862,11 +31965,10 @@
         fontSize: 9,
         color: "rgba(150,180,210,0.7)",
         fontWeight: 500
-      } }, "500 \u043C"))),
-      /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+      } }, "500 \u043C"))), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
         position: "absolute",
-        bottom: 80,
-        right: 20,
+        bottom: 192,
+        right: 172,
         zIndex: 10,
         textAlign: "right"
       } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
@@ -31875,22 +31977,37 @@
         color: "rgba(150,180,210,0.7)",
         fontWeight: 500,
         lineHeight: 1.4
-      } }, /* @__PURE__ */ import_react27.default.createElement("div", null, `52\xB022'14.3"N`), /* @__PURE__ */ import_react27.default.createElement("div", null, `4\xB053'28.7"E`)))
-    ), /* @__PURE__ */ import_react27.default.createElement(
+      } }, /* @__PURE__ */ import_react27.default.createElement("div", null, `52\xB022'14.3"N`), /* @__PURE__ */ import_react27.default.createElement("div", null, `4\xB053'28.7"E`))))
+    )), /* @__PURE__ */ import_react27.default.createElement(
       motion.div,
       {
         initial: { opacity: 0, y: 30 },
         animate: { opacity: loadingPhase === "done" ? 1 : 0, y: loadingPhase === "done" ? 0 : 30 },
         transition: { duration: 0.6, delay: 0.2 },
-        style: { width: "100%", maxWidth: 1152, marginBottom: 20, position: "relative", height: 102 }
+        style: { width: "100%", maxWidth: 1048, marginBottom: 16, position: "relative", height: 88 }
       },
+      expandedSection && /* @__PURE__ */ import_react27.default.createElement(
+        "div",
+        {
+          onClick: () => setExpandedSection(null),
+          style: {
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 99
+          }
+        }
+      ),
       /* @__PURE__ */ import_react27.default.createElement(
         motion.div,
         {
           animate: {
-            height: expandedSection ? 380 : 102
+            height: expandedSection ? 380 : 88
           },
           transition: { type: "spring", stiffness: 300, damping: 30 },
+          onClick: () => expandedSection && setExpandedSection(null),
           style: {
             background: "linear-gradient(180deg, rgba(12,18,28,0.95) 0%, rgba(6,10,18,0.98) 100%)",
             borderRadius: 20,
@@ -31901,7 +32018,8 @@
             top: 0,
             left: 0,
             right: 0,
-            zIndex: expandedSection ? 100 : 1
+            zIndex: expandedSection ? 100 : 1,
+            cursor: expandedSection ? "pointer" : "default"
           }
         },
         /* @__PURE__ */ import_react27.default.createElement("div", { style: {
@@ -31924,114 +32042,8 @@
                 borderRight: "1px solid rgba(80,100,120,0.2)"
               }
             },
-            /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 14, color: T.textSecondary, letterSpacing: 0.5, fontWeight: 500 } }, sectionData[expandedSection]?.title), /* @__PURE__ */ import_react27.default.createElement(
-              "button",
-              {
-                onClick: () => setExpandedSection(null),
-                style: {
-                  padding: "6px 16px",
-                  background: "rgba(80,110,140,0.2)",
-                  border: "1px solid rgba(100,130,160,0.3)",
-                  borderRadius: 12,
-                  color: "rgba(150,180,210,0.7)",
-                  fontSize: 11,
-                  cursor: "pointer"
-                }
-              },
-              "\u0417\u0430\u043A\u0440\u044B\u0442\u044C"
-            )),
-            expandedSection === "fuel" ? /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", gap: 32, flex: 1, alignItems: "stretch" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1.5, display: "flex", gap: 24, alignItems: "flex-start", justifyContent: "center", paddingTop: 8 } }, sectionData.fuel.tanks.map((tank, idx) => /* @__PURE__ */ import_react27.default.createElement(
-              motion.div,
-              {
-                key: idx,
-                initial: { opacity: 0, y: 20 },
-                animate: { opacity: 1, y: 0 },
-                transition: { delay: 0.05 * idx },
-                style: { display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }
-              },
-              /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center", marginBottom: 2 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, fontWeight: 500, color: T.textSecondary } }, tank.name), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted } }, tank.subname)),
-              /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-                width: 64,
-                height: 160,
-                borderRadius: 12,
-                background: "rgba(20,30,45,0.8)",
-                border: `1px solid ${tank.status === "warn" ? "rgba(220,160,60,0.4)" : tank.status === "critical" ? "rgba(224,64,80,0.4)" : "rgba(80,100,120,0.3)"}`,
-                position: "relative",
-                overflow: "hidden",
-                boxShadow: "inset 0 2px 8px rgba(0,0,0,0.3)"
-              } }, /* @__PURE__ */ import_react27.default.createElement(
-                motion.div,
-                {
-                  initial: { height: 0 },
-                  animate: { height: `${tank.level}%` },
-                  transition: { delay: 0.1 + idx * 0.1, duration: 0.8, ease: "easeOut" },
-                  style: {
-                    position: "absolute",
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    background: tank.status === "warn" ? "linear-gradient(180deg, rgba(220,160,60,0.7) 0%, rgba(180,120,40,0.5) 100%)" : tank.status === "critical" ? "linear-gradient(180deg, rgba(224,64,80,0.7) 0%, rgba(180,40,60,0.5) 100%)" : "linear-gradient(180deg, rgba(61,200,140,0.6) 0%, rgba(40,160,110,0.4) 100%)",
-                    borderRadius: "0 0 11px 11px"
-                  }
-                }
-              ), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: "60%",
-                bottom: 0,
-                background: "linear-gradient(90deg, rgba(255,255,255,0.05) 0%, transparent 100%)",
-                borderRadius: "12px 0 0 12px"
-              } })),
-              /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-                fontSize: 18,
-                fontWeight: 600,
-                color: tank.status === "warn" ? "rgba(220,160,60,0.9)" : tank.status === "critical" ? T.textRed : T.textPrimary
-              } }, tank.level, "%")
-            ))), /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: 1, background: "linear-gradient(180deg, transparent 5%, rgba(80,100,120,0.3) 50%, transparent 95%)" } }), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-              display: "flex",
-              flexDirection: "column",
-              flex: 1,
-              paddingTop: 8
-              /* такой же как у контейнера баков */
-            } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { height: 34 } }), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-              height: 160,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between"
-            } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12 } }, sectionData.fuel.metrics.slice(0, 2).map((metric, idx) => /* @__PURE__ */ import_react27.default.createElement(
-              motion.div,
-              {
-                key: idx,
-                initial: { opacity: 0, y: 10 },
-                animate: { opacity: 1, y: 0 },
-                transition: { delay: 0.15 + 0.05 * idx },
-                style: {
-                  padding: "12px 14px",
-                  background: "rgba(30,45,60,0.4)",
-                  border: "1px solid rgba(80,100,120,0.3)",
-                  borderRadius: 12
-                }
-              },
-              /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textMuted, marginBottom: 4 } }, metric.label),
-              /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 18, fontWeight: 600, color: T.textPrimary } }, metric.value, /* @__PURE__ */ import_react27.default.createElement("span", { style: { fontSize: 11, fontWeight: 400, marginLeft: 4, color: T.textMuted } }, metric.unit))
-            ))), /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12 } }, sectionData.fuel.metrics.slice(2, 4).map((metric, idx) => /* @__PURE__ */ import_react27.default.createElement(
-              motion.div,
-              {
-                key: idx,
-                initial: { opacity: 0, y: 10 },
-                animate: { opacity: 1, y: 0 },
-                transition: { delay: 0.25 + 0.05 * idx },
-                style: {
-                  padding: "12px 14px",
-                  background: "rgba(30,45,60,0.4)",
-                  border: "1px solid rgba(80,100,120,0.3)",
-                  borderRadius: 12
-                }
-              },
-              /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textMuted, marginBottom: 4 } }, metric.label),
-              /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 18, fontWeight: 600, color: T.textPrimary } }, metric.value, /* @__PURE__ */ import_react27.default.createElement("span", { style: { fontSize: 11, fontWeight: 400, marginLeft: 4, color: T.textMuted } }, metric.unit))
-            )))))) : expandedSection === "tanks" ? (
+            /* @__PURE__ */ import_react27.default.createElement("div", { style: { marginBottom: 20 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 14, color: T.textSecondary, letterSpacing: 0.5, fontWeight: 500 } }, sectionData[expandedSection]?.title)),
+            expandedSection === "tanks" ? (
               /* Кастомное отображение для ёмкостей */
               /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", gap: 32, flex: 1, alignItems: "stretch" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1.5, display: "flex", gap: 20, alignItems: "flex-start", justifyContent: "center", paddingTop: 8 } }, sectionData.tanks.containers.map((container, idx) => /* @__PURE__ */ import_react27.default.createElement(
                 motion.div,
@@ -32159,7 +32171,7 @@
               key === "fuel" && /* @__PURE__ */ import_react27.default.createElement(import_react27.default.Fragment, null, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 6 } }, "\u0422\u041E\u041F\u041B\u0418\u0412\u041E"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 4, width: "75%" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 8, color: T.textMuted, width: 24 } }, "\u0410\u0418-95"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1, height: 6, borderRadius: 3, background: "rgba(30,45,60,0.6)", border: "1px solid rgba(80,100,120,0.3)", overflow: "hidden" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "78%", height: "100%", background: "linear-gradient(90deg, rgba(61,200,140,0.7) 0%, rgba(61,200,140,0.5) 100%)", borderRadius: 2 } })), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textSecondary, width: 24, textAlign: "right" } }, "78%")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 8, color: T.textMuted, width: 24 } }, "\u0414\u0422"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1, height: 6, borderRadius: 3, background: "rgba(30,45,60,0.6)", border: "1px solid rgba(80,100,120,0.3)", overflow: "hidden" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "45%", height: "100%", background: "linear-gradient(90deg, rgba(220,160,60,0.7) 0%, rgba(220,160,60,0.5) 100%)", borderRadius: 2 } })), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textSecondary, width: 24, textAlign: "right" } }, "45%")))),
               key === "weather" && /* @__PURE__ */ import_react27.default.createElement(import_react27.default.Fragment, null, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 6 } }, "\u041F\u041E\u0413\u041E\u0414\u0410"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", gap: 12, alignItems: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 13, fontWeight: 500, color: T.textSecondary } }, "18\xB0"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 8, color: T.textMuted } }, "\u0432\u043E\u0434\u0430")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 13, fontWeight: 500, color: T.textSecondary } }, "5\u043C/\u0441"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 8, color: T.textMuted } }, "\u0432\u0435\u0442\u0435\u0440")))),
               key === "electric" && /* @__PURE__ */ import_react27.default.createElement(import_react27.default.Fragment, null, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 6 } }, "\u042D\u041B\u0415\u041A\u0422\u0420\u0418\u041A\u0410"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", gap: 12, alignItems: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 13, fontWeight: 500, color: T.textSecondary } }, "12.8\u0412"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 8, color: T.textMuted } }, "\u0410\u041A\u0411")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 13, fontWeight: 500, color: T.textSecondary } }, "2.1\u043A\u0412\u0442"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 8, color: T.textMuted } }, "\u0441\u043E\u043B\u043D\u0446\u0435")))),
-              key === "tanks" && /* @__PURE__ */ import_react27.default.createElement(import_react27.default.Fragment, null, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 6 } }, "\u0401\u041C\u041A\u041E\u0421\u0422\u0418"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 4, width: "75%" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 8, color: T.textMuted, width: 28 } }, "\u0432\u043E\u0434\u0430"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1, height: 6, borderRadius: 3, background: "rgba(30,45,60,0.6)", border: "1px solid rgba(80,100,120,0.3)", overflow: "hidden" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "65%", height: "100%", background: "linear-gradient(90deg, rgba(61,200,140,0.7) 0%, rgba(61,200,140,0.5) 100%)", borderRadius: 2 } })), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textSecondary, width: 24, textAlign: "right" } }, "65%")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 8, color: T.textMuted, width: 28 } }, "\u0441\u0435\u043F\u0442\u0438\u043A"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1, height: 6, borderRadius: 3, background: "rgba(30,45,60,0.6)", border: "1px solid rgba(224,64,80,0.4)", overflow: "hidden" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "87%", height: "100%", background: "linear-gradient(90deg, rgba(224,64,80,0.8) 0%, rgba(224,64,80,0.6) 100%)", borderRadius: 2 } })), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textRed, width: 24, textAlign: "right" } }, "87%")))),
+              key === "tanks" && /* @__PURE__ */ import_react27.default.createElement(import_react27.default.Fragment, null, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 6 } }, "\u0411\u0410\u041A\u0418"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 4, width: "75%" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 8, color: T.textMuted, width: 28 } }, "\u0432\u043E\u0434\u0430"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1, height: 6, borderRadius: 3, background: "rgba(30,45,60,0.6)", border: "1px solid rgba(80,100,120,0.3)", overflow: "hidden" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "65%", height: "100%", background: "linear-gradient(90deg, rgba(61,200,140,0.7) 0%, rgba(61,200,140,0.5) 100%)", borderRadius: 2 } })), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textSecondary, width: 24, textAlign: "right" } }, "65%")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 8, color: T.textMuted, width: 28 } }, "\u0433\u0435\u043D."), /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1, height: 6, borderRadius: 3, background: "rgba(30,45,60,0.6)", border: "1px solid rgba(80,100,120,0.3)", overflow: "hidden" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "45%", height: "100%", background: "linear-gradient(90deg, rgba(61,200,140,0.7) 0%, rgba(61,200,140,0.5) 100%)", borderRadius: 2 } })), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textSecondary, width: 24, textAlign: "right" } }, "45%")))),
               key === "safety" && /* @__PURE__ */ import_react27.default.createElement(import_react27.default.Fragment, null, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 8 } }, "\u0411\u0415\u0417\u041E\u041F\u0410\u0421\u041D\u041E\u0421\u0422\u042C"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
                 width: 6,
                 height: 6,
@@ -32174,16 +32186,8 @@
           /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "stretch" } }, /* @__PURE__ */ import_react27.default.createElement(
             "div",
             {
-              onClick: () => setExpandedSection("fuel"),
-              style: { flex: 1, height: 100, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 12, cursor: "pointer" }
-            },
-            /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 8 } }, "\u0422\u041E\u041F\u041B\u0418\u0412\u041E"),
-            /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 5, width: "80%" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 8, color: T.textMuted, width: 32 } }, "\u041B\u0415\u0412."), /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1, height: 7, borderRadius: 4, background: "rgba(30,45,60,0.6)", border: "1px solid rgba(80,100,120,0.3)", overflow: "hidden" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "78%", height: "100%", background: "linear-gradient(90deg, rgba(61,200,140,0.7) 0%, rgba(61,200,140,0.5) 100%)", borderRadius: 3 } })), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textSecondary, width: 28, textAlign: "right" } }, "78%")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 8, color: T.textMuted, width: 32 } }, "\u041F\u0420\u0410\u0412."), /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1, height: 7, borderRadius: 4, background: "rgba(30,45,60,0.6)", border: "1px solid rgba(80,100,120,0.3)", overflow: "hidden" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "72%", height: "100%", background: "linear-gradient(90deg, rgba(61,200,140,0.7) 0%, rgba(61,200,140,0.5) 100%)", borderRadius: 3 } })), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textSecondary, width: 28, textAlign: "right" } }, "72%")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 8, color: T.textMuted, width: 32 } }, "\u0413\u0415\u041D."), /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1, height: 7, borderRadius: 4, background: "rgba(30,45,60,0.6)", border: "1px solid rgba(80,100,120,0.3)", overflow: "hidden" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "45%", height: "100%", background: "linear-gradient(90deg, rgba(220,160,60,0.7) 0%, rgba(220,160,60,0.5) 100%)", borderRadius: 3 } })), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textSecondary, width: 28, textAlign: "right" } }, "45%")))
-          ), /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: 1, background: "linear-gradient(180deg, transparent 10%, rgba(80,100,120,0.3) 50%, transparent 90%)" } }), /* @__PURE__ */ import_react27.default.createElement(
-            "div",
-            {
               onClick: () => setExpandedSection("weather"),
-              style: { flex: 1, height: 100, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 12, cursor: "pointer" }
+              style: { flex: 1, height: 85, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 10, cursor: "pointer" }
             },
             /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 16 } }, "\u041F\u041E\u0413\u041E\u0414\u0410"),
             /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", gap: 20, alignItems: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 16, fontWeight: 500, color: T.textSecondary } }, "18\xB0"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted } }, "\u0432\u043E\u0434\u0430")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 16, fontWeight: 500, color: T.textSecondary } }, "5 \u043C/\u0441"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted } }, "\u0432\u0435\u0442\u0435\u0440")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 16, fontWeight: 500, color: T.textSecondary } }, "1013"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted } }, "\u0433\u041F\u0430")))
@@ -32191,7 +32195,7 @@
             "div",
             {
               onClick: () => setExpandedSection("electric"),
-              style: { flex: 1, height: 100, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 12, cursor: "pointer" }
+              style: { flex: 1, height: 85, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 10, cursor: "pointer" }
             },
             /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 16 } }, "\u042D\u041B\u0415\u041A\u0422\u0420\u0418\u041A\u0410"),
             /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", gap: 20, alignItems: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 16, fontWeight: 500, color: T.textSecondary } }, "12.8 \u0412"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted } }, "\u0410\u041A\u0411")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { textAlign: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 16, fontWeight: 500, color: T.textSecondary } }, "2.1 \u043A\u0412\u0442"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted } }, "\u0441\u043E\u043B\u043D\u0446\u0435")))
@@ -32199,15 +32203,15 @@
             "div",
             {
               onClick: () => setExpandedSection("tanks"),
-              style: { flex: 1, height: 100, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 12, cursor: "pointer" }
+              style: { flex: 1, height: 85, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 10, cursor: "pointer" }
             },
-            /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 16 } }, "\u0401\u041C\u041A\u041E\u0421\u0422\u0418"),
-            /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 6, width: "70%" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted, width: 36 } }, "\u0432\u043E\u0434\u0430"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1, height: 8, borderRadius: 4, background: "rgba(30,45,60,0.6)", border: "1px solid rgba(80,100,120,0.3)", overflow: "hidden" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "65%", height: "100%", background: "linear-gradient(90deg, rgba(61,200,140,0.7) 0%, rgba(61,200,140,0.5) 100%)", borderRadius: 3 } })), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textSecondary, width: 28, textAlign: "right" } }, "65%")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted, width: 36 } }, "\u0441\u0435\u043F\u0442\u0438\u043A"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1, height: 8, borderRadius: 4, background: "rgba(30,45,60,0.6)", border: "1px solid rgba(224,64,80,0.4)", overflow: "hidden" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "87%", height: "100%", background: "linear-gradient(90deg, rgba(224,64,80,0.8) 0%, rgba(224,64,80,0.6) 100%)", borderRadius: 3 } })), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textRed, width: 28, textAlign: "right" } }, "87%")))
+            /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 16 } }, "\u0411\u0410\u041A\u0418"),
+            /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 6, width: "70%" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted, width: 36 } }, "\u0432\u043E\u0434\u0430"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1, height: 8, borderRadius: 4, background: "rgba(30,45,60,0.6)", border: "1px solid rgba(80,100,120,0.3)", overflow: "hidden" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "65%", height: "100%", background: "linear-gradient(90deg, rgba(61,200,140,0.7) 0%, rgba(61,200,140,0.5) 100%)", borderRadius: 3 } })), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textSecondary, width: 28, textAlign: "right" } }, "65%")), /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 9, color: T.textMuted, width: 36 } }, "\u0433\u0435\u043D."), /* @__PURE__ */ import_react27.default.createElement("div", { style: { flex: 1, height: 8, borderRadius: 4, background: "rgba(30,45,60,0.6)", border: "1px solid rgba(80,100,120,0.3)", overflow: "hidden" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: "45%", height: "100%", background: "linear-gradient(90deg, rgba(61,200,140,0.7) 0%, rgba(61,200,140,0.5) 100%)", borderRadius: 3 } })), /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 11, color: T.textSecondary, width: 28, textAlign: "right" } }, "45%")))
           ), /* @__PURE__ */ import_react27.default.createElement("div", { style: { width: 1, background: "linear-gradient(180deg, transparent 10%, rgba(80,100,120,0.3) 50%, transparent 90%)" } }), /* @__PURE__ */ import_react27.default.createElement(
             "div",
             {
               onClick: () => setExpandedSection("safety"),
-              style: { flex: 1, height: 100, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 12, cursor: "pointer" }
+              style: { flex: 1, height: 85, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 10, cursor: "pointer" }
             },
             /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 10, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 24 } }, "\u0411\u0415\u0417\u041E\u041F\u0410\u0421\u041D\u041E\u0421\u0422\u042C"),
             /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
@@ -32226,16 +32230,219 @@
         initial: { opacity: 0, y: 30 },
         animate: { opacity: loadingPhase === "done" ? 1 : 0, y: loadingPhase === "done" ? 0 : 30 },
         transition: { duration: 0.6, delay: 0.3 },
-        style: { width: "100%", maxWidth: 1200, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, overflow: "visible" }
+        style: { width: "100%", maxWidth: 1048, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, position: "relative" }
       },
-      /* @__PURE__ */ import_react27.default.createElement("div", { style: { marginRight: -92, paddingTop: 20 } }, /* @__PURE__ */ import_react27.default.createElement(EngineCard, { side: "Left", tempText: "\u0422\u0435\u043C\u043F 82\xB0C \xB7 \u041C\u0430\u0441\u043B\u043E \u041E\u041A", rpm: Math.round(rpmLeft), throttle: Math.round(throttleLeft), gear: gearLeft, expanded: false, onToggleExpand: () => setExpandedEngine("Left") })),
-      /* @__PURE__ */ import_react27.default.createElement("div", { style: { height: 400, display: "flex", alignItems: "center", justifyContent: "center" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "relative", width: 230, height: 190 } }, (() => {
+      /* @__PURE__ */ import_react27.default.createElement(
+        motion.div,
+        {
+          animate: {
+            opacity: controls.navigation ? 0 : 1,
+            scale: controls.navigation ? 0.5 : 1,
+            x: controls.navigation ? -170 : 0
+          },
+          transition: { type: "spring", stiffness: 200, damping: 25 },
+          style: { marginRight: -50, paddingTop: 16, pointerEvents: controls.navigation ? "none" : "auto" }
+        },
+        /* @__PURE__ */ import_react27.default.createElement(EngineCard, { side: "Left", tempText: "\u0422\u0435\u043C\u043F 82\xB0C \xB7 \u041C\u0430\u0441\u043B\u043E \u041E\u041A", rpm: Math.round(rpmLeft), throttle: Math.round(throttleLeft), gear: gearLeft, motorHours: 1247, fuelLevel: 75, expanded: false, onToggleExpand: () => setExpandedEngine("Left") })
+      ),
+      /* @__PURE__ */ import_react27.default.createElement("div", { style: { height: 340, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start", paddingTop: 16 } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", gap: 30, marginBottom: 16 } }, /* @__PURE__ */ import_react27.default.createElement(
+        motion.div,
+        {
+          animate: {
+            x: controls.navigation ? -374 : 0
+          },
+          transition: { type: "spring", stiffness: 200, damping: 25 },
+          style: {
+            width: 135,
+            height: 135,
+            borderRadius: "50%",
+            background: "linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.5)",
+            padding: 5,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }
+        },
+        /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+          width: "100%",
+          height: "100%",
+          borderRadius: "50%",
+          background: "linear-gradient(145deg, rgba(10,15,25,0.98) 0%, rgba(5,8,15,1) 100%)",
+          position: "relative"
+        } }, /* @__PURE__ */ import_react27.default.createElement(
+          motion.div,
+          {
+            style: {
+              position: "absolute",
+              inset: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            },
+            animate: { rotate: -heading },
+            transition: { type: "spring", stiffness: 120, damping: 18 }
+          },
+          /* @__PURE__ */ import_react27.default.createElement("svg", { viewBox: "0 0 100 100", style: { width: "100%", height: "100%" } }, Array.from({ length: 36 }).map((_, i) => {
+            const angle = i * 10 * Math.PI / 180;
+            const isMajor = i % 9 === 0;
+            const r1 = isMajor ? 38 : 42;
+            const r2 = 48;
+            return /* @__PURE__ */ import_react27.default.createElement(
+              "line",
+              {
+                key: i,
+                x1: 50 + r1 * Math.sin(angle),
+                y1: 50 - r1 * Math.cos(angle),
+                x2: 50 + r2 * Math.sin(angle),
+                y2: 50 - r2 * Math.cos(angle),
+                stroke: isMajor ? "rgba(200,210,230,0.8)" : "rgba(150,160,180,0.4)",
+                strokeWidth: isMajor ? 2 : 1
+              }
+            );
+          }), /* @__PURE__ */ import_react27.default.createElement("text", { x: "50", y: "20", fill: "rgba(200,210,230,0.6)", fontSize: "9", fontWeight: "500", textAnchor: "middle", dominantBaseline: "middle" }, "\u0421"), /* @__PURE__ */ import_react27.default.createElement("text", { x: "50", y: "80", fill: "rgba(200,210,230,0.6)", fontSize: "9", fontWeight: "500", textAnchor: "middle", dominantBaseline: "middle", transform: "rotate(180 50 80)" }, "\u042E"), /* @__PURE__ */ import_react27.default.createElement("text", { x: "80", y: "50", fill: "rgba(200,210,230,0.6)", fontSize: "9", fontWeight: "500", textAnchor: "middle", dominantBaseline: "middle", transform: "rotate(90 80 50)" }, "\u0412"), /* @__PURE__ */ import_react27.default.createElement("text", { x: "20", y: "50", fill: "rgba(200,210,230,0.6)", fontSize: "9", fontWeight: "500", textAnchor: "middle", dominantBaseline: "middle", transform: "rotate(-90 20 50)" }, "\u0417"))
+        ), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+          position: "absolute",
+          top: -18,
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: 0,
+          height: 0,
+          borderLeft: "7px solid transparent",
+          borderRight: "7px solid transparent",
+          borderTop: "11px solid #d44050",
+          filter: "drop-shadow(0 0 4px rgba(212,64,80,0.6))"
+        } }))
+      ), /* @__PURE__ */ import_react27.default.createElement(
+        motion.div,
+        {
+          animate: {
+            x: controls.navigation ? 374 : 0
+          },
+          transition: { type: "spring", stiffness: 200, damping: 25 },
+          style: {
+            width: 135,
+            height: 135,
+            borderRadius: "50%",
+            background: "linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.5)",
+            padding: 5,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }
+        },
+        /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+          width: "100%",
+          height: "100%",
+          borderRadius: "50%",
+          background: "linear-gradient(145deg, rgba(10,15,25,0.98) 0%, rgba(5,8,15,1) 100%)",
+          position: "relative",
+          overflow: "hidden"
+        } }, /* @__PURE__ */ import_react27.default.createElement("svg", { viewBox: "0 0 100 100", style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%" } }, Array.from({ length: 19 }).map((_, i) => {
+          const deg = -45 + i * 5;
+          const angle = (deg + 90) * Math.PI / 180;
+          const isMajor = deg % 15 === 0;
+          const r1 = isMajor ? 38 : 40;
+          const r2 = 46;
+          return /* @__PURE__ */ import_react27.default.createElement(
+            "line",
+            {
+              key: i,
+              x1: 50 + r1 * Math.cos(angle),
+              y1: 50 + r1 * Math.sin(angle),
+              x2: 50 + r2 * Math.cos(angle),
+              y2: 50 + r2 * Math.sin(angle),
+              stroke: isMajor ? "rgba(200,210,230,0.8)" : "rgba(150,160,180,0.4)",
+              strokeWidth: isMajor ? 2 : 1,
+              strokeLinecap: "round"
+            }
+          );
+        })), /* @__PURE__ */ import_react27.default.createElement(
+          "svg",
+          {
+            viewBox: "0 0 24 32",
+            style: {
+              position: "absolute",
+              top: 22,
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: 33,
+              height: 45,
+              opacity: 0.35
+            }
+          },
+          /* @__PURE__ */ import_react27.default.createElement(
+            "path",
+            {
+              d: "M12 1 L18 8 L19 22 Q12 30 5 22 L6 8 Z",
+              fill: "rgba(150,180,210,0.6)",
+              stroke: "rgba(150,180,210,0.8)",
+              strokeWidth: "0.5"
+            }
+          ),
+          /* @__PURE__ */ import_react27.default.createElement(
+            "ellipse",
+            {
+              cx: "12",
+              cy: "14",
+              rx: "4",
+              ry: "6",
+              fill: "rgba(100,130,160,0.5)"
+            }
+          )
+        ), /* @__PURE__ */ import_react27.default.createElement(
+          motion.div,
+          {
+            style: {
+              position: "absolute",
+              top: 57,
+              left: "50%",
+              width: 4,
+              height: 48,
+              marginLeft: -2,
+              background: "linear-gradient(90deg, #a03040 0%, #d04050 25%, #e85060 50%, #d04050 75%, #a03040 100%)",
+              borderRadius: 2,
+              transformOrigin: "center top",
+              boxShadow: "0 0 8px rgba(224,80,96,0.5)"
+            },
+            animate: { rotate: rudderDeg },
+            transition: { type: "spring", stiffness: 100, damping: 15 }
+          }
+        ), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 14,
+          height: 14,
+          borderRadius: "50%",
+          background: "radial-gradient(circle at 35% 35%, #ffffff 0%, #d0d0d0 30%, #909090 70%, #606060 100%)",
+          boxShadow: "0 2px 6px rgba(0,0,0,0.4)"
+        } }))
+      )), /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "relative", width: 230, height: 127, marginTop: 22 } }, expandedEngine && /* @__PURE__ */ import_react27.default.createElement(
+        "div",
+        {
+          onClick: () => setExpandedEngine(null),
+          style: {
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 29
+          }
+        }
+      ), (() => {
         const expandedFaults = expandedEngine === "Left" ? [] : ["E102 - \u0414\u0430\u0442\u0447\u0438\u043A \u0442\u0435\u043C\u043F\u0435\u0440\u0430\u0442\u0443\u0440\u044B", "E045 - \u041D\u0438\u0437\u043A\u043E\u0435 \u0434\u0430\u0432\u043B\u0435\u043D\u0438\u0435 \u043C\u0430\u0441\u043B\u0430"];
         const hasExpandedFaults = expandedFaults.length > 0;
         const expandedWidth = hasExpandedFaults ? 580 : 380;
-        const expandedHeight = 380;
+        const expandedHeight = 300;
         const collapsedWidth = 230;
-        const collapsedHeight = 190;
+        const collapsedHeight = 127;
+        const miniWidth = 115;
+        const miniHeight = 63.5;
+        const isNavMode = controls.navigation && !expandedEngine;
         return /* @__PURE__ */ import_react27.default.createElement(
           motion.div,
           {
@@ -32243,7 +32450,8 @@
               width: expandedEngine ? expandedWidth : collapsedWidth,
               height: expandedEngine ? expandedHeight : collapsedHeight,
               x: expandedEngine ? -expandedWidth / 2 : -collapsedWidth / 2,
-              y: expandedEngine ? -expandedHeight / 2 : -collapsedHeight / 2
+              y: expandedEngine ? -expandedHeight / 2 - 60 : isNavMode ? 22 : -collapsedHeight / 2,
+              scale: isNavMode ? 0.6 : 1
             },
             transition: { type: "spring", stiffness: 300, damping: 30 },
             style: {
@@ -32252,7 +32460,7 @@
               left: "50%",
               width: collapsedWidth,
               height: collapsedHeight,
-              borderRadius: 42,
+              borderRadius: 28,
               background: "linear-gradient(145deg, rgba(15,22,35,0.97) 0%, rgba(8,12,22,0.98) 50%, rgba(5,8,15,1) 100%)",
               boxShadow: "0 12px 40px rgba(0,0,0,0.6), 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 1px rgba(100,140,200,0.1), inset 0 -2px 10px rgba(0,0,0,0.5)",
               border: "1px solid rgba(80,100,130,0.2)",
@@ -32262,17 +32470,17 @@
           },
           /* @__PURE__ */ import_react27.default.createElement("div", { style: {
             position: "absolute",
-            inset: 6,
-            borderRadius: 36,
-            boxShadow: "inset 0 8px 30px rgba(0,0,0,0.8), inset 0 2px 10px rgba(0,5,15,0.5)",
+            inset: 4,
+            borderRadius: 24,
+            boxShadow: "inset 0 6px 20px rgba(0,0,0,0.8), inset 0 2px 8px rgba(0,5,15,0.5)",
             pointerEvents: "none"
           } }),
           /* @__PURE__ */ import_react27.default.createElement("div", { style: {
             position: "absolute",
             top: 0,
-            left: 15,
-            right: 15,
-            height: 60,
+            left: 12,
+            right: 12,
+            height: 40,
             borderRadius: "0 0 50% 50%",
             background: "linear-gradient(180deg, rgba(180,210,255,0.12) 0%, rgba(150,180,220,0.05) 40%, transparent 100%)",
             pointerEvents: "none"
@@ -32285,7 +32493,7 @@
             alignItems: "center",
             justifyContent: expandedEngine ? "flex-start" : "center",
             padding: expandedEngine ? "28px 32px 24px" : 0
-          } }, expandedEngine ? /* @__PURE__ */ import_react27.default.createElement(import_react27.default.Fragment, null, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 16, fontWeight: 600, color: hasExpandedFaults ? T.textRed : T.textSecondary, marginBottom: 20 } }, expandedEngine === "Left" ? "\u041B\u0435\u0432\u044B\u0439" : "\u041F\u0440\u0430\u0432\u044B\u0439", " \u0434\u0432\u0438\u0433\u0430\u0442\u0435\u043B\u044C"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", width: "100%", flex: 1, position: "relative", alignItems: "flex-start" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+          } }, expandedEngine ? /* @__PURE__ */ import_react27.default.createElement(import_react27.default.Fragment, null, /* @__PURE__ */ import_react27.default.createElement("div", { style: { fontSize: 16, fontWeight: 600, color: hasExpandedFaults ? T.textRed : T.textSecondary, marginBottom: 36 } }, expandedEngine === "Left" ? "\u041B\u0435\u0432\u044B\u0439" : "\u041F\u0440\u0430\u0432\u044B\u0439", " \u0434\u0432\u0438\u0433\u0430\u0442\u0435\u043B\u044C"), /* @__PURE__ */ import_react27.default.createElement("div", { style: { display: "flex", width: "100%", flex: 1, position: "relative", alignItems: "flex-start" } }, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
             flex: 1,
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
@@ -32314,23 +32522,7 @@
               }
             },
             fault
-          )))), /* @__PURE__ */ import_react27.default.createElement(
-            "button",
-            {
-              onClick: () => setExpandedEngine(null),
-              style: {
-                marginTop: 16,
-                padding: "10px 28px",
-                background: "rgba(80,110,140,0.2)",
-                border: "1px solid rgba(100,130,160,0.3)",
-                borderRadius: 20,
-                color: "rgba(150,180,210,0.7)",
-                fontSize: 12,
-                cursor: "pointer"
-              }
-            },
-            "\u0417\u0430\u043A\u0440\u044B\u0442\u044C"
-          )) : /* @__PURE__ */ import_react27.default.createElement(import_react27.default.Fragment, null, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+          ))))) : /* @__PURE__ */ import_react27.default.createElement(import_react27.default.Fragment, null, /* @__PURE__ */ import_react27.default.createElement("div", { style: {
             fontSize: 56,
             fontWeight: 400,
             color: "#d4af65",
@@ -32346,32 +32538,175 @@
           /* @__PURE__ */ import_react27.default.createElement("div", { style: {
             position: "absolute",
             inset: 0,
-            borderRadius: 42,
+            borderRadius: 28,
             border: "1px solid rgba(150,180,220,0.08)",
             pointerEvents: "none"
           } })
         );
-      })(), /* @__PURE__ */ import_react27.default.createElement("div", { style: {
-        position: "absolute",
-        bottom: -94,
-        left: "50%",
-        transform: "translateX(-50%)",
-        zIndex: 5
-      } }, /* @__PURE__ */ import_react27.default.createElement("svg", { width: "105", height: "68", viewBox: "600 -100 1620 750", style: { opacity: 0.6 } }, /* @__PURE__ */ import_react27.default.createElement(
-        "path",
+      })(), /* @__PURE__ */ import_react27.default.createElement(
+        motion.div,
         {
-          fill: "#2a3a4a",
-          d: "M1798.09 319.87c-4.35,-12.65 -31.56,-22.61 -26.42,-5.52 2.53,29.43 7.74,74.72 -23.19,131.9 -34.39,29.27 5.18,34.93 43.53,16.19 64.03,-24.99 12.21,-119.88 6.08,-142.57zm-498.41 -195.06l0 0 -0.42 0 0 54.51 47.15 0c-0.78,-30.15 -21.5,-54.51 -46.73,-54.51zm-17.11 0.05l0 0c-24.28,1.3 -43.89,25.15 -44.65,54.46l44.65 0 0 -54.46zm-44.67 74.57l0 0 0 51 44.67 0 0 -51 -44.67 0zm61.36 51l0 0 47.17 0 0 -51 -47.17 0 0 51zm488.43 -118.7l0 0c-75.64,39.65 -105.96,79.31 -167.43,107.06 -14.5,6.53 -30.65,12.67 -48.33,18.34l0 -102.15c0,-34.71 -28.38,-63.1 -63.09,-63.1 -34.71,0 -63.1,28.39 -63.1,63.1l0 130.53c-114.9,17.14 -260.31,19.42 -421.05,-2.18 209.11,99.93 576.41,33.58 705.24,-76.57 38.48,-32.89 101.67,-75.25 149.43,-91.4 151.13,-55.09 221.23,-5.03 260.55,84.96 -7.9,31.59 -71.1,31.12 -109.89,46.44 -109.8,30.41 -134.33,31.14 -244.26,11.66 -12.86,-0.26 -32.74,10.03 -27.17,24.4 10.58,216.03 -71.36,208.7 -255.45,232.26 -61.99,2.97 -1.08,-78.65 13.4,-87.72 46.13,-48.5 75.84,-52.86 86.21,-69.64 14.88,-26.72 3.03,-38.46 -31.76,-15.84 -142.22,60.11 -308.64,63.74 -496.17,18.12 -193.15,147.77 -382.49,16.88 -304.72,-13.59 67.62,-23.73 138.17,-42.34 211.83,-55.51l-26.05 -41.91c50.95,-25.54 95,-62.9 135.37,-106.56 212.3,-195.78 446.39,-180.44 696.44,-10.7z"
-        }
-      ))))),
-      /* @__PURE__ */ import_react27.default.createElement("div", { style: { marginLeft: -92, paddingTop: 20 } }, /* @__PURE__ */ import_react27.default.createElement(EngineCard, { side: "Right", tempText: "\u0422\u0435\u043C\u043F 81\xB0C \xB7 \u041C\u0430\u0441\u043B\u043E \u041E\u041A", rpm: Math.round(rpmRight), throttle: Math.round(throttleRight), gear: gearRight, expanded: false, onToggleExpand: () => setExpandedEngine("Right") }))
+          animate: { opacity: controls.navigation ? 0 : 1 },
+          transition: { type: "spring", stiffness: 300, damping: 30 },
+          style: {
+            position: "absolute",
+            bottom: -66,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 5
+          }
+        },
+        /* @__PURE__ */ import_react27.default.createElement("svg", { width: "75", height: "48", viewBox: "600 -100 1620 750", style: { opacity: 0.6 } }, /* @__PURE__ */ import_react27.default.createElement(
+          "path",
+          {
+            fill: "#2a3a4a",
+            d: "M1798.09 319.87c-4.35,-12.65 -31.56,-22.61 -26.42,-5.52 2.53,29.43 7.74,74.72 -23.19,131.9 -34.39,29.27 5.18,34.93 43.53,16.19 64.03,-24.99 12.21,-119.88 6.08,-142.57zm-498.41 -195.06l0 0 -0.42 0 0 54.51 47.15 0c-0.78,-30.15 -21.5,-54.51 -46.73,-54.51zm-17.11 0.05l0 0c-24.28,1.3 -43.89,25.15 -44.65,54.46l44.65 0 0 -54.46zm-44.67 74.57l0 0 0 51 44.67 0 0 -51 -44.67 0zm61.36 51l0 0 47.17 0 0 -51 -47.17 0 0 51zm488.43 -118.7l0 0c-75.64,39.65 -105.96,79.31 -167.43,107.06 -14.5,6.53 -30.65,12.67 -48.33,18.34l0 -102.15c0,-34.71 -28.38,-63.1 -63.09,-63.1 -34.71,0 -63.1,28.39 -63.1,63.1l0 130.53c-114.9,17.14 -260.31,19.42 -421.05,-2.18 209.11,99.93 576.41,33.58 705.24,-76.57 38.48,-32.89 101.67,-75.25 149.43,-91.4 151.13,-55.09 221.23,-5.03 260.55,84.96 -7.9,31.59 -71.1,31.12 -109.89,46.44 -109.8,30.41 -134.33,31.14 -244.26,11.66 -12.86,-0.26 -32.74,10.03 -27.17,24.4 10.58,216.03 -71.36,208.7 -255.45,232.26 -61.99,2.97 -1.08,-78.65 13.4,-87.72 46.13,-48.5 75.84,-52.86 86.21,-69.64 14.88,-26.72 3.03,-38.46 -31.76,-15.84 -142.22,60.11 -308.64,63.74 -496.17,18.12 -193.15,147.77 -382.49,16.88 -304.72,-13.59 67.62,-23.73 138.17,-42.34 211.83,-55.51l-26.05 -41.91c50.95,-25.54 95,-62.9 135.37,-106.56 212.3,-195.78 446.39,-180.44 696.44,-10.7z"
+          }
+        ))
+      ), /* @__PURE__ */ import_react27.default.createElement(AnimatePresence, null, controls.navigation && !expandedEngine && /* @__PURE__ */ import_react27.default.createElement(
+        motion.div,
+        {
+          initial: { opacity: 0, x: 50 },
+          animate: { opacity: 1, x: 0 },
+          exit: { opacity: 0, x: 50 },
+          transition: { type: "spring", stiffness: 300, damping: 30 },
+          style: {
+            position: "absolute",
+            top: 110,
+            left: "calc(50% + 85px)",
+            width: 138,
+            height: 76,
+            borderRadius: 16,
+            background: "linear-gradient(145deg, rgba(15,22,35,0.97) 0%, rgba(8,12,22,0.98) 50%, rgba(5,8,15,1) 100%)",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 1px rgba(100,140,200,0.1)",
+            border: "1px solid rgba(80,100,130,0.2)",
+            overflow: "hidden",
+            zIndex: 3
+          }
+        },
+        /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+          position: "absolute",
+          inset: 3,
+          borderRadius: 13,
+          boxShadow: "inset 0 4px 12px rgba(0,0,0,0.6)",
+          pointerEvents: "none"
+        } }),
+        /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+          position: "absolute",
+          top: 6,
+          left: 0,
+          right: 0,
+          textAlign: "center",
+          fontSize: 8,
+          color: "rgba(150,180,210,0.6)",
+          letterSpacing: 1,
+          fontWeight: 500
+        } }, "\u0413\u041B\u0423\u0411\u0418\u041D\u0410"),
+        /* @__PURE__ */ import_react27.default.createElement("div", { style: {
+          position: "absolute",
+          top: 18,
+          left: 8,
+          display: "flex",
+          alignItems: "baseline",
+          gap: 2
+        } }, /* @__PURE__ */ import_react27.default.createElement("span", { style: {
+          fontSize: 22,
+          fontWeight: 400,
+          color: "#50a0ff",
+          textShadow: "0 0 15px rgba(80,160,255,0.4)"
+        } }, depthHistory[depthHistory.length - 1].toFixed(1)), /* @__PURE__ */ import_react27.default.createElement("span", { style: {
+          fontSize: 9,
+          color: "rgba(80,160,255,0.5)"
+        } }, "\u043C")),
+        /* @__PURE__ */ import_react27.default.createElement(
+          "svg",
+          {
+            style: {
+              position: "absolute",
+              bottom: 6,
+              left: 6,
+              right: 6,
+              height: 28
+            },
+            viewBox: "0 0 126 28",
+            preserveAspectRatio: "none"
+          },
+          /* @__PURE__ */ import_react27.default.createElement("line", { x1: "0", y1: "7", x2: "126", y2: "7", stroke: "rgba(80,160,255,0.1)", strokeWidth: "0.5" }),
+          /* @__PURE__ */ import_react27.default.createElement("line", { x1: "0", y1: "14", x2: "126", y2: "14", stroke: "rgba(80,160,255,0.1)", strokeWidth: "0.5" }),
+          /* @__PURE__ */ import_react27.default.createElement("line", { x1: "0", y1: "21", x2: "126", y2: "21", stroke: "rgba(80,160,255,0.1)", strokeWidth: "0.5" }),
+          /* @__PURE__ */ import_react27.default.createElement("defs", null, /* @__PURE__ */ import_react27.default.createElement("linearGradient", { id: "depthGradient", x1: "0%", y1: "0%", x2: "0%", y2: "100%" }, /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "0%", stopColor: "rgba(80,160,255,0.3)" }), /* @__PURE__ */ import_react27.default.createElement("stop", { offset: "100%", stopColor: "rgba(80,160,255,0)" }))),
+          /* @__PURE__ */ import_react27.default.createElement(
+            "path",
+            {
+              d: `M 0 ${(depthHistory[0] - 2) / 13 * 28} ${depthHistory.map((d, i) => `L ${i / (depthHistory.length - 1) * 126} ${(d - 2) / 13 * 28}`).join(" ")} L 126 28 L 0 28 Z`,
+              fill: "url(#depthGradient)"
+            }
+          ),
+          /* @__PURE__ */ import_react27.default.createElement(
+            "path",
+            {
+              d: `M 0 ${(depthHistory[0] - 2) / 13 * 28} ${depthHistory.map((d, i) => `L ${i / (depthHistory.length - 1) * 126} ${(d - 2) / 13 * 28}`).join(" ")}`,
+              fill: "none",
+              stroke: "#50a0ff",
+              strokeWidth: "1.5",
+              strokeLinecap: "round",
+              strokeLinejoin: "round",
+              style: { filter: "drop-shadow(0 0 3px rgba(80,160,255,0.6))" }
+            }
+          )
+        )
+      )))),
+      /* @__PURE__ */ import_react27.default.createElement(
+        motion.div,
+        {
+          animate: {
+            opacity: controls.navigation ? 0 : 1,
+            scale: controls.navigation ? 0.5 : 1,
+            x: controls.navigation ? 170 : 0
+          },
+          transition: { type: "spring", stiffness: 200, damping: 25 },
+          style: { marginLeft: -50, paddingTop: 16, pointerEvents: controls.navigation ? "none" : "auto" }
+        },
+        /* @__PURE__ */ import_react27.default.createElement(EngineCard, { side: "Right", tempText: "\u0422\u0435\u043C\u043F 81\xB0C \xB7 \u041C\u0430\u0441\u043B\u043E \u041E\u041A", rpm: Math.round(rpmRight), throttle: Math.round(throttleRight), gear: gearRight, motorHours: 1198, fuelLevel: 18, expanded: false, onToggleExpand: () => setExpandedEngine("Right") })
+      ),
+      /* @__PURE__ */ import_react27.default.createElement(AnimatePresence, null, controls.navigation && /* @__PURE__ */ import_react27.default.createElement(import_react27.default.Fragment, null, /* @__PURE__ */ import_react27.default.createElement(
+        motion.div,
+        {
+          initial: { opacity: 0, x: -100, y: 100 },
+          animate: { opacity: 1, x: 0, y: 0 },
+          exit: { opacity: 0, x: -100, y: 100 },
+          transition: { type: "spring", stiffness: 200, damping: 25 },
+          style: {
+            position: "absolute",
+            bottom: 4,
+            left: 0,
+            zIndex: 50
+          }
+        },
+        /* @__PURE__ */ import_react27.default.createElement(MiniEngineCard, { side: "Left", rpm: Math.round(rpmLeft), fuelLevel: 75, hasFaults: false })
+      ), /* @__PURE__ */ import_react27.default.createElement(
+        motion.div,
+        {
+          initial: { opacity: 0, x: 100, y: 100 },
+          animate: { opacity: 1, x: 0, y: 0 },
+          exit: { opacity: 0, x: 100, y: 100 },
+          transition: { type: "spring", stiffness: 200, damping: 25 },
+          style: {
+            position: "absolute",
+            bottom: 4,
+            right: 0,
+            zIndex: 50
+          }
+        },
+        /* @__PURE__ */ import_react27.default.createElement(MiniEngineCard, { side: "Right", rpm: Math.round(rpmRight), fuelLevel: 18, hasFaults: true })
+      )))
     ), /* @__PURE__ */ import_react27.default.createElement(
       motion.div,
       {
         initial: { opacity: 0, y: 30 },
         animate: { opacity: loadingPhase === "done" ? 1 : 0, y: loadingPhase === "done" ? 0 : 30 },
         transition: { duration: 0.6, delay: 0.5 },
-        style: { width: "100%", maxWidth: 1152, marginTop: 20 }
+        style: { width: "100%", maxWidth: 1048, marginTop: 16 }
       },
       /* @__PURE__ */ import_react27.default.createElement("div", { style: {
         background: "linear-gradient(180deg, rgba(12,18,28,0.95) 0%, rgba(6,10,18,0.98) 100%)",
@@ -32386,9 +32721,11 @@
         const Icon = it.icon;
         const on = controls[it.key];
         const isAnchor = it.key === "anchor";
+        const isNavigation = it.key === "navigation";
         const anchorDeployed = isAnchor && anchorPosition > 0;
         const buttonOn = isAnchor ? anchorDeployed : on;
-        const buttonColor = isAnchor && anchorDeployed ? T.textRed : T.textGreen;
+        const navBlue = "#50a0ff";
+        const buttonColor = isAnchor && anchorDeployed ? T.textRed : isNavigation ? navBlue : T.textGreen;
         return /* @__PURE__ */ import_react27.default.createElement(import_react27.default.Fragment, { key: it.key }, /* @__PURE__ */ import_react27.default.createElement(
           "button",
           {
@@ -32402,7 +32739,7 @@
               justifyContent: "center",
               gap: 6,
               border: "none",
-              background: buttonOn ? isAnchor && anchorDeployed ? "linear-gradient(180deg, rgba(100,40,50,0.3) 0%, rgba(60,20,30,0.2) 100%)" : "linear-gradient(180deg, rgba(40,100,80,0.3) 0%, rgba(20,60,50,0.2) 100%)" : "transparent",
+              background: buttonOn ? isAnchor && anchorDeployed ? "linear-gradient(180deg, rgba(100,40,50,0.3) 0%, rgba(60,20,30,0.2) 100%)" : isNavigation ? "linear-gradient(180deg, rgba(40,80,140,0.3) 0%, rgba(20,50,100,0.2) 100%)" : "linear-gradient(180deg, rgba(40,100,80,0.3) 0%, rgba(20,60,50,0.2) 100%)" : "transparent",
               cursor: "pointer",
               position: "relative"
             }
@@ -32414,7 +32751,7 @@
             right: "20%",
             height: 2,
             background: buttonColor,
-            boxShadow: `0 0 12px ${isAnchor && anchorDeployed ? "rgba(224,64,80,0.8)" : "rgba(61,200,140,0.8)"}`,
+            boxShadow: `0 0 12px ${isAnchor && anchorDeployed ? "rgba(224,64,80,0.8)" : isNavigation ? "rgba(80,160,255,0.8)" : "rgba(61,200,140,0.8)"}`,
             borderRadius: 1
           } }),
           /* @__PURE__ */ import_react27.default.createElement("div", { style: { position: "relative", display: "flex", alignItems: "center", justifyContent: "center" } }, /* @__PURE__ */ import_react27.default.createElement(Icon, { style: { width: 24, height: 24, color: buttonOn ? buttonColor : T.textSecondary } }), isAnchor && anchorDeployed && /* @__PURE__ */ import_react27.default.createElement("span", { style: {
