@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-yacht-bg text-yacht-primary antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+@layer utilities {
+  .glass-card {
+    @apply relative bg-card-gradient rounded-card border border-yacht-border shadow-card overflow-hidden;
+  }
+
+  .glass-shine {
+    @apply absolute top-0 left-5 right-5 h-10 bg-glass-shine rounded-b-[50%] pointer-events-none;
+  }
+}
