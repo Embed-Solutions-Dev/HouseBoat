@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { SPLASH_LOGO_DURATION, SPLASH_TRANSITION_DURATION } from '@/config/constants';
 import { Dashboard } from './layouts/Dashboard';
+import { DemoProvider } from '@/services/demo';
 
 type Phase = 'logo' | 'transition' | 'ready';
 
@@ -22,15 +23,17 @@ export function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-yacht-gradient">
-      <AnimatePresence mode="wait">
-        {phase !== 'ready' ? (
-          <SplashScreen key="splash" phase={phase} />
-        ) : (
-          <Dashboard key="dashboard" />
-        )}
-      </AnimatePresence>
-    </div>
+    <DemoProvider>
+      <div className="min-h-screen bg-yacht-gradient">
+        <AnimatePresence mode="wait">
+          {phase !== 'ready' ? (
+            <SplashScreen key="splash" phase={phase} />
+          ) : (
+            <Dashboard key="dashboard" />
+          )}
+        </AnimatePresence>
+      </div>
+    </DemoProvider>
   );
 }
 
