@@ -1,14 +1,20 @@
 import { memo } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { CamerasPanel } from '@/features/cameras';
-import { EnginesPanel } from '@/features/engines';
-import { NavigationOverlay, CompassWidget, RudderWidget, SpeedWidget } from '@/features/navigation';
+import { EnginesPanel, MiniEngineCard } from '@/features/engines';
+import { NavigationOverlay, CompassWidget, RudderWidget, SpeedWidget, DepthWidget } from '@/features/navigation';
 import { ControlsPanel } from '@/features/controls';
 import { TopBar } from '@/components/TopBar';
 import { useStore } from '@/stores';
 
 export const Dashboard = memo(function Dashboard() {
   const navMode = useStore((s) => s.controls.navigation);
+  const leftEngine = useStore((s) => s.engines.left);
+  const rightEngine = useStore((s) => s.engines.right);
+  const fuel = useStore((s) => s.systems.fuel);
+
+  const leftFuelLevel = Math.round((fuel.tank1.level / fuel.tank1.capacity) * 100);
+  const rightFuelLevel = Math.round((fuel.tank2.level / fuel.tank2.capacity) * 100);
 
   return (
     <motion.div
@@ -34,6 +40,11 @@ export const Dashboard = memo(function Dashboard() {
       <div className="w-full max-w-[1048px] mb-4 relative">
         {/* Navigation map overlay - behind engines */}
         <NavigationOverlay />
+
+        {/* Depth widget - appears in nav mode */}
+        <AnimatePresence>
+          {navMode && <DepthWidget />}
+        </AnimatePresence>
 
         {/* Engines - three columns: left tach, nav widgets, right tach */}
         <div
@@ -99,6 +110,55 @@ export const Dashboard = memo(function Dashboard() {
             <EnginesPanel side="right" />
           </motion.div>
         </div>
+
+        {/* Mini engines in corners - appear in nav mode */}
+        <AnimatePresence>
+          {navMode && (
+            <>
+              {/* Left mini engine */}
+              <motion.div
+                initial={{ opacity: 0, x: -100, y: 100 }}
+                animate={{ opacity: 1, x: 0, y: 0 }}
+                exit={{ opacity: 0, x: -100, y: 100 }}
+                transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+                style={{
+                  position: 'absolute',
+                  bottom: 4,
+                  left: 0,
+                  zIndex: 50,
+                }}
+              >
+                <MiniEngineCard
+                  side="Left"
+                  rpm={leftEngine.rpm}
+                  fuelLevel={leftFuelLevel}
+                  hasFaults={leftEngine.errors.length > 0}
+                />
+              </motion.div>
+
+              {/* Right mini engine */}
+              <motion.div
+                initial={{ opacity: 0, x: 100, y: 100 }}
+                animate={{ opacity: 1, x: 0, y: 0 }}
+                exit={{ opacity: 0, x: 100, y: 100 }}
+                transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+                style={{
+                  position: 'absolute',
+                  bottom: 4,
+                  right: 0,
+                  zIndex: 50,
+                }}
+              >
+                <MiniEngineCard
+                  side="Right"
+                  rpm={rightEngine.rpm}
+                  fuelLevel={rightFuelLevel}
+                  hasFaults={rightEngine.errors.length > 0}
+                />
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Controls */}
