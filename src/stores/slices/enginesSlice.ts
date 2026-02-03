@@ -18,6 +18,8 @@ const initialEngine: EngineData = {
   temperature: 75,
   oilPressure: 4.2,
   hours: 1247,
+  fuelConsumption: 12.5,
+  status: 'ok',
   errors: [],
 };
 

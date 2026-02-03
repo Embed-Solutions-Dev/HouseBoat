@@ -20,7 +20,6 @@ export const EngineCard = memo(function EngineCard({ id, data, onToggleExpand }:
       rpm={data.rpm}
       maxRpm={data.maxRpm}
       throttle={data.throttle}
-      gear={data.gear}
       motorHours={data.hours}
       fuelLevel={fuelLevel}
       tempText={tempText}

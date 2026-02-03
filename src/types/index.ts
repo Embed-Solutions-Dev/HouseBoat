@@ -8,6 +8,8 @@ export interface EngineError {
   severity: 'warning' | 'critical';
 }
 
+export type EngineStatus = 'ok' | 'warning' | 'error';
+
 export interface EngineData {
   rpm: number;
   maxRpm: number;
@@ -16,6 +18,8 @@ export interface EngineData {
   temperature: number;
   oilPressure: number;
   hours: number;
+  fuelConsumption: number;
+  status: EngineStatus;
   errors: EngineError[];
 }
 

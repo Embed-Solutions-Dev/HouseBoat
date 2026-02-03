@@ -1,11 +1,10 @@
-import type { EngineData, EngineId, GearPosition } from '@/types';
+import type { EngineData, EngineId } from '@/types';
 
 export interface TachometerProps {
   side: 'Left' | 'Right';
   rpm: number;
   maxRpm: number;
   throttle: number;
-  gear: GearPosition;
   motorHours: number;
   fuelLevel: number;
   tempText: string;
@@ -16,6 +15,5 @@ export interface TachometerProps {
 export interface EngineCardProps {
   id: EngineId;
   data: EngineData;
-  label: string;
   onToggleExpand?: () => void;
 }
