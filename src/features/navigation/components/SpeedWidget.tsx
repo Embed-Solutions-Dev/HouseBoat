@@ -1,4 +1,4 @@
-import { memo, useState } from 'react';
+import { memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '@/stores';
 
@@ -14,7 +14,8 @@ const T = {
 export const SpeedWidget = memo(function SpeedWidget() {
   const speed = useStore((s) => s.navigation.speed);
   const navMode = useStore((s) => s.controls.navigation);
-  const [expandedEngine, setExpandedEngine] = useState<'Left' | 'Right' | null>(null);
+  const expandedEngine = useStore((s) => s.expandedEngine);
+  const setExpandedEngine = useStore((s) => s.setExpandedEngine);
 
   const leftEngine = useStore((s) => s.engines.left);
   const rightEngine = useStore((s) => s.engines.right);

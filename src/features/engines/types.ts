@@ -15,5 +15,4 @@ export interface TachometerProps {
 export interface EngineCardProps {
   id: EngineId;
   data: EngineData;
-  onToggleExpand?: () => void;
 }
