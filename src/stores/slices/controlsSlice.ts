@@ -7,6 +7,7 @@ export interface ControlsSlice {
   toggleLight: (light: 'parking' | 'running') => void;
   toggleBowThruster: () => void;
   toggleGenerator: () => void;
+  toggleNavigation: () => void;
   setControl: (key: keyof ControlsData, value: boolean) => void;
 }
 
@@ -16,6 +17,7 @@ export const createControlsSlice: StateCreator<ControlsSlice> = (set) => ({
     lights: { parking: false, running: true },
     bowThruster: false,
     generator: true,
+    navigation: false,
   },
   togglePower: () =>
     set((state) => ({
@@ -35,6 +37,10 @@ export const createControlsSlice: StateCreator<ControlsSlice> = (set) => ({
   toggleGenerator: () =>
     set((state) => ({
       controls: { ...state.controls, generator: !state.controls.generator },
+    })),
+  toggleNavigation: () =>
+    set((state) => ({
+      controls: { ...state.controls, navigation: !state.controls.navigation },
     })),
   setControl: (key, value) =>
     set((state) => ({

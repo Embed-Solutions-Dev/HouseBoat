@@ -1,7 +1,6 @@
-import type { CameraId, CameraFeed } from '@/types';
+import type { CameraFeed, CameraId } from '@/types';
 
 export interface CameraFeedProps {
-  id: CameraId;
   feed: CameraFeed;
   onClick?: () => void;
   selected?: boolean;

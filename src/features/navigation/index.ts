@@ -3,4 +3,5 @@ export { RudderGauge } from './components/RudderGauge';
 export { SpeedDisplay } from './components/SpeedDisplay';
 export { HeadingDisplay } from './components/HeadingDisplay';
 export { NavigationPanel } from './components/NavigationPanel';
+export { NavigationOverlay } from './components/NavigationOverlay';
 export type * from './types';

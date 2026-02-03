@@ -1,9 +1,24 @@
 import { memo } from 'react';
 import { useStore } from '@/stores';
-import { Card } from '@/components/ui/Card';
-import { Power, Lightbulb, Generator, BowThruster } from '@/components/icons';
-import { ControlButton } from './ControlButton';
-import { AnchorControl } from './AnchorControl';
+import { Power, Lightbulb, Generator, BowThruster, Navigation, Anchor } from '@/components/icons';
+
+const T = {
+  textSecondary: '#7a95a8',
+  textMuted: '#4a6070',
+  textGreen: '#3dc88c',
+  textRed: '#e04050',
+  navBlue: '#50a0ff',
+};
+
+const controlItems = [
+  { key: 'power', label: 'Питание', Icon: Power },
+  { key: 'runLight', label: 'Ходовые', Icon: Lightbulb },
+  { key: 'parkLight', label: 'Стоян. огонь', Icon: Lightbulb },
+  { key: 'navigation', label: 'Навигация', Icon: Navigation },
+  { key: 'thruster', label: 'Подрулька', Icon: BowThruster },
+  { key: 'anchor', label: 'Якорь', Icon: Anchor },
+  { key: 'generator', label: 'Генератор', Icon: Generator },
+] as const;
 
 export const ControlsPanel = memo(function ControlsPanel() {
   const controls = useStore((s) => s.controls);
@@ -11,52 +26,151 @@ export const ControlsPanel = memo(function ControlsPanel() {
   const toggleLight = useStore((s) => s.toggleLight);
   const toggleBowThruster = useStore((s) => s.toggleBowThruster);
   const toggleGenerator = useStore((s) => s.toggleGenerator);
+  const toggleNavigation = useStore((s) => s.toggleNavigation);
+
+  const handleClick = (key: string) => {
+    switch (key) {
+      case 'power':
+        togglePower();
+        break;
+      case 'runLight':
+        toggleLight('running');
+        break;
+      case 'parkLight':
+        toggleLight('parking');
+        break;
+      case 'navigation':
+        toggleNavigation();
+        break;
+      case 'thruster':
+        toggleBowThruster();
+        break;
+      case 'generator':
+        toggleGenerator();
+        break;
+      case 'anchor':
+        // TODO: open anchor modal
+        break;
+    }
+  };
+
+  const getButtonState = (key: string): boolean => {
+    switch (key) {
+      case 'power':
+        return controls.power;
+      case 'runLight':
+        return controls.lights.running;
+      case 'parkLight':
+        return controls.lights.parking;
+      case 'navigation':
+        return controls.navigation;
+      case 'thruster':
+        return controls.bowThruster;
+      case 'generator':
+        return controls.generator;
+      case 'anchor':
+        return false;
+      default:
+        return false;
+    }
+  };
 
   return (
-    <Card className="p-3">
-      <h3 className="text-sm font-medium text-yacht-primary mb-3">Управление</h3>
+    <div
+      style={{
+        background: 'linear-gradient(180deg, rgba(12,18,28,0.95) 0%, rgba(6,10,18,0.98) 100%)',
+        borderRadius: 20,
+        border: '1px solid rgba(60,80,100,0.2)',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(100,130,160,0.08)',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Top shine */}
+      <div
+        style={{
+          height: 1,
+          background: 'linear-gradient(90deg, transparent 10%, rgba(120,150,180,0.15) 50%, transparent 90%)',
+        }}
+      />
 
-      <div className="flex gap-2 flex-wrap">
-        <ControlButton
-          icon={<Power className="w-full h-full" />}
-          label="Питание"
-          active={controls.power}
-          onClick={togglePower}
-          variant="danger"
-        />
+      <div style={{ display: 'flex', alignItems: 'stretch' }}>
+        {controlItems.map((item, idx) => {
+          const { key, label, Icon } = item;
+          const isOn = getButtonState(key);
+          const isNavigation = key === 'navigation';
+          const buttonColor = isNavigation ? T.navBlue : T.textGreen;
 
-        <ControlButton
-          icon={<Lightbulb className="w-full h-full" />}
-          label="Ходовые"
-          active={controls.lights.running}
-          onClick={() => toggleLight('running')}
-        />
+          return (
+            <div key={key} style={{ display: 'flex', flex: 1 }}>
+              <button
+                onClick={() => handleClick(key)}
+                style={{
+                  flex: 1,
+                  height: 72,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 6,
+                  border: 'none',
+                  background: isOn
+                    ? isNavigation
+                      ? 'linear-gradient(180deg, rgba(40,80,140,0.3) 0%, rgba(20,50,100,0.2) 100%)'
+                      : 'linear-gradient(180deg, rgba(40,100,80,0.3) 0%, rgba(20,60,50,0.2) 100%)'
+                    : 'transparent',
+                  cursor: 'pointer',
+                  position: 'relative',
+                }}
+              >
+                {/* Active indicator line */}
+                {isOn && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      bottom: 6,
+                      left: '20%',
+                      right: '20%',
+                      height: 2,
+                      background: buttonColor,
+                      boxShadow: `0 0 12px ${isNavigation ? 'rgba(80,160,255,0.8)' : 'rgba(61,200,140,0.8)'}`,
+                      borderRadius: 1,
+                    }}
+                  />
+                )}
 
-        <ControlButton
-          icon={<Lightbulb className="w-full h-full" />}
-          label="Стояночные"
-          active={controls.lights.parking}
-          onClick={() => toggleLight('parking')}
-        />
+                <Icon
+                  style={{
+                    width: 24,
+                    height: 24,
+                    color: isOn ? buttonColor : T.textSecondary,
+                  }}
+                />
 
-        <ControlButton
-          icon={<BowThruster className="w-full h-full" />}
-          label="Подруль"
-          active={controls.bowThruster}
-          onClick={toggleBowThruster}
-        />
+                <span
+                  style={{
+                    fontSize: 10,
+                    color: isOn ? buttonColor : T.textMuted,
+                    fontWeight: 500,
+                    letterSpacing: '0.3px',
+                  }}
+                >
+                  {label}
+                </span>
+              </button>
 
-        <ControlButton
-          icon={<Generator className="w-full h-full" />}
-          label="Генератор"
-          active={controls.generator}
-          onClick={toggleGenerator}
-        />
+              {/* Divider */}
+              {idx < controlItems.length - 1 && (
+                <div
+                  style={{
+                    width: 1,
+                    background: 'linear-gradient(180deg, transparent 15%, rgba(80,100,120,0.3) 50%, transparent 85%)',
+                  }}
+                />
+              )}
+            </div>
+          );
+        })}
       </div>
-
-      <div className="mt-3 pt-3 border-t border-yacht-border">
-        <AnchorControl />
-      </div>
-    </Card>
+    </div>
   );
 });

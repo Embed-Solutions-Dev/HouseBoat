@@ -20,7 +20,6 @@ export const CameraGrid = memo(function CameraGrid({ onCameraSelect }: CameraGri
       {cameraOrder.map((id) => (
         <CameraFeed
           key={id}
-          id={id}
           feed={feeds[id]}
           selected={selectedCamera === id}
           onClick={() => handleSelect(id)}

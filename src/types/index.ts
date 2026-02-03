@@ -88,6 +88,7 @@ export interface ControlsData {
   lights: LightsState;
   bowThruster: boolean;
   generator: boolean;
+  navigation: boolean;
 }
 
 // Connection types
