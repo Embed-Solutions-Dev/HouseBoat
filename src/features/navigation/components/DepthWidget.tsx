@@ -3,8 +3,6 @@ import { motion } from 'framer-motion';
 import { useStore } from '@/stores';
 
 export const DepthWidget = memo(function DepthWidget() {
-  const navMode = useStore((s) => s.controls.navigation);
-
   // Depth history for sonar chart
   const [depthHistory, setDepthHistory] = useState<number[]>(() => {
     const initial: number[] = [];
@@ -19,8 +17,6 @@ export const DepthWidget = memo(function DepthWidget() {
 
   // Update depth periodically
   useEffect(() => {
-    if (!navMode) return;
-
     const interval = setInterval(() => {
       setDepthHistory((prev) => {
         const lastDepth = prev[prev.length - 1];
@@ -30,9 +26,7 @@ export const DepthWidget = memo(function DepthWidget() {
     }, 500);
 
     return () => clearInterval(interval);
-  }, [navMode]);
-
-  if (!navMode) return null;
+  }, []);
 
   const currentDepth = depthHistory[depthHistory.length - 1];
 

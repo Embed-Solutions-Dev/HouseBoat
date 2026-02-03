@@ -82,10 +82,12 @@ export const Dashboard = memo(function Dashboard() {
               alignItems: 'center',
               justifyContent: 'flex-start',
               paddingTop: 16,
+              position: 'relative',
+              overflow: 'visible',
             }}
           >
             {/* Compass and Rudder side by side */}
-            <div style={{ display: 'flex', gap: 30, marginBottom: 16 }}>
+            <div style={{ display: 'flex', gap: 30, marginBottom: 16, overflow: 'visible' }}>
               <CompassWidget />
               <RudderWidget />
             </div>

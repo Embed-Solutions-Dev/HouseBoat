@@ -29,7 +29,7 @@ export const SpeedWidget = memo(function SpeedWidget() {
   const actualExpandedWidth = hasExpandedFaults ? expandedWidth : 380;
 
   return (
-    <div style={{ position: 'relative', width: collapsedWidth, height: collapsedHeight, marginTop: 22 }}>
+    <div style={{ position: 'relative', width: collapsedWidth, height: collapsedHeight }}>
       {/* Backdrop for closing */}
       {expandedEngine && (
         <div
