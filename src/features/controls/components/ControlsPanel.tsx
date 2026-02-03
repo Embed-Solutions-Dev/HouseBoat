@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { useStore } from '@/stores';
-import { Power, Lightbulb, Generator, BowThruster, Navigation, Anchor } from '@/components/icons';
+import { Power, LightRunning, LightParking, Generator, BowThruster, Navigation, Anchor } from '@/components/icons';
 
 const T = {
   textSecondary: '#7a95a8',
@@ -12,8 +12,8 @@ const T = {
 
 const controlItems = [
   { key: 'power', label: 'Питание', Icon: Power },
-  { key: 'runLight', label: 'Ходовые', Icon: Lightbulb },
-  { key: 'parkLight', label: 'Стоян. огонь', Icon: Lightbulb },
+  { key: 'runLight', label: 'Ходовые', Icon: LightRunning },
+  { key: 'parkLight', label: 'Стоян. огонь', Icon: LightParking },
   { key: 'navigation', label: 'Навигация', Icon: Navigation },
   { key: 'thruster', label: 'Подрулька', Icon: BowThruster },
   { key: 'anchor', label: 'Якорь', Icon: Anchor },
@@ -148,10 +148,10 @@ export const ControlsPanel = memo(function ControlsPanel() {
 
                 <span
                   style={{
-                    fontSize: 10,
+                    fontSize: 11,
                     color: isOn ? buttonColor : T.textMuted,
                     fontWeight: 500,
-                    letterSpacing: '0.3px',
+                    marginTop: -2,
                   }}
                 >
                   {label}
@@ -163,7 +163,7 @@ export const ControlsPanel = memo(function ControlsPanel() {
                 <div
                   style={{
                     width: 1,
-                    background: 'linear-gradient(180deg, transparent 15%, rgba(80,100,120,0.3) 50%, transparent 85%)',
+                    background: 'linear-gradient(180deg, transparent 10%, rgba(80,100,120,0.3) 50%, transparent 90%)',
                   }}
                 />
               )}

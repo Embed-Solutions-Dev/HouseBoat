@@ -296,7 +296,7 @@ export const TopBar = memo(function TopBar() {
           </div>
         ) : (
           /* Collapsed view - 4 sections + fuel */
-          <div style={{ display: 'flex', alignItems: 'stretch', height: 87 }}>
+          <div style={{ display: 'flex', alignItems: 'stretch', height: 85 }}>
             {/* Fuel section */}
             <button
               onClick={() => setExpandedSection('tanks')}
@@ -366,7 +366,7 @@ export const TopBar = memo(function TopBar() {
               </div>
             </button>
 
-            <div style={{ width: 1, background: 'linear-gradient(180deg, transparent 15%, rgba(80,100,120,0.3) 50%, transparent 85%)' }} />
+            <div style={{ width: 1, background: 'linear-gradient(180deg, transparent 10%, rgba(80,100,120,0.3) 50%, transparent 90%)' }} />
 
             {/* Other sections */}
             {sectionKeys.map((key, idx) => (
@@ -418,7 +418,7 @@ export const TopBar = memo(function TopBar() {
                   </div>
                 </button>
                 {idx < sectionKeys.length - 1 && (
-                  <div style={{ width: 1, background: 'linear-gradient(180deg, transparent 15%, rgba(80,100,120,0.3) 50%, transparent 85%)' }} />
+                  <div style={{ width: 1, background: 'linear-gradient(180deg, transparent 10%, rgba(80,100,120,0.3) 50%, transparent 90%)' }} />
                 )}
               </div>
             ))}

@@ -196,3 +196,21 @@ export function WifiOff(props: IconProps) {
     </svg>
   );
 }
+
+export function LightParking(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
+      <circle cx="12" cy="12" r="3" />
+      <circle cx="12" cy="12" r="9" />
+    </svg>
+  );
+}
+
+export function LightRunning(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" {...props}>
+      <path d="M12 2L2 12l10 10 10-10L12 2z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}

@@ -17,7 +17,10 @@ export const CameraFeed = memo(function CameraFeed({
 
   return (
     <div
-      onClick={onClick}
+      onPointerDown={(e) => {
+        e.stopPropagation();
+        onClick?.();
+      }}
       style={{
         background: 'linear-gradient(180deg, rgba(12,18,28,0.95) 0%, rgba(6,10,18,0.98) 100%)',
         borderRadius: isExpanded ? 24 : 16,
@@ -32,6 +35,7 @@ export const CameraFeed = memo(function CameraFeed({
         cursor: 'pointer',
         height: isExpanded ? '100%' : 'auto',
         aspectRatio: isExpanded ? undefined : '16/10',
+        touchAction: 'manipulation',
       }}
     >
       {/* Video simulation */}
@@ -110,6 +114,19 @@ export const CameraFeed = memo(function CameraFeed({
             width: isExpanded ? 80 : 40,
             height: isExpanded ? 16 : 8,
             background: 'radial-gradient(ellipse, rgba(100,150,200,0.3) 0%, transparent 70%)',
+            filter: 'blur(2px)',
+          }}
+        />
+        <motion.div
+          animate={{ opacity: [0.05, 0.2, 0.05], scale: [1, 1.1, 1] }}
+          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
+          style={{
+            position: 'absolute',
+            top: '65%',
+            left: '60%',
+            width: isExpanded ? 60 : 30,
+            height: isExpanded ? 12 : 6,
+            background: 'radial-gradient(ellipse, rgba(100,150,200,0.25) 0%, transparent 70%)',
             filter: 'blur(2px)',
           }}
         />
