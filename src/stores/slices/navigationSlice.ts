@@ -13,6 +13,7 @@ export const createNavigationSlice: StateCreator<NavigationSlice> = (set) => ({
     speed: 18.4,
     heading: 42,
     rudderAngle: -6,
+    depth: 8.5,
     position: { lat: 55.7558, lng: 37.6173 },
     destination: { lat: 55.7612, lng: 37.6289 },
     routePoints: [

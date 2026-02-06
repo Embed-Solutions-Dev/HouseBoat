@@ -8,11 +8,12 @@ const T = {
   textMuted: '#4a6070',
   textGreen: '#3dc88c',
   textRed: '#e04050',
+  speedGold: '#d4af65',
 };
 
-type SectionKey = 'weather' | 'electric' | 'tanks' | 'safety';
+type SectionKey = 'weather' | 'electric' | 'speed' | 'depth' | 'tanks' | 'safety';
 
-const sectionData: Record<SectionKey, { title: string; metrics: Array<{ label: string; value: string; unit: string; status: string }> }> = {
+const sectionData: Record<Exclude<SectionKey, 'speed' | 'depth'>, { title: string; metrics: Array<{ label: string; value: string; unit: string; status: string }> }> = {
   weather: {
     title: 'ПОГОДА',
     metrics: [
@@ -60,14 +61,18 @@ const tankContainers = [
   { name: 'Топливо', subname: 'ген.', level: 45, status: 'normal' },
 ];
 
-const sectionKeys: SectionKey[] = ['weather', 'electric', 'tanks', 'safety'];
+const sectionKeys: SectionKey[] = ['weather', 'electric', 'speed', 'depth', 'tanks', 'safety'];
 
 export const TopBar = memo(function TopBar() {
   const [expandedSection, setExpandedSection] = useState<SectionKey | null>(null);
-  const fuel = useStore((s) => s.systems.fuel);
+  const speed = useStore((s) => s.navigation.speed);
+  const depth = useStore((s) => s.navigation.depth);
 
-  const fuelAI95 = Math.round(((fuel.tank1.level + fuel.tank2.level) / 2 / fuel.tank1.capacity) * 100);
-  const fuelDT = Math.round((fuel.tank3.level / fuel.tank3.capacity) * 100);
+  const getSectionTitle = (key: SectionKey) => {
+    if (key === 'speed') return 'СКОРОСТЬ';
+    if (key === 'depth') return 'ГЛУБИНА';
+    return sectionData[key].title;
+  };
 
   return (
     <div style={{ position: 'relative', height: 88 }}>
@@ -105,7 +110,7 @@ export const TopBar = memo(function TopBar() {
           }}
         />
 
-        {expandedSection ? (
+        {expandedSection && expandedSection !== 'speed' && expandedSection !== 'depth' ? (
           /* Expanded view */
           <div style={{ display: 'flex', height: 'calc(100% - 1px)' }}>
             {/* Left - section details */}
@@ -250,7 +255,7 @@ export const TopBar = memo(function TopBar() {
             {/* Right - other sections */}
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
               {sectionKeys
-                .filter((key) => key !== expandedSection)
+                .filter((key) => key !== expandedSection && key !== 'speed' && key !== 'depth')
                 .map((key, idx, arr) => (
                   <div key={key} style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                     <button
@@ -271,13 +276,13 @@ export const TopBar = memo(function TopBar() {
                       }}
                     >
                       <div style={{ fontSize: 9, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 6 }}>
-                        {sectionData[key].title}
+                        {getSectionTitle(key)}
                       </div>
                       <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                         <div style={{ textAlign: 'center' }}>
                           <div style={{ fontSize: 13, fontWeight: 500, color: T.textSecondary }}>
-                            {sectionData[key].metrics[0]?.value}
-                            {sectionData[key].metrics[0]?.unit}
+                            {sectionData[key as keyof typeof sectionData].metrics[0]?.value}
+                            {sectionData[key as keyof typeof sectionData].metrics[0]?.unit}
                           </div>
                         </div>
                       </div>
@@ -295,127 +300,71 @@ export const TopBar = memo(function TopBar() {
             </div>
           </div>
         ) : (
-          /* Collapsed view - 4 sections + fuel */
+          /* Collapsed view - 6 sections without fuel */
           <div style={{ display: 'flex', alignItems: 'stretch', height: 85 }}>
-            {/* Fuel section */}
-            <button
-              onClick={() => setExpandedSection('tanks')}
-              style={{
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                padding: '8px 12px',
-                background: 'transparent',
-                border: 'none',
-              }}
-            >
-              <div style={{ fontSize: 9, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 6 }}>ТОПЛИВО</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 4, width: '75%' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <div style={{ fontSize: 8, color: T.textMuted, width: 24 }}>АИ-95</div>
-                  <div
-                    style={{
-                      flex: 1,
-                      height: 6,
-                      borderRadius: 3,
-                      background: 'rgba(30,45,60,0.6)',
-                      border: '1px solid rgba(80,100,120,0.3)',
-                      overflow: 'hidden',
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: `${fuelAI95}%`,
-                        height: '100%',
-                        background: 'linear-gradient(90deg, rgba(61,200,140,0.7) 0%, rgba(61,200,140,0.5) 100%)',
-                        borderRadius: 2,
-                      }}
-                    />
-                  </div>
-                  <div style={{ fontSize: 9, color: T.textSecondary, width: 24, textAlign: 'right' }}>{fuelAI95}%</div>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <div style={{ fontSize: 8, color: T.textMuted, width: 24 }}>ДТ</div>
-                  <div
-                    style={{
-                      flex: 1,
-                      height: 6,
-                      borderRadius: 3,
-                      background: 'rgba(30,45,60,0.6)',
-                      border: '1px solid rgba(80,100,120,0.3)',
-                      overflow: 'hidden',
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: `${fuelDT}%`,
-                        height: '100%',
-                        background:
-                          fuelDT < 25
-                            ? 'linear-gradient(90deg, rgba(220,160,60,0.7) 0%, rgba(220,160,60,0.5) 100%)'
-                            : 'linear-gradient(90deg, rgba(61,200,140,0.7) 0%, rgba(61,200,140,0.5) 100%)',
-                        borderRadius: 2,
-                      }}
-                    />
-                  </div>
-                  <div style={{ fontSize: 9, color: T.textSecondary, width: 24, textAlign: 'right' }}>{fuelDT}%</div>
-                </div>
-              </div>
-            </button>
-
-            <div style={{ width: 1, background: 'linear-gradient(180deg, transparent 10%, rgba(80,100,120,0.3) 50%, transparent 90%)' }} />
-
-            {/* Other sections */}
             {sectionKeys.map((key, idx) => (
               <div key={key} style={{ display: 'flex', flex: 1 }}>
                 <button
-                  onClick={() => setExpandedSection(key)}
+                  onClick={() => key !== 'speed' && key !== 'depth' && setExpandedSection(key)}
                   style={{
                     flex: 1,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    cursor: 'pointer',
+                    cursor: key === 'speed' || key === 'depth' ? 'default' : 'pointer',
                     padding: '8px 12px',
                     background: 'transparent',
                     border: 'none',
                   }}
                 >
                   <div style={{ fontSize: 9, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 6 }}>
-                    {sectionData[key].title}
+                    {getSectionTitle(key)}
                   </div>
-                  <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                  {key === 'speed' ? (
                     <div style={{ textAlign: 'center' }}>
-                      <div style={{ fontSize: 13, fontWeight: 500, color: T.textSecondary }}>
-                        {sectionData[key].metrics[0]?.value}
-                        {sectionData[key].metrics[0]?.unit}
+                      <div style={{ fontSize: 24, fontWeight: 600, color: T.speedGold }}>
+                        {speed.toFixed(1)}
                       </div>
-                      <div style={{ fontSize: 8, color: T.textMuted }}>
-                        {key === 'weather' && 'вода'}
-                        {key === 'electric' && 'АКБ'}
-                        {key === 'tanks' && 'вода'}
-                        {key === 'safety' && 'трюм'}
-                      </div>
+                      <div style={{ fontSize: 8, color: T.textMuted }}>км/ч</div>
                     </div>
-                    {sectionData[key].metrics[1] && (
+                  ) : key === 'depth' ? (
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontSize: 24, fontWeight: 600, color: T.textPrimary }}>
+                        {depth.toFixed(1)}
+                      </div>
+                      <div style={{ fontSize: 8, color: T.textMuted }}>м</div>
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                       <div style={{ textAlign: 'center' }}>
                         <div style={{ fontSize: 13, fontWeight: 500, color: T.textSecondary }}>
-                          {sectionData[key].metrics[1]?.value}
-                          {sectionData[key].metrics[1]?.unit}
+                          {sectionData[key].metrics[0]?.value}
+                          {sectionData[key].metrics[0]?.unit}
                         </div>
                         <div style={{ fontSize: 8, color: T.textMuted }}>
-                          {key === 'weather' && 'ветер'}
-                          {key === 'electric' && 'солнце'}
-                          {key === 'tanks' && 'давл.'}
-                          {key === 'safety' && 'дым'}
+                          {key === 'weather' && 'вода'}
+                          {key === 'electric' && 'АКБ'}
+                          {key === 'tanks' && 'вода'}
+                          {key === 'safety' && 'трюм'}
                         </div>
                       </div>
-                    )}
-                  </div>
+                      {sectionData[key].metrics[1] && (
+                        <div style={{ textAlign: 'center' }}>
+                          <div style={{ fontSize: 13, fontWeight: 500, color: T.textSecondary }}>
+                            {sectionData[key].metrics[1]?.value}
+                            {sectionData[key].metrics[1]?.unit}
+                          </div>
+                          <div style={{ fontSize: 8, color: T.textMuted }}>
+                            {key === 'weather' && 'ветер'}
+                            {key === 'electric' && 'солнце'}
+                            {key === 'tanks' && 'давл.'}
+                            {key === 'safety' && 'дым'}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </button>
                 {idx < sectionKeys.length - 1 && (
                   <div style={{ width: 1, background: 'linear-gradient(180deg, transparent 10%, rgba(80,100,120,0.3) 50%, transparent 90%)' }} />

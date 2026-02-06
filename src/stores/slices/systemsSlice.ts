@@ -13,6 +13,7 @@ export interface SystemsSlice {
   updateWeather: (data: Partial<WeatherData>) => void;
   updateAnchor: (data: Partial<AnchorData>) => void;
   setAnchorPosition: (position: number) => void;
+  toggleAnchor: () => void;
 }
 
 export const createSystemsSlice: StateCreator<SystemsSlice> = (set) => ({
@@ -65,4 +66,18 @@ export const createSystemsSlice: StateCreator<SystemsSlice> = (set) => ({
         anchor: { ...state.systems.anchor, position, deployed: position > 0 },
       },
     })),
+  toggleAnchor: () =>
+    set((state) => {
+      const isDeployed = state.systems.anchor.deployed;
+      return {
+        systems: {
+          ...state.systems,
+          anchor: {
+            ...state.systems.anchor,
+            deployed: !isDeployed,
+            position: isDeployed ? 0 : 100,
+          },
+        },
+      };
+    }),
 });

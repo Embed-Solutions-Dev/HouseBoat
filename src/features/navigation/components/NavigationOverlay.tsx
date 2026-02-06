@@ -15,12 +15,12 @@ export const NavigationOverlay = memo(function NavigationOverlay() {
           transition={{ duration: 0.3 }}
           style={{
             position: 'absolute',
-            top: 0,
+            top: '50%',
             left: '50%',
-            transform: 'translateX(-50%)',
+            transform: 'translate(-50%, -50%)',
             width: '100%',
             maxWidth: 1048,
-            height: 700,
+            height: 650,
             zIndex: 1,
             pointerEvents: 'none',
           }}
@@ -29,7 +29,7 @@ export const NavigationOverlay = memo(function NavigationOverlay() {
             <div
               style={{
                 overflow: 'hidden',
-                height: 700,
+                height: 650,
                 position: 'relative',
                 WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 70%)',
                 maskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 70%)',
@@ -44,7 +44,7 @@ export const NavigationOverlay = memo(function NavigationOverlay() {
                   top: -300,
                   left: -200,
                   width: 'calc(100% + 400px)',
-                  height: 'calc(100% + 700px)',
+                  height: 'calc(100% + 650px)',
                 }}
               >
                 <svg width="100%" height="100%" style={{ position: 'absolute', top: 0, left: 0 }}>

@@ -4,12 +4,9 @@ import { useStore } from '@/stores';
 
 export const RudderWidget = memo(function RudderWidget() {
   const rudderAngle = useStore((s) => s.navigation.rudderAngle);
-  const navMode = useStore((s) => s.controls.navigation);
 
   return (
-    <motion.div
-      animate={{ x: navMode ? 374 : 0 }}
-      transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+    <div
       style={{
         width: 135,
         height: 135,
@@ -105,6 +102,6 @@ export const RudderWidget = memo(function RudderWidget() {
           }}
         />
       </div>
-    </motion.div>
+    </div>
   );
 });

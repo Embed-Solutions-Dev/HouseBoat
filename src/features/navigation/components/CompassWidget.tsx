@@ -4,12 +4,9 @@ import { useStore } from '@/stores';
 
 export const CompassWidget = memo(function CompassWidget() {
   const heading = useStore((s) => s.navigation.heading);
-  const navMode = useStore((s) => s.controls.navigation);
 
   return (
-    <motion.div
-      animate={{ x: navMode ? -374 : 0 }}
-      transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+    <div
       style={{
         width: 135,
         height: 135,
@@ -82,6 +79,6 @@ export const CompassWidget = memo(function CompassWidget() {
           }}
         />
       </div>
-    </motion.div>
+    </div>
   );
 });

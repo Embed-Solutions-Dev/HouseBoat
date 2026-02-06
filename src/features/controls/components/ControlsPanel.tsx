@@ -27,6 +27,7 @@ export const ControlsPanel = memo(function ControlsPanel() {
   const toggleBowThruster = useStore((s) => s.toggleBowThruster);
   const toggleGenerator = useStore((s) => s.toggleGenerator);
   const toggleNavigation = useStore((s) => s.toggleNavigation);
+  const toggleAnchor = useStore((s) => s.toggleAnchor);
 
   const handleClick = (key: string) => {
     switch (key) {
@@ -49,10 +50,12 @@ export const ControlsPanel = memo(function ControlsPanel() {
         toggleGenerator();
         break;
       case 'anchor':
-        // TODO: open anchor modal
+        toggleAnchor();
         break;
     }
   };
+
+  const anchor = useStore((s) => s.systems.anchor);
 
   const getButtonState = (key: string): boolean => {
     switch (key) {
@@ -69,7 +72,7 @@ export const ControlsPanel = memo(function ControlsPanel() {
       case 'generator':
         return controls.generator;
       case 'anchor':
-        return false;
+        return anchor.deployed;
       default:
         return false;
     }

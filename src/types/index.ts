@@ -33,6 +33,7 @@ export interface NavigationData {
   speed: number;
   heading: number;
   rudderAngle: number;
+  depth: number;
   position: Position;
   destination: Position | null;
   routePoints: Position[];
