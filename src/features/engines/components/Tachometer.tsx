@@ -1,5 +1,5 @@
 import { memo, useEffect } from 'react';
-import { motion, useMotionValue, useSpring } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 import { clamp } from '@/utils/math';
 import type { TachometerProps } from '../types';
 
@@ -29,8 +29,12 @@ export const Tachometer = memo(function Tachometer({
   tempText,
   hasFaults,
   onToggleExpand,
+  isExpanded = false,
+  temperature = 0,
+  oilPressure = 0,
 }: TachometerProps) {
   const lowFuel = fuelLevel < 25;
+  const mediumFuel = fuelLevel >= 25 && fuelLevel < 50;
   const v = clamp(rpm, 0, maxRpm);
   const ratio = v / maxRpm;
 
@@ -97,10 +101,10 @@ export const Tachometer = memo(function Tachometer({
   const fuelSweep = 70;
   const fuelRatio = clamp(fuelLevel, 0, 100) / 100;
   const fuelFilledAngle = fuelStartAngle + fuelRatio * fuelSweep;
-  const fuelColor = lowFuel ? T.textAmber : T.gaugeActive;
+  const fuelColor = lowFuel ? T.textRed : mediumFuel ? T.textAmber : T.gaugeActive;
 
   return (
-    <div style={{ minHeight: 360, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'visible' }}>
+    <div style={{ position: 'relative', minHeight: 360, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'visible' }}>
       <div
         style={{
           position: 'relative',
@@ -111,8 +115,10 @@ export const Tachometer = memo(function Tachometer({
           boxShadow: hasFaults
             ? '0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.8), 0 0 30px rgba(224,64,80,0.6), 0 0 60px rgba(224,64,80,0.3)'
             : lowFuel
-              ? '0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.8), 0 0 30px rgba(232,160,48,0.5), 0 0 60px rgba(232,160,48,0.25)'
-              : '0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.8)',
+              ? '0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.8), 0 0 30px rgba(224,64,80,0.5), 0 0 60px rgba(224,64,80,0.25)'
+              : mediumFuel
+                ? '0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.8), 0 0 30px rgba(232,160,48,0.5), 0 0 60px rgba(232,160,48,0.25)'
+                : '0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.8)',
           padding: 8,
         }}
       >
@@ -354,12 +360,167 @@ export const Tachometer = memo(function Tachometer({
 
           {/* Fuel pump icon */}
           <div style={{ position: 'absolute', bottom: 28, left: 0, right: 0, textAlign: 'center' }}>
-            <svg style={{ width: 27, height: 27 }} viewBox="0 0 24 24" fill={lowFuel ? T.textAmber : T.textMuted} stroke="none">
+            <svg style={{ width: 27, height: 27 }} viewBox="0 0 24 24" fill={fuelColor} stroke="none">
               <path d="M19.77 7.23l.01-.01-3.72-3.72L15 4.56l2.11 2.11c-.94.36-1.61 1.26-1.61 2.33 0 1.38 1.12 2.5 2.5 2.5.36 0 .69-.08 1-.21v7.21c0 .55-.45 1-1 1s-1-.45-1-1V14c0-1.1-.9-2-2-2h-1V5c0-1.1-.9-2-2-2H6c-1.1 0-2 .9-2 2v16h10v-7.5h1.5v5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V9c0-.69-.28-1.32-.73-1.77zM12 10H6V5h6v5z" />
             </svg>
           </div>
         </div>
       </div>
+
+      {/* Info panel popup - appears directly over the widget */}
+      <AnimatePresence>
+        {isExpanded && (
+          <>
+            {/* Full screen backdrop to catch clicks anywhere */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={onToggleExpand}
+              style={{
+                position: 'fixed',
+                inset: 0,
+                zIndex: 98,
+              }}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+              style={{
+                position: 'absolute',
+                inset: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 99,
+                background: 'linear-gradient(180deg, rgba(12,18,28,0.98) 0%, rgba(6,10,16,0.99) 100%)',
+                borderRadius: 20,
+                border: '1px solid rgba(60,80,100,0.3)',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(100,130,160,0.1)',
+                padding: 20,
+              }}
+            >
+              <div
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+              {/* Title */}
+              <div style={{ fontSize: 14, fontWeight: 500, color: T.textSecondary, letterSpacing: 0.5, marginBottom: 20 }}>
+                {side === 'Left' ? 'ЛЕВЫЙ' : 'ПРАВЫЙ'} ДВИГАТЕЛЬ
+              </div>
+
+              {/* Info grid */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: 12,
+                  width: '100%',
+                  maxWidth: 280,
+                }}
+              >
+                {/* RPM */}
+                <div
+                  style={{
+                    padding: '12px 14px',
+                    background: 'rgba(30,45,60,0.4)',
+                    border: '1px solid rgba(80,100,120,0.3)',
+                    borderRadius: 12,
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: 10, color: T.textMuted, marginBottom: 4 }}>ОБОРОТЫ</div>
+                  <div style={{ fontSize: 22, fontWeight: 600, color: T.textPrimary }}>{Math.round(rpm).toLocaleString()}</div>
+                  <div style={{ fontSize: 9, color: T.textMuted }}>об/мин</div>
+                </div>
+
+                {/* Throttle */}
+                <div
+                  style={{
+                    padding: '12px 14px',
+                    background: 'rgba(30,45,60,0.4)',
+                    border: '1px solid rgba(80,100,120,0.3)',
+                    borderRadius: 12,
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: 10, color: T.textMuted, marginBottom: 4 }}>ГАЗ</div>
+                  <div style={{ fontSize: 22, fontWeight: 600, color: T.textPrimary }}>{throttle}%</div>
+                </div>
+
+                {/* Temperature */}
+                <div
+                  style={{
+                    padding: '12px 14px',
+                    background: temperature > 100 ? 'rgba(224,64,80,0.15)' : 'rgba(30,45,60,0.4)',
+                    border: `1px solid ${temperature > 100 ? 'rgba(224,64,80,0.5)' : temperature > 90 ? 'rgba(232,160,48,0.5)' : 'rgba(61,200,140,0.3)'}`,
+                    borderRadius: 12,
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: 10, color: T.textMuted, marginBottom: 4 }}>ТЕМПЕРАТУРА</div>
+                  <div style={{ fontSize: 22, fontWeight: 600, color: temperature > 100 ? T.textRed : temperature > 90 ? T.textAmber : T.textGreen }}>
+                    {temperature}°C
+                  </div>
+                </div>
+
+                {/* Oil Pressure */}
+                <div
+                  style={{
+                    padding: '12px 14px',
+                    background: oilPressure < 2 ? 'rgba(224,64,80,0.15)' : 'rgba(30,45,60,0.4)',
+                    border: `1px solid ${oilPressure < 2 ? 'rgba(224,64,80,0.5)' : oilPressure < 3 ? 'rgba(232,160,48,0.5)' : 'rgba(61,200,140,0.3)'}`,
+                    borderRadius: 12,
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: 10, color: T.textMuted, marginBottom: 4 }}>ДАВЛ. МАСЛА</div>
+                  <div style={{ fontSize: 22, fontWeight: 600, color: oilPressure < 2 ? T.textRed : oilPressure < 3 ? T.textAmber : T.textGreen }}>
+                    {oilPressure} бар
+                  </div>
+                </div>
+
+                {/* Motor Hours */}
+                <div
+                  style={{
+                    padding: '12px 14px',
+                    background: 'rgba(30,45,60,0.4)',
+                    border: '1px solid rgba(80,100,120,0.3)',
+                    borderRadius: 12,
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: 10, color: T.textMuted, marginBottom: 4 }}>МОТОЧАСЫ</div>
+                  <div style={{ fontSize: 22, fontWeight: 600, color: T.textPrimary }}>{motorHours.toLocaleString()}</div>
+                </div>
+
+                {/* Fuel Level */}
+                <div
+                  style={{
+                    padding: '12px 14px',
+                    background: lowFuel ? 'rgba(224,64,80,0.15)' : 'rgba(30,45,60,0.4)',
+                    border: `1px solid ${lowFuel ? 'rgba(224,64,80,0.5)' : mediumFuel ? 'rgba(232,160,48,0.5)' : 'rgba(61,200,140,0.3)'}`,
+                    borderRadius: 12,
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: 10, color: T.textMuted, marginBottom: 4 }}>ТОПЛИВО</div>
+                  <div style={{ fontSize: 22, fontWeight: 600, color: fuelColor }}>{fuelLevel}%</div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 });

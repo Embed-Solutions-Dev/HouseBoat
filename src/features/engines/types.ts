@@ -10,6 +10,9 @@ export interface TachometerProps {
   tempText: string;
   hasFaults: boolean;
   onToggleExpand?: () => void;
+  isExpanded?: boolean;
+  temperature?: number;
+  oilPressure?: number;
 }
 
 export interface EngineCardProps {

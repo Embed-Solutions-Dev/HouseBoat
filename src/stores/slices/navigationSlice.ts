@@ -3,9 +3,11 @@ import type { NavigationData, Position } from '@/types';
 
 export interface NavigationSlice {
   navigation: NavigationData;
+  mapZoom: number;
   updateNavigation: (data: Partial<NavigationData>) => void;
   setDestination: (dest: Position | null) => void;
   setRudderAngle: (angle: number) => void;
+  setMapZoom: (zoom: number) => void;
 }
 
 export const createNavigationSlice: StateCreator<NavigationSlice> = (set) => ({
@@ -22,6 +24,7 @@ export const createNavigationSlice: StateCreator<NavigationSlice> = (set) => ({
       { lat: 55.7612, lng: 37.6289 },
     ],
   },
+  mapZoom: 50,
   updateNavigation: (data) =>
     set((state) => ({
       navigation: { ...state.navigation, ...data },
@@ -33,5 +36,9 @@ export const createNavigationSlice: StateCreator<NavigationSlice> = (set) => ({
   setRudderAngle: (angle) =>
     set((state) => ({
       navigation: { ...state.navigation, rudderAngle: angle },
+    })),
+  setMapZoom: (zoom) =>
+    set(() => ({
+      mapZoom: Math.max(0, Math.min(100, zoom)),
     })),
 });

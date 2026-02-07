@@ -14,9 +14,10 @@ export const FuelPanel = memo(function FuelPanel() {
   };
 
   const tanks = [
-    { label: 'Бак 1', data: fuel.tank1 },
-    { label: 'Бак 2', data: fuel.tank2 },
-    { label: 'Бак 3', data: fuel.tank3 },
+    { label: 'Бензин Л', data: fuel.gasolineLeft },
+    { label: 'Бензин П', data: fuel.gasolineRight },
+    { label: 'Дизель', data: fuel.diesel },
+    { label: 'Вода', data: fuel.water },
   ];
 
   return (

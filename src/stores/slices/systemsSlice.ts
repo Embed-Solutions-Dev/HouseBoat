@@ -19,9 +19,10 @@ export interface SystemsSlice {
 export const createSystemsSlice: StateCreator<SystemsSlice> = (set) => ({
   systems: {
     fuel: {
-      tank1: { level: 68, capacity: 400 },
-      tank2: { level: 72, capacity: 400 },
-      tank3: { level: 45, capacity: 200 },
+      gasolineLeft: { level: 360, capacity: 400 },
+      gasolineRight: { level: 92, capacity: 400 },
+      diesel: { level: 146, capacity: 200 },
+      water: { level: 96, capacity: 200 },
       consumption: 24.5,
     },
     electrical: {

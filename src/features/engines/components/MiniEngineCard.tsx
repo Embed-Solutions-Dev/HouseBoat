@@ -23,7 +23,8 @@ export const MiniEngineCard = memo(function MiniEngineCard({
   hasFaults,
 }: MiniEngineCardProps) {
   const lowFuel = fuelLevel < 25;
-  const fuelColor = lowFuel ? T.textAmber : T.gaugeActive;
+  const mediumFuel = fuelLevel >= 25 && fuelLevel < 50;
+  const fuelColor = lowFuel ? T.textRed : mediumFuel ? T.textAmber : T.gaugeActive;
 
   const max = 4000;
   const v = clamp(rpm, 0, max);
@@ -80,8 +81,10 @@ export const MiniEngineCard = memo(function MiniEngineCard({
           boxShadow: hasFaults
             ? '0 4px 16px rgba(0,0,0,0.5), 0 0 20px rgba(224,64,80,0.7), 0 0 40px rgba(224,64,80,0.4)'
             : lowFuel
-              ? '0 4px 16px rgba(0,0,0,0.5), 0 0 20px rgba(232,160,48,0.6), 0 0 40px rgba(232,160,48,0.3)'
-              : '0 4px 16px rgba(0,0,0,0.5)',
+              ? '0 4px 16px rgba(0,0,0,0.5), 0 0 20px rgba(224,64,80,0.6), 0 0 40px rgba(224,64,80,0.3)'
+              : mediumFuel
+                ? '0 4px 16px rgba(0,0,0,0.5), 0 0 20px rgba(232,160,48,0.6), 0 0 40px rgba(232,160,48,0.3)'
+                : '0 4px 16px rgba(0,0,0,0.5)',
           padding: 5,
           display: 'flex',
           alignItems: 'center',

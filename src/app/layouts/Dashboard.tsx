@@ -13,8 +13,8 @@ export const Dashboard = memo(function Dashboard() {
   const rightEngine = useStore((s) => s.engines.right);
   const fuel = useStore((s) => s.systems.fuel);
 
-  const leftFuelLevel = Math.round((fuel.tank1.level / fuel.tank1.capacity) * 100);
-  const rightFuelLevel = Math.round((fuel.tank2.level / fuel.tank2.capacity) * 100);
+  const leftFuelLevel = Math.round((fuel.gasolineLeft.level / fuel.gasolineLeft.capacity) * 100);
+  const rightFuelLevel = Math.round((fuel.gasolineRight.level / fuel.gasolineRight.capacity) * 100);
 
   return (
     <motion.div
@@ -39,7 +39,7 @@ export const Dashboard = memo(function Dashboard() {
         <motion.div
           animate={{
             x: navMode ? -456 : 0,
-            y: navMode ? 100 : 0,
+            y: navMode ? -4 : 0,
           }}
           transition={{ type: 'spring', stiffness: 200, damping: 25 }}
           style={{
@@ -60,7 +60,7 @@ export const Dashboard = memo(function Dashboard() {
         <motion.div
           animate={{
             x: navMode ? 456 : 0,
-            y: navMode ? 100 : 0,
+            y: navMode ? -193 : 0,
           }}
           transition={{ type: 'spring', stiffness: 200, damping: 25 }}
           style={{

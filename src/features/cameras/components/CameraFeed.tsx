@@ -7,13 +7,17 @@ export const CameraFeed = memo(function CameraFeed({
   onClick,
   selected,
   isExpanded = false,
-}: CameraFeedProps & { isExpanded?: boolean }) {
+  isEnlarged = false,
+}: CameraFeedProps & { isExpanded?: boolean; isEnlarged?: boolean }) {
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
     const id = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(id);
   }, []);
+
+  // Determine size mode: fullscreen > enlarged > normal
+  const isLarge = isExpanded || isEnlarged;
 
   return (
     <div
@@ -23,18 +27,20 @@ export const CameraFeed = memo(function CameraFeed({
       }}
       style={{
         background: 'linear-gradient(180deg, rgba(12,18,28,0.95) 0%, rgba(6,10,18,0.98) 100%)',
-        borderRadius: isExpanded ? 24 : 16,
+        borderRadius: isExpanded ? 24 : isEnlarged ? 20 : 16,
         border: selected
           ? '2px solid rgba(61,200,140,0.6)'
           : '1px solid rgba(60,80,100,0.2)',
         boxShadow: isExpanded
           ? '0 20px 60px rgba(0,0,0,0.8), inset 0 1px 0 rgba(100,130,160,0.08)'
-          : '0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(100,130,160,0.08)',
+          : isEnlarged
+            ? '0 8px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(100,130,160,0.08)'
+            : '0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(100,130,160,0.08)',
         overflow: 'hidden',
         position: 'relative',
         cursor: 'pointer',
-        height: isExpanded ? '100%' : 'auto',
-        aspectRatio: isExpanded ? undefined : '16/10',
+        height: (isExpanded || isEnlarged) ? '100%' : 'auto',
+        aspectRatio: (isExpanded || isEnlarged) ? undefined : '16/10',
         touchAction: 'manipulation',
       }}
     >
@@ -71,7 +77,7 @@ export const CameraFeed = memo(function CameraFeed({
             top: '50%',
             left: 0,
             right: 0,
-            height: isExpanded ? 3 : 2,
+            height: isLarge ? 3 : 2,
             background: 'rgba(60,100,140,0.3)',
             filter: 'blur(1px)',
           }}
@@ -84,7 +90,7 @@ export const CameraFeed = memo(function CameraFeed({
             top: '60%',
             left: 0,
             right: 0,
-            height: isExpanded ? 2 : 1,
+            height: isLarge ? 2 : 1,
             background: 'rgba(60,100,140,0.25)',
             filter: 'blur(1px)',
           }}
@@ -97,7 +103,7 @@ export const CameraFeed = memo(function CameraFeed({
             top: '70%',
             left: 0,
             right: 0,
-            height: isExpanded ? 2 : 1,
+            height: isLarge ? 2 : 1,
             background: 'rgba(60,100,140,0.2)',
             filter: 'blur(1px)',
           }}
@@ -111,8 +117,8 @@ export const CameraFeed = memo(function CameraFeed({
             position: 'absolute',
             top: '55%',
             left: '30%',
-            width: isExpanded ? 80 : 40,
-            height: isExpanded ? 16 : 8,
+            width: isLarge ? 80 : 40,
+            height: isLarge ? 16 : 8,
             background: 'radial-gradient(ellipse, rgba(100,150,200,0.3) 0%, transparent 70%)',
             filter: 'blur(2px)',
           }}
@@ -124,8 +130,8 @@ export const CameraFeed = memo(function CameraFeed({
             position: 'absolute',
             top: '65%',
             left: '60%',
-            width: isExpanded ? 60 : 30,
-            height: isExpanded ? 12 : 6,
+            width: isLarge ? 60 : 30,
+            height: isLarge ? 12 : 6,
             background: 'radial-gradient(ellipse, rgba(100,150,200,0.25) 0%, transparent 70%)',
             filter: 'blur(2px)',
           }}
@@ -149,18 +155,18 @@ export const CameraFeed = memo(function CameraFeed({
       <div
         style={{
           position: 'absolute',
-          top: isExpanded ? 16 : 8,
-          left: isExpanded ? 20 : 10,
+          top: isLarge ? 16 : 8,
+          left: isLarge ? 20 : 10,
           display: 'flex',
           alignItems: 'center',
-          gap: isExpanded ? 10 : 6,
+          gap: isLarge ? 10 : 6,
           pointerEvents: 'none',
         }}
       >
         <div
           style={{
-            width: isExpanded ? 10 : 6,
-            height: isExpanded ? 10 : 6,
+            width: isLarge ? 10 : 6,
+            height: isLarge ? 10 : 6,
             borderRadius: '50%',
             background: '#e53935',
             boxShadow: '0 0 8px rgba(229,57,53,0.8)',
@@ -179,7 +185,7 @@ export const CameraFeed = memo(function CameraFeed({
         </div>
         <span
           style={{
-            fontSize: isExpanded ? 14 : 9,
+            fontSize: isLarge ? 14 : 9,
             fontWeight: 600,
             color: 'rgba(255,255,255,0.7)',
             textShadow: '0 1px 2px rgba(0,0,0,0.8)',
@@ -194,9 +200,9 @@ export const CameraFeed = memo(function CameraFeed({
       <div
         style={{
           position: 'absolute',
-          bottom: isExpanded ? 16 : 8,
-          left: isExpanded ? 20 : 10,
-          fontSize: isExpanded ? 16 : 10,
+          bottom: isLarge ? 16 : 8,
+          left: isLarge ? 20 : 10,
+          fontSize: isLarge ? 16 : 10,
           fontWeight: 600,
           color: 'rgba(255,255,255,0.6)',
           textShadow: '0 1px 3px rgba(0,0,0,0.9)',
@@ -211,9 +217,9 @@ export const CameraFeed = memo(function CameraFeed({
       <div
         style={{
           position: 'absolute',
-          bottom: isExpanded ? 16 : 8,
-          right: isExpanded ? 20 : 10,
-          fontSize: isExpanded ? 14 : 9,
+          bottom: isLarge ? 16 : 8,
+          right: isLarge ? 20 : 10,
+          fontSize: isLarge ? 14 : 9,
           fontFamily: 'monospace',
           color: 'rgba(255,255,255,0.5)',
           textShadow: '0 1px 3px rgba(0,0,0,0.9)',
@@ -230,17 +236,17 @@ export const CameraFeed = memo(function CameraFeed({
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: isExpanded ? 120 : 50,
-          height: isExpanded ? 120 : 50,
+          width: isLarge ? 120 : 50,
+          height: isLarge ? 120 : 50,
           border: '1px solid rgba(255,255,255,0.15)',
           borderRadius: 2,
           pointerEvents: 'none',
         }}
       >
-        <div style={{ position: 'absolute', top: -1, left: -1, width: isExpanded ? 16 : 8, height: isExpanded ? 16 : 8, borderTop: '2px solid rgba(255,255,255,0.4)', borderLeft: '2px solid rgba(255,255,255,0.4)' }} />
-        <div style={{ position: 'absolute', top: -1, right: -1, width: isExpanded ? 16 : 8, height: isExpanded ? 16 : 8, borderTop: '2px solid rgba(255,255,255,0.4)', borderRight: '2px solid rgba(255,255,255,0.4)' }} />
-        <div style={{ position: 'absolute', bottom: -1, left: -1, width: isExpanded ? 16 : 8, height: isExpanded ? 16 : 8, borderBottom: '2px solid rgba(255,255,255,0.4)', borderLeft: '2px solid rgba(255,255,255,0.4)' }} />
-        <div style={{ position: 'absolute', bottom: -1, right: -1, width: isExpanded ? 16 : 8, height: isExpanded ? 16 : 8, borderBottom: '2px solid rgba(255,255,255,0.4)', borderRight: '2px solid rgba(255,255,255,0.4)' }} />
+        <div style={{ position: 'absolute', top: -1, left: -1, width: isLarge ? 16 : 8, height: isLarge ? 16 : 8, borderTop: '2px solid rgba(255,255,255,0.4)', borderLeft: '2px solid rgba(255,255,255,0.4)' }} />
+        <div style={{ position: 'absolute', top: -1, right: -1, width: isLarge ? 16 : 8, height: isLarge ? 16 : 8, borderTop: '2px solid rgba(255,255,255,0.4)', borderRight: '2px solid rgba(255,255,255,0.4)' }} />
+        <div style={{ position: 'absolute', bottom: -1, left: -1, width: isLarge ? 16 : 8, height: isLarge ? 16 : 8, borderBottom: '2px solid rgba(255,255,255,0.4)', borderLeft: '2px solid rgba(255,255,255,0.4)' }} />
+        <div style={{ position: 'absolute', bottom: -1, right: -1, width: isLarge ? 16 : 8, height: isLarge ? 16 : 8, borderBottom: '2px solid rgba(255,255,255,0.4)', borderRight: '2px solid rgba(255,255,255,0.4)' }} />
       </div>
     </div>
   );
