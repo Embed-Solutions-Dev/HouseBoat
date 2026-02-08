@@ -18,9 +18,9 @@ export const EnginesPanel = memo(function EnginesPanel() {
       const rightEngines = engines.slice(2, 4);
 
       return (
-        <div className="flex items-center justify-center gap-12">
+        <div className="flex items-center justify-center gap-20">
           {/* Left group */}
-          <div className="flex gap-3">
+          <div className="flex gap-2">
             {leftEngines.map((engine, index) => (
               <EngineCard
                 key={index}
@@ -32,7 +32,7 @@ export const EnginesPanel = memo(function EnginesPanel() {
           </div>
 
           {/* Right group */}
-          <div className="flex gap-3">
+          <div className="flex gap-2">
             {rightEngines.map((engine, index) => (
               <EngineCard
                 key={index + 2}
