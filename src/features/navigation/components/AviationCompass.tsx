@@ -39,25 +39,10 @@ export const AviationCompass = memo(function AviationCompass() {
       style={{
         width: 450,
         height: 80,
-        background: 'linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)',
-        boxShadow: '0 4px 16px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.8)',
-        borderRadius: 8,
-        padding: 5,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
-      <div
-        style={{
-          width: '100%',
-          height: '100%',
-          borderRadius: 4,
-          background: 'linear-gradient(180deg, rgba(10,15,25,0.98) 0%, rgba(5,8,15,1) 100%)',
-          position: 'relative',
-          overflow: 'hidden',
-        }}
-      >
         {/* Moving compass tape */}
         <motion.div
           style={{
@@ -103,7 +88,7 @@ export const AviationCompass = memo(function AviationCompass() {
                   }}
                 />
 
-                {/* Label or degree number */}
+                {/* Labels (only cardinal and intercardinal directions) */}
                 {mark.label && (
                   <div
                     style={{
@@ -118,19 +103,6 @@ export const AviationCompass = memo(function AviationCompass() {
                     }}
                   >
                     {mark.label}
-                  </div>
-                )}
-
-                {mark.isMajor && !mark.label && (
-                  <div
-                    style={{
-                      fontSize: 10,
-                      fontWeight: 500,
-                      color: 'rgba(150,170,190,0.7)',
-                      fontFamily: 'system-ui, -apple-system, sans-serif',
-                    }}
-                  >
-                    {mark.displayDeg.toString().padStart(3, '0')}
                   </div>
                 )}
               </div>
@@ -191,30 +163,6 @@ export const AviationCompass = memo(function AviationCompass() {
           </div>
         </div>
 
-        {/* Left and right fade edges */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: 60,
-            height: '100%',
-            background: 'linear-gradient(90deg, rgba(5,8,15,1) 0%, rgba(5,8,15,0) 100%)',
-            pointerEvents: 'none',
-          }}
-        />
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            width: 60,
-            height: '100%',
-            background: 'linear-gradient(270deg, rgba(5,8,15,1) 0%, rgba(5,8,15,0) 100%)',
-            pointerEvents: 'none',
-          }}
-        />
-      </div>
     </div>
   );
 });
