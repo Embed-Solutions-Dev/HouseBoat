@@ -108,7 +108,7 @@ export const Tachometer = memo(function Tachometer({
   const fuelSweep = 70;
   const fuelRatio = clamp(fuelLevel, 0, 100) / 100;
   const fuelFilledAngle = fuelStartAngle + fuelRatio * fuelSweep;
-  const fuelColor = lowFuel ? T.textRed : mediumFuel ? T.textAmber : T.gaugeActive;
+  const fuelColor = engineOff ? T.textMuted : lowFuel ? T.textRed : mediumFuel ? T.textAmber : T.gaugeActive;
 
   return (
     <div style={{ position: 'relative', minHeight: 360 * scale, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'visible' }}>
@@ -337,8 +337,8 @@ export const Tachometer = memo(function Tachometer({
           {/* Motor hours - right of center */}
           <div style={{ position: 'absolute', top: cy, left: cx + 66 * scale, transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
             <div style={{ fontSize: 9 * fontScale, color: T.textMuted }}>МОТОЧАСЫ</div>
-            <div style={{ fontSize: 16 * fontScale, fontWeight: 600, color: T.textSecondary, fontVariantNumeric: 'tabular-nums' }}>
-              {motorHours.toLocaleString()}
+            <div style={{ fontSize: 16 * fontScale, fontWeight: 600, color: engineOff ? T.textMuted : T.textSecondary, fontVariantNumeric: 'tabular-nums' }}>
+              {engineOff ? '----' : motorHours.toLocaleString()}
             </div>
           </div>
 
@@ -474,8 +474,8 @@ export const Tachometer = memo(function Tachometer({
                   }}
                 >
                   <div style={{ fontSize: 10 * fontScale, color: T.textMuted, marginBottom: 4 * scale }}>ТЕМПЕРАТУРА</div>
-                  <div style={{ fontSize: 22 * fontScale, fontWeight: 600, color: temperature > 100 ? T.textRed : temperature > 90 ? T.textAmber : T.textGreen }}>
-                    {temperature}°C
+                  <div style={{ fontSize: 22 * fontScale, fontWeight: 600, color: engineOff ? T.textMuted : temperature > 100 ? T.textRed : temperature > 90 ? T.textAmber : T.textGreen }}>
+                    {engineOff ? 'OFF' : `${temperature}°C`}
                   </div>
                 </div>
 
@@ -483,15 +483,15 @@ export const Tachometer = memo(function Tachometer({
                 <div
                   style={{
                     padding: `${12 * scale}px ${14 * scale}px`,
-                    background: oilPressure < 2 ? 'rgba(224,64,80,0.15)' : 'rgba(30,45,60,0.4)',
-                    border: `1px solid ${oilPressure < 2 ? 'rgba(224,64,80,0.5)' : oilPressure < 3 ? 'rgba(232,160,48,0.5)' : 'rgba(61,200,140,0.3)'}`,
+                    background: engineOff ? 'rgba(30,45,60,0.4)' : oilPressure < 2 ? 'rgba(224,64,80,0.15)' : 'rgba(30,45,60,0.4)',
+                    border: `1px solid ${engineOff ? 'rgba(60,80,100,0.3)' : oilPressure < 2 ? 'rgba(224,64,80,0.5)' : oilPressure < 3 ? 'rgba(232,160,48,0.5)' : 'rgba(61,200,140,0.3)'}`,
                     borderRadius: 12 * scale,
                     textAlign: 'center',
                   }}
                 >
                   <div style={{ fontSize: 10 * fontScale, color: T.textMuted, marginBottom: 4 * scale }}>ДАВЛ. МАСЛА</div>
-                  <div style={{ fontSize: 22 * fontScale, fontWeight: 600, color: oilPressure < 2 ? T.textRed : oilPressure < 3 ? T.textAmber : T.textGreen }}>
-                    {oilPressure} бар
+                  <div style={{ fontSize: 22 * fontScale, fontWeight: 600, color: engineOff ? T.textMuted : oilPressure < 2 ? T.textRed : oilPressure < 3 ? T.textAmber : T.textGreen }}>
+                    {engineOff ? 'OFF' : `${oilPressure} бар`}
                   </div>
                 </div>
 
