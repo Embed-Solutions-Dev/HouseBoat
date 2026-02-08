@@ -134,35 +134,6 @@ export const AviationCompass = memo(function AviationCompass() {
           </svg>
         </div>
 
-        {/* Digital heading display */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 4,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            background: 'rgba(10,15,25,0.95)',
-            border: '1px solid rgba(80,110,140,0.5)',
-            borderRadius: 4,
-            padding: '2px 12px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.6)',
-            zIndex: 10,
-          }}
-        >
-          <div
-            style={{
-              fontSize: 18,
-              fontWeight: 700,
-              color: '#3dc88c',
-              textShadow: '0 0 8px rgba(61,200,140,0.6)',
-              fontFamily: 'system-ui, -apple-system, sans-serif',
-              letterSpacing: '0.05em',
-            }}
-          >
-            {Math.round(heading).toString().padStart(3, '0')}°
-          </div>
-        </div>
-
     </div>
   );
 });
