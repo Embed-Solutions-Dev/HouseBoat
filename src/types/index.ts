@@ -1,6 +1,6 @@
 // Engine types
 export type GearPosition = 'N' | 'F' | 'R';
-export type EngineId = 'left' | 'right';
+export type EngineId = number; // 0-5 for 6 engines max
 
 export interface EngineError {
   code: string;
