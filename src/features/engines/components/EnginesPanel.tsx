@@ -27,14 +27,14 @@ export const EnginesPanel = memo(function EnginesPanel() {
                 style={{
                   position: 'relative',
                   zIndex: index === 0 ? 2 : 1,
-                  transform: index === 1 ? 'scale(0.85) translateX(-40px) translateY(10px)' : 'none',
-                  opacity: index === 1 ? 0.9 : 1,
+                  transform: index === 1 ? 'scale(0.92) translateX(-40px) translateY(10px)' : 'none',
+                  opacity: index === 1 ? 0.95 : 1,
                 }}
               >
                 <EngineCard
                   id={index}
                   data={engine}
-                  size={index === 1 ? layout.tachometerSize * 0.85 : layout.tachometerSize}
+                  size={index === 1 ? layout.tachometerSize * 0.92 : layout.tachometerSize}
                 />
               </div>
             ))}
