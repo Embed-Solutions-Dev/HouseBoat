@@ -34,7 +34,7 @@ export const EnginesPanel = memo(function EnginesPanel() {
                 <EngineCard
                   id={index}
                   data={engine}
-                  size={index === 1 ? layout.tachometerSize * 0.92 : layout.tachometerSize}
+                  size={index === 1 ? layout.tachometerSize * 1.012 : layout.tachometerSize * 1.1}
                 />
               </div>
             ))}
