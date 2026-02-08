@@ -16,6 +16,7 @@ export interface TachometerProps {
 }
 
 export interface EngineCardProps {
-  id: EngineId;
+  id: EngineId;      // Now number instead of 'left' | 'right'
   data: EngineData;
+  size?: number;     // New: optional tachometer size
 }
