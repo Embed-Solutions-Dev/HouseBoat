@@ -3,7 +3,9 @@ import { motion } from 'framer-motion';
 import { useStore } from '@/stores';
 
 export const AviationRudder = memo(function AviationRudder() {
-  const rudderAngle = useStore((s) => s.navigation.rudderAngle);
+  const rawRudderAngle = useStore((s) => s.navigation.rudderAngle);
+  // Clamp rudder angle to valid range
+  const rudderAngle = Math.max(-45, Math.min(45, rawRudderAngle));
 
   // Tick marks configuration: -45 to +45 degrees
   const majorTicks = [-45, -30, -15, 0, 15, 30, 45];
@@ -159,12 +161,6 @@ export const AviationRudder = memo(function AviationRudder() {
           >
             {/* Pointer arrow */}
             <svg width="16" height="28" viewBox="0 0 16 28" style={{ filter: 'drop-shadow(0 0 6px rgba(224,64,80,0.7))' }}>
-              <path
-                d="M 8 2 L 3 10 L 6 10 L 6 26 L 10 26 L 10 10 L 13 10 Z"
-                fill="linear-gradient(180deg, #ff6070 0%, #e04050 50%, #c03040 100%)"
-                stroke="#ff6070"
-                strokeWidth="0.5"
-              />
               <defs>
                 <linearGradient id="pointerGradient" x1="0%" y1="0%" x2="0%" y2="100%">
                   <stop offset="0%" stopColor="#ff6070" />
