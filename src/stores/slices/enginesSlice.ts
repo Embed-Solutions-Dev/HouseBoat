@@ -58,7 +58,10 @@ const createEnginesArray = (count: number): EngineData[] => {
 const createFuelMapping = (count: number): Record<number, string> => {
   const mapping: Record<number, string> = {};
   for (let i = 0; i < count; i++) {
-    if (i % 2 === 0) {
+    // Engine 3 (Правый двигатель 2) uses diesel tank (set to 0%)
+    if (i === 3) {
+      mapping[i] = 'diesel';
+    } else if (i % 2 === 0) {
       mapping[i] = 'gasolineLeft';
     } else {
       mapping[i] = 'gasolineRight';

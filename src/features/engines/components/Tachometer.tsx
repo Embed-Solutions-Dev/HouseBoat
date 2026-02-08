@@ -34,8 +34,10 @@ export const Tachometer = memo(function Tachometer({
   oilPressure = 0,
   size = 310,
 }: TachometerProps) {
-  const lowFuel = fuelLevel < 25;
-  const mediumFuel = fuelLevel >= 25 && fuelLevel < 50;
+  // Don't show fuel warnings if engine is off (rpm = 0)
+  const engineOff = rpm === 0 && throttle === 0;
+  const lowFuel = !engineOff && fuelLevel < 25;
+  const mediumFuel = !engineOff && fuelLevel >= 25 && fuelLevel < 50;
   const v = clamp(rpm, 0, maxRpm);
   const ratio = v / maxRpm;
 
