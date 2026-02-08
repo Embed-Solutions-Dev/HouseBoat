@@ -20,7 +20,7 @@ export const createSystemsSlice: StateCreator<SystemsSlice> = (set) => ({
   systems: {
     fuel: {
       gasolineLeft: { level: 360, capacity: 400 },
-      gasolineRight: { level: 92, capacity: 400 },
+      gasolineRight: { level: 180, capacity: 400 }, // 45% for Левый двигатель 2
       diesel: { level: 146, capacity: 200 },
       water: { level: 96, capacity: 200 },
       consumption: 24.5,

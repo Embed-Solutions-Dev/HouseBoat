@@ -30,13 +30,28 @@ const initialEngine: EngineData = {
 
 // Helper to create default engines array
 const createEnginesArray = (count: number): EngineData[] => {
-  return Array.from({ length: count }, (_, i) => ({
-    ...initialEngine,
-    rpm: i === 0 ? 2350 : 2410 + i * 10,
-    throttle: i === 0 ? 62 : 64 + i,
-    gear: 'F' as const,
-    hours: 1247 - i,
-  }));
+  return Array.from({ length: count }, (_, i) => {
+    // Engine 3 (Правый двигатель 2) is turned off
+    if (i === 3) {
+      return {
+        ...initialEngine,
+        rpm: 0,
+        throttle: 0,
+        gear: 'N' as const,
+        hours: 1244,
+        status: 'ok' as const,
+      };
+    }
+
+    // Other engines running normally
+    return {
+      ...initialEngine,
+      rpm: i === 0 ? 2350 : 2410 + i * 10,
+      throttle: i === 0 ? 62 : 64 + i,
+      gear: 'F' as const,
+      hours: 1247 - i,
+    };
+  });
 };
 
 // Helper to create default fuel mapping
