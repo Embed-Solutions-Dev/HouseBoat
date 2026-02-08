@@ -19,8 +19,8 @@ export const EnginesPanel = memo(function EnginesPanel() {
 
       return (
         <div className="flex items-center justify-center gap-20">
-          {/* Left group */}
-          <div className="flex gap-2">
+          {/* Left group - unified instrument */}
+          <div className="flex" style={{ gap: 1 }}>
             {leftEngines.map((engine, index) => (
               <EngineCard
                 key={index}
@@ -31,8 +31,8 @@ export const EnginesPanel = memo(function EnginesPanel() {
             ))}
           </div>
 
-          {/* Right group */}
-          <div className="flex gap-2">
+          {/* Right group - unified instrument */}
+          <div className="flex" style={{ gap: 1 }}>
             {rightEngines.map((engine, index) => (
               <EngineCard
                 key={index + 2}
