@@ -6,15 +6,24 @@ import { NavigationOverlay, AviationCompass, AviationRudder } from '@/features/n
 import { ControlsPanel } from '@/features/controls';
 import { TopBar } from '@/components/TopBar';
 import { useStore } from '@/stores';
+import type { FuelData } from '@/types';
 
 export const Dashboard = memo(function Dashboard() {
   const navMode = useStore((s) => s.controls.navigation);
-  const leftEngine = useStore((s) => s.engines.left);
-  const rightEngine = useStore((s) => s.engines.right);
+  const engines = useStore((s) => s.engines);
+  const fuelMapping = useStore((s) => s.fuelMapping);
   const fuel = useStore((s) => s.systems.fuel);
 
-  const leftFuelLevel = Math.round((fuel.gasolineLeft.level / fuel.gasolineLeft.capacity) * 100);
-  const rightFuelLevel = Math.round((fuel.gasolineRight.level / fuel.gasolineRight.capacity) * 100);
+  // Get fuel levels for first two engines (for mini cards in nav mode)
+  const getEngineFuelLevel = (engineIndex: number): number => {
+    const fuelTankId = fuelMapping[engineIndex] as keyof FuelData;
+    const tank = fuel[fuelTankId];
+    // Check if tank is a FuelTank object (not consumption which is a number)
+    if (tank && typeof tank === 'object' && 'level' in tank && 'capacity' in tank) {
+      return Math.round((tank.level / tank.capacity) * 100);
+    }
+    return 0;
+  };
 
   return (
     <motion.div
@@ -43,54 +52,26 @@ export const Dashboard = memo(function Dashboard() {
 
       {/* Engines */}
       <div className="w-full max-w-[1048px] mb-4 relative">
-        {/* Engines - two columns layout */}
-        <div
+        {/* Engines panel - handles all engines with dynamic layout */}
+        <motion.div
+          animate={{
+            opacity: navMode ? 0 : 1,
+            scale: navMode ? 0.95 : 1,
+          }}
+          transition={{ type: 'spring', stiffness: 200, damping: 25 }}
           style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 16,
-            position: 'relative',
-            zIndex: 2,
+            paddingTop: 16,
+            pointerEvents: navMode ? 'none' : 'auto',
           }}
         >
-          {/* Left Engine */}
-          <motion.div
-            animate={{
-              opacity: navMode ? 0 : 1,
-              scale: navMode ? 0.5 : 1,
-              x: navMode ? -170 : 0,
-            }}
-            transition={{ type: 'spring', stiffness: 200, damping: 25 }}
-            style={{
-              paddingTop: 16,
-              pointerEvents: navMode ? 'none' : 'auto',
-            }}
-          >
-            <EnginesPanel side="left" />
-          </motion.div>
+          <EnginesPanel />
+        </motion.div>
 
-          {/* Right Engine */}
-          <motion.div
-            animate={{
-              opacity: navMode ? 0 : 1,
-              scale: navMode ? 0.5 : 1,
-              x: navMode ? 170 : 0,
-            }}
-            transition={{ type: 'spring', stiffness: 200, damping: 25 }}
-            style={{
-              paddingTop: 16,
-              pointerEvents: navMode ? 'none' : 'auto',
-            }}
-          >
-            <EnginesPanel side="right" />
-          </motion.div>
-        </div>
-
-        {/* Mini engines in corners - appear in nav mode */}
+        {/* Mini engines in corners - appear in nav mode (first two engines only) */}
         <AnimatePresence>
-          {navMode && (
+          {navMode && engines.length >= 2 && (
             <>
-              {/* Left mini engine */}
+              {/* Left mini engine (engine 0) */}
               <motion.div
                 initial={{ opacity: 0, x: -100, y: 100 }}
                 animate={{ opacity: 1, x: 0, y: 0 }}
@@ -105,13 +86,13 @@ export const Dashboard = memo(function Dashboard() {
               >
                 <MiniEngineCard
                   side="Left"
-                  rpm={leftEngine.rpm}
-                  fuelLevel={leftFuelLevel}
-                  hasFaults={leftEngine.errors.length > 0}
+                  rpm={engines[0].rpm}
+                  fuelLevel={getEngineFuelLevel(0)}
+                  hasFaults={engines[0].errors.length > 0}
                 />
               </motion.div>
 
-              {/* Right mini engine */}
+              {/* Right mini engine (engine 1) */}
               <motion.div
                 initial={{ opacity: 0, x: 100, y: 100 }}
                 animate={{ opacity: 1, x: 0, y: 0 }}
@@ -126,9 +107,9 @@ export const Dashboard = memo(function Dashboard() {
               >
                 <MiniEngineCard
                   side="Right"
-                  rpm={rightEngine.rpm}
-                  fuelLevel={rightFuelLevel}
-                  hasFaults={rightEngine.errors.length > 0}
+                  rpm={engines[1].rpm}
+                  fuelLevel={getEngineFuelLevel(1)}
+                  hasFaults={engines[1].errors.length > 0}
                 />
               </motion.div>
             </>
