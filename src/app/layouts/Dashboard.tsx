@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CamerasPanel } from '@/features/cameras';
 import { EnginesPanel, MiniEngineCard } from '@/features/engines';
-import { NavigationOverlay, CompassWidget, RudderWidget, AviationCompass, AviationRudder } from '@/features/navigation';
+import { NavigationOverlay, AviationCompass, AviationRudder } from '@/features/navigation';
 import { ControlsPanel } from '@/features/controls';
 import { TopBar } from '@/components/TopBar';
 import { useStore } from '@/stores';
@@ -26,56 +26,14 @@ export const Dashboard = memo(function Dashboard() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.2 }}
     >
+      {/* Top metrics bar */}
+      <div className="w-full max-w-[1048px] mb-4">
+        <TopBar />
+      </div>
+
       {/* Cameras - 2x2 grid */}
       <div className="w-full max-w-[1048px] mb-4">
         <CamerasPanel />
-      </div>
-
-      {/* Top metrics bar */}
-      <div className="w-full max-w-[1048px] mb-4 relative" style={{ zIndex: 60 }}>
-        <TopBar />
-
-        {/* Compass - flies to top left in nav mode */}
-        <motion.div
-          animate={{
-            x: navMode ? -456 : 0,
-            y: navMode ? -4 : 0,
-          }}
-          transition={{ type: 'spring', stiffness: 200, damping: 25 }}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: '50%',
-            marginLeft: -67,
-            zIndex: 70,
-            pointerEvents: 'none',
-          }}
-        >
-          <div style={{ transform: 'translateY(calc(100% + 4px))', pointerEvents: 'auto' }}>
-            <CompassWidget />
-          </div>
-        </motion.div>
-
-        {/* Rudder - flies to top right in nav mode */}
-        <motion.div
-          animate={{
-            x: navMode ? 456 : 0,
-            y: navMode ? -193 : 0,
-          }}
-          transition={{ type: 'spring', stiffness: 200, damping: 25 }}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: '50%',
-            marginLeft: -67,
-            zIndex: 70,
-            pointerEvents: 'none',
-          }}
-        >
-          <div style={{ transform: 'translateY(calc(100% + 193px))', pointerEvents: 'auto' }}>
-            <RudderWidget />
-          </div>
-        </motion.div>
       </div>
 
       {/* Aviation Compass - Above Engines */}
@@ -83,11 +41,8 @@ export const Dashboard = memo(function Dashboard() {
         <AviationCompass />
       </div>
 
-      {/* Engines with Navigation overlay */}
+      {/* Engines */}
       <div className="w-full max-w-[1048px] mb-4 relative">
-        {/* Navigation map overlay - behind engines */}
-        <NavigationOverlay />
-
         {/* Engines - two columns layout */}
         <div
           style={{
@@ -184,6 +139,11 @@ export const Dashboard = memo(function Dashboard() {
       {/* Aviation Rudder - Below Engines */}
       <div className="w-full max-w-[1048px] mb-4 flex justify-center">
         <AviationRudder />
+      </div>
+
+      {/* Navigation Overlay */}
+      <div className="w-full max-w-[1048px] mb-4">
+        <NavigationOverlay />
       </div>
 
       {/* Controls */}
