@@ -11,8 +11,9 @@ export const getEnginesLayout = (count: number): EngineLayout => {
       rows: 1,
       topRow: count,
       bottomRow: 0,
-      // Gradual size reduction: 2 engines = full size, 3 = slightly smaller, 4 = compact
-      tachometerSize: count === 2 ? 310 : count === 3 ? 285 : 270,
+      // Gradual size reduction to fit within 1048px container
+      // 2 engines = 310px, 3 = 285px, 4 = 244px (fits with 24px gaps)
+      tachometerSize: count === 2 ? 310 : count === 3 ? 285 : 244,
     };
   } else if (count === 5) {
     return {
