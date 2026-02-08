@@ -7,4 +7,5 @@ export { NavigationOverlay } from './components/NavigationOverlay';
 export { CompassWidget } from './components/CompassWidget';
 export { RudderWidget } from './components/RudderWidget';
 export { AviationCompass } from './components/AviationCompass';
+export { AviationRudder } from './components/AviationRudder';
 export type * from './types';
