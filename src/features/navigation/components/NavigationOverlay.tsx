@@ -260,12 +260,12 @@ export const NavigationOverlay = memo(function NavigationOverlay() {
                 </div>
               </div>
 
-              {/* Scale - bottom left, right of left engine */}
+              {/* Scale - bottom left */}
               <div
                 style={{
                   position: 'absolute',
-                  bottom: 122,
-                  left: 200,
+                  bottom: 32,
+                  left: 32,
                   zIndex: 10,
                 }}
               >
@@ -290,8 +290,8 @@ export const NavigationOverlay = memo(function NavigationOverlay() {
               <div
                 style={{
                   position: 'absolute',
-                  bottom: 122,
-                  right: 200,
+                  bottom: 32,
+                  right: 32,
                   zIndex: 10,
                   textAlign: 'right',
                 }}
@@ -334,7 +334,7 @@ export const NavigationOverlay = memo(function NavigationOverlay() {
               style={{
                 position: 'absolute',
                 top: '50%',
-                right: 200,
+                right: 32,
                 transform: 'translateY(-50%)',
                 zIndex: 10,
                 pointerEvents: 'auto',
