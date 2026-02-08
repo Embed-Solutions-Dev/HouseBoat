@@ -54,12 +54,12 @@ export const Dashboard = memo(function Dashboard() {
       </div>
 
       {/* Aviation Rudder - Below Engines */}
-      <div className="w-full max-w-[1048px] mb-6 flex justify-center">
+      <div className="w-full max-w-[1048px] flex justify-center" style={{ marginBottom: 5 }}>
         <AviationRudder />
       </div>
 
       {/* Navigation Overlay */}
-      <div className="w-full max-w-[1048px] mb-5">
+      <div className="w-full max-w-[1048px]" style={{ marginBottom: 0 }}>
         <NavigationOverlay />
       </div>
 
