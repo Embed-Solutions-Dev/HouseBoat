@@ -54,7 +54,7 @@ export const Dashboard = memo(function Dashboard() {
       </div>
 
       {/* Aviation Rudder - Below Engines */}
-      <div className="w-full max-w-[1048px] flex justify-center" style={{ marginBottom: 5 }}>
+      <div className="w-full max-w-[1048px] flex justify-center" style={{ marginBottom: 3 }}>
         <AviationRudder />
       </div>
 
