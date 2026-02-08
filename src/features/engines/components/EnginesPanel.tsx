@@ -19,15 +19,24 @@ export const EnginesPanel = memo(function EnginesPanel() {
 
       return (
         <div className="flex items-center justify-center gap-20">
-          {/* Left group - unified instrument */}
-          <div className="flex" style={{ gap: 1 }}>
+          {/* Left group - with depth effect */}
+          <div className="flex items-center" style={{ gap: 1, position: 'relative' }}>
             {leftEngines.map((engine, index) => (
-              <EngineCard
+              <div
                 key={index}
-                id={index}
-                data={engine}
-                size={layout.tachometerSize}
-              />
+                style={{
+                  position: 'relative',
+                  zIndex: index === 0 ? 2 : 1,
+                  transform: index === 1 ? 'scale(0.85) translateX(-40px) translateY(10px)' : 'none',
+                  opacity: index === 1 ? 0.9 : 1,
+                }}
+              >
+                <EngineCard
+                  id={index}
+                  data={engine}
+                  size={index === 1 ? layout.tachometerSize * 0.85 : layout.tachometerSize}
+                />
+              </div>
             ))}
           </div>
 
