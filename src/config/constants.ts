@@ -24,8 +24,15 @@ export const GEAR_LABELS: Record<string, string> = {
   R: 'Назад',
 };
 
+export const ENGINE_LABELS: Record<number, string> = {
+  0: 'Левый двигатель 1',
+  1: 'Левый двигатель 2',
+  2: 'Правый двигатель 1',
+  3: 'Правый двигатель 2',
+};
+
 export const ENGINE_CONFIG = {
-  count: Number(import.meta.env.VITE_ENGINE_COUNT) || 2,
+  count: Number(import.meta.env.VITE_ENGINE_COUNT) || 4,
   maxEngines: 6,
   minEngines: 2,
 };

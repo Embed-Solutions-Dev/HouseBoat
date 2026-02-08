@@ -2,6 +2,7 @@ import { memo, useCallback } from 'react';
 import { useStore } from '@/stores';
 import { Tachometer } from './Tachometer';
 import type { EngineCardProps } from '../types';
+import { ENGINE_LABELS } from '@/config/constants';
 
 export const EngineCard = memo(function EngineCard({ id, data, size = 310 }: EngineCardProps) {
   const fuel = useStore((s) => s.systems.fuel);
@@ -31,9 +32,12 @@ export const EngineCard = memo(function EngineCard({ id, data, size = 310 }: Eng
 
   const isExpanded = expandedEngine === id;
 
+  // Get engine label from configuration
+  const engineLabel = ENGINE_LABELS[id] || `Двигатель ${id + 1}`;
+
   return (
     <Tachometer
-      side={`Engine ${id + 1}` as 'Left' | 'Right'} // Temp compatibility
+      side={engineLabel as 'Left' | 'Right'} // Custom engine label
       rpm={data.rpm}
       maxRpm={data.maxRpm}
       throttle={data.throttle}
