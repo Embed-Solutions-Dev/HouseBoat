@@ -6,4 +6,5 @@ export { NavigationPanel } from './components/NavigationPanel';
 export { NavigationOverlay } from './components/NavigationOverlay';
 export { CompassWidget } from './components/CompassWidget';
 export { RudderWidget } from './components/RudderWidget';
+export { AviationCompass } from './components/AviationCompass';
 export type * from './types';
