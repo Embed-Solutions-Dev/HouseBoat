@@ -2,13 +2,21 @@
 
 ## Текущая ветка разработки
 
-**Активная ветка:** `feature/dashboard-refinements`
+**Активная ветка:** `houseboat-four-plus-engines`
 
-Вся текущая работа ведётся в этой ветке. После завершения — мерж в `main`.
+Реализация поддержки 2-6 двигателей с динамической компоновкой и авиационными навигационными приборами. После завершения — мерж в `main`.
 
 ## Обзор проекта
 
 **HouseBoat Dashboard** — это современный веб-интерфейс для управления яхтой или хаусботом. Приложение представляет собой интерактивную панель управления с премиальным дизайном в морском стиле, вдохновлённым интерфейсами Mercedes-Benz.
+
+### Ключевые возможности
+
+- Поддержка от 2 до 6 двигателей с динамической компоновкой
+- Авиационный стиль навигационных приборов (компас, руль)
+- Адаптивное масштабирование интерфейса под количество двигателей
+- Гибкая система маппинга топливных баков на двигатели
+- Real-time мониторинг всех систем судна
 
 ## Технологический стек
 
@@ -44,7 +52,15 @@ src/
 │
 ├── features/                # Feature-based модули
 │   ├── navigation/          # Навигация (компас, руль, скорость)
-│   ├── engines/             # Двигатели (тахометры)
+│   │   ├── components/
+│   │   │   ├── AviationCompass.tsx    # Авиационный компас
+│   │   │   ├── AviationRudder.tsx     # Авиационный индикатор руля
+│   │   │   └── NavigationOverlay.tsx  # Оверлей навигации
+│   ├── engines/             # Двигатели (2-6 тахометров)
+│   │   ├── components/
+│   │   │   ├── Tachometer.tsx         # Индикатор оборотов
+│   │   │   ├── EngineCard.tsx         # Карточка двигателя
+│   │   │   └── EnginesPanel.tsx       # Панель всех двигателей
 │   ├── cameras/             # Камеры (4 видеопотока)
 │   ├── fuel/                # Топливо (3 бака)
 │   ├── electrical/          # Электрика (батарея, ток)
@@ -77,21 +93,51 @@ src/
 ### State Management (Zustand)
 
 Состояние разбито на слайсы:
-- `enginesSlice` — данные двигателей
-- `navigationSlice` — навигационные данные
+- `enginesSlice` — массив данных двигателей (2-6), маппинг топлива
+- `navigationSlice` — навигационные данные (курс, руль, скорость)
 - `camerasSlice` — состояние камер
 - `systemsSlice` — топливо, электрика, погода, якорь
 - `controlsSlice` — переключатели управления
 - `connectionSlice` — статус подключения
 
+### Архитектура двигателей (Multi-Engine System)
+
+Система поддерживает от 2 до 6 двигателей с динамической компоновкой:
+
+**Array-based архитектура:**
+- Двигатели хранятся как массив `EngineData[]` (ранее: `{left, right}`)
+- Индексация от 0 до N-1, где N — количество двигателей
+- Гибкая система маппинга двигателей на топливные баки
+
+**Адаптивная компоновка:**
+- 2-4 двигателя: одна строка
+- 5-6 двигателей: две строки (3+2 или 3+3)
+- Автоматическое масштабирование тахометров:
+  - 2 двигателя: 310px
+  - 3 двигателя: 285px
+  - 4 двигателя: 270px
+  - 5-6 двигателей: 245px
+
+**Конфигурация:**
+```typescript
+// src/config/constants.ts
+export const ENGINE_CONFIG = {
+  count: Number(import.meta.env.VITE_ENGINE_COUNT) || 2,
+  maxEngines: 6,
+  minEngines: 2,
+};
+```
+
+Подробнее: `/workspace/docs/architecture/multi-engine-system.md`
+
 ### Функциональные блоки
 
 | Блок | Компоненты |
 |------|------------|
-| Навигация | Compass, RudderGauge, SpeedDisplay, HeadingDisplay |
-| Двигатели | Tachometer, EngineCard, EnginesPanel |
+| Навигация | AviationCompass, AviationRudder, SpeedDisplay, HeadingDisplay, NavigationOverlay |
+| Двигатели | Tachometer, EngineCard, EnginesPanel (2-6 двигателей) |
 | Камеры | CameraFeed, CameraGrid, CamerasPanel |
-| Топливо | FuelPanel |
+| Топливо | FuelPanel (с маппингом на двигатели) |
 | Электрика | ElectricalPanel |
 | Погода | WeatherPanel |
 | Управление | ControlButton, AnchorControl, ControlsPanel |
@@ -121,6 +167,20 @@ yacht: {
 - `.glass-card` — карточка с glass morphism
 - `.glass-shine` — блик на карточке
 
+## Конфигурация
+
+### Переменные окружения
+
+Создайте файл `.env` в корне проекта:
+
+```bash
+# Количество двигателей (2-6)
+VITE_ENGINE_COUNT=4
+
+# WebSocket сервер (опционально)
+VITE_WS_URL=ws://yacht-server:8080
+```
+
 ## Сборка и запуск
 
 ### Локальная разработка
@@ -128,6 +188,19 @@ yacht: {
 ```bash
 npm install
 npm run dev      # Запуск на http://localhost:3000
+```
+
+### Изменение количества двигателей
+
+```bash
+# Для 2 двигателей (по умолчанию)
+VITE_ENGINE_COUNT=2 npm run dev
+
+# Для 4 двигателей
+VITE_ENGINE_COUNT=4 npm run dev
+
+# Для 6 двигателей
+VITE_ENGINE_COUNT=6 npm run dev
 ```
 
 ### Production сборка
