@@ -1,5 +1,6 @@
 import type { StateCreator } from 'zustand';
 import type { EngineData, EngineId } from '@/types';
+import { ENGINE_CONFIG } from '@/config/constants';
 
 export type ExpandedEngine = number | null; // Engine index
 
@@ -27,29 +28,61 @@ const initialEngine: EngineData = {
   errors: [],
 };
 
-export const createEnginesSlice: StateCreator<EnginesSlice> = (set) => ({
-  engines: {
-    left: { ...initialEngine, rpm: 2350, throttle: 62, gear: 'F' },
-    right: { ...initialEngine, rpm: 2410, throttle: 64, gear: 'F', hours: 1243 },
-  },
-  expandedEngine: null,
-  updateEngine: (id, data) =>
-    set((state) => ({
-      engines: {
-        ...state.engines,
-        [id]: { ...state.engines[id], ...data },
-      },
-    })),
-  setEngineGear: (id, gear) =>
-    set((state) => ({
-      engines: {
-        ...state.engines,
-        [id]: { ...state.engines[id], gear },
-      },
-    })),
-  setExpandedEngine: (engine) => set({ expandedEngine: engine }),
-  toggleExpandedEngine: (engine) =>
-    set((state) => ({
-      expandedEngine: state.expandedEngine === engine ? null : engine,
-    })),
-});
+// Helper to create default engines array
+const createEnginesArray = (count: number): EngineData[] => {
+  return Array.from({ length: count }, (_, i) => ({
+    ...initialEngine,
+    rpm: i === 0 ? 2350 : 2410 + i * 10,
+    throttle: i === 0 ? 62 : 64 + i,
+    gear: 'F' as const,
+    hours: 1247 - i,
+  }));
+};
+
+// Helper to create default fuel mapping
+const createFuelMapping = (count: number): Record<number, string> => {
+  const mapping: Record<number, string> = {};
+  for (let i = 0; i < count; i++) {
+    if (i % 2 === 0) {
+      mapping[i] = 'gasolineLeft';
+    } else {
+      mapping[i] = 'gasolineRight';
+    }
+  }
+  return mapping;
+};
+
+export const createEnginesSlice: StateCreator<EnginesSlice> = (set) => {
+  const engineCount = Math.min(
+    Math.max(ENGINE_CONFIG.count, ENGINE_CONFIG.minEngines),
+    ENGINE_CONFIG.maxEngines
+  );
+
+  return {
+    engines: createEnginesArray(engineCount),
+    engineCount,
+    fuelMapping: createFuelMapping(engineCount),
+    expandedEngine: null,
+
+    updateEngine: (index, data) =>
+      set((state) => ({
+        engines: state.engines.map((engine, i) =>
+          i === index ? { ...engine, ...data } : engine
+        ),
+      })),
+
+    setEngineGear: (index, gear) =>
+      set((state) => ({
+        engines: state.engines.map((engine, i) =>
+          i === index ? { ...engine, gear } : engine
+        ),
+      })),
+
+    setExpandedEngine: (index) => set({ expandedEngine: index }),
+
+    toggleExpandedEngine: (index) =>
+      set((state) => ({
+        expandedEngine: state.expandedEngine === index ? null : index,
+      })),
+  };
+};
