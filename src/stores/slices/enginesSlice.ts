@@ -1,5 +1,5 @@
 import type { StateCreator } from 'zustand';
-import type { EngineData, EngineId } from '@/types';
+import type { EngineData } from '@/types';
 import { ENGINE_CONFIG } from '@/config/constants';
 
 export type ExpandedEngine = number | null; // Engine index

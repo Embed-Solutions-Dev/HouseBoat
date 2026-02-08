@@ -1,6 +1,5 @@
 import { memo, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useStore } from '@/stores';
 
 export const DepthWidget = memo(function DepthWidget() {
   // Depth history for sonar chart
