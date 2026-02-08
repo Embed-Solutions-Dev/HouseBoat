@@ -37,8 +37,8 @@ export const AviationCompass = memo(function AviationCompass() {
   return (
     <div
       style={{
-        width: 450,
-        height: 60,
+        width: 804, // From center of engine 0 to center of engine 3
+        height: 50,
         position: 'relative',
         overflow: 'hidden',
       }}
@@ -52,7 +52,7 @@ export const AviationCompass = memo(function AviationCompass() {
             height: '100%',
             display: 'flex',
             alignItems: 'flex-end',
-            paddingBottom: 4,
+            paddingBottom: 3,
           }}
           animate={{ x: tapeOffset }}
           transition={{ type: 'spring', stiffness: 100, damping: 20 }}
