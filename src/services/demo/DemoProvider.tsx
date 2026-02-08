@@ -26,10 +26,10 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
 
     // Simulate engine RPM fluctuations
     const engineInterval = setInterval(() => {
-      updateEngine('left', {
+      updateEngine(0, {
         rpm: 2350 + Math.sin(Date.now() / 2000) * 50,
       });
-      updateEngine('right', {
+      updateEngine(1, {
         rpm: 2410 + Math.sin(Date.now() / 2500) * 50,
       });
     }, 200);

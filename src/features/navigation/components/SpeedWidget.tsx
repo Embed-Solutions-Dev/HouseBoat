@@ -17,22 +17,22 @@ export const SpeedWidget = memo(function SpeedWidget() {
   const expandedEngine = useStore((s) => s.expandedEngine);
   const setExpandedEngine = useStore((s) => s.setExpandedEngine);
 
-  const leftEngine = useStore((s) => s.engines.left);
-  const rightEngine = useStore((s) => s.engines.right);
+  const leftEngine = useStore((s) => s.engines[0]);
+  const rightEngine = useStore((s) => s.engines[1]);
 
   const collapsedWidth = 230;
   const collapsedHeight = 127;
   const expandedWidth = 580;
   const expandedHeight = 300;
 
-  const currentEngine = expandedEngine === 'Left' ? leftEngine : rightEngine;
-  const hasExpandedFaults = expandedEngine ? currentEngine.errors.length > 0 : false;
+  const currentEngine = expandedEngine === 0 ? leftEngine : rightEngine;
+  const hasExpandedFaults = expandedEngine !== null ? currentEngine.errors.length > 0 : false;
   const actualExpandedWidth = hasExpandedFaults ? expandedWidth : 380;
 
   return (
     <div style={{ position: 'relative', width: collapsedWidth, height: collapsedHeight }}>
       {/* Backdrop for closing */}
-      {expandedEngine && (
+      {expandedEngine !== null && (
         <div
           onClick={() => setExpandedEngine(null)}
           style={{
@@ -48,11 +48,11 @@ export const SpeedWidget = memo(function SpeedWidget() {
 
       <motion.div
         animate={{
-          width: expandedEngine ? actualExpandedWidth : collapsedWidth,
-          height: expandedEngine ? expandedHeight : collapsedHeight,
-          x: expandedEngine ? -actualExpandedWidth / 2 : -collapsedWidth / 2,
-          y: expandedEngine ? -expandedHeight / 2 - 60 : navMode ? 22 : -collapsedHeight / 2,
-          scale: navMode && !expandedEngine ? 0.6 : 1,
+          width: expandedEngine !== null ? actualExpandedWidth : collapsedWidth,
+          height: expandedEngine !== null ? expandedHeight : collapsedHeight,
+          x: expandedEngine !== null ? -actualExpandedWidth / 2 : -collapsedWidth / 2,
+          y: expandedEngine !== null ? -expandedHeight / 2 - 60 : navMode ? 22 : -collapsedHeight / 2,
+          scale: navMode && expandedEngine === null ? 0.6 : 1,
         }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         style={{
@@ -66,10 +66,10 @@ export const SpeedWidget = memo(function SpeedWidget() {
           boxShadow: '0 12px 40px rgba(0,0,0,0.6), 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 1px rgba(100,140,200,0.1), inset 0 -2px 10px rgba(0,0,0,0.5)',
           border: '1px solid rgba(80,100,130,0.2)',
           overflow: 'hidden',
-          zIndex: expandedEngine ? 30 : 2,
+          zIndex: expandedEngine !== null ? 30 : 2,
           cursor: 'pointer',
         }}
-        onClick={() => !expandedEngine && setExpandedEngine('Left')}
+        onClick={() => expandedEngine === null && setExpandedEngine(0)}
       >
         {/* Inner shadow */}
         <div
@@ -108,7 +108,7 @@ export const SpeedWidget = memo(function SpeedWidget() {
           }}
         >
           <AnimatePresence mode="wait">
-            {expandedEngine ? (
+            {expandedEngine !== null ? (
               <motion.div
                 key="expanded"
                 initial={{ opacity: 0 }}
@@ -126,30 +126,30 @@ export const SpeedWidget = memo(function SpeedWidget() {
                     textAlign: 'center',
                   }}
                 >
-                  {expandedEngine === 'Left' ? 'Левый' : 'Правый'} двигатель
+                  {expandedEngine === 0 ? 'Левый' : 'Правый'} двигатель
                 </div>
 
                 {/* Engine selector tabs */}
                 <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginBottom: 24 }}>
-                  {(['Left', 'Right'] as const).map((side) => (
+                  {([0, 1] as const).map((index) => (
                     <button
-                      key={side}
+                      key={index}
                       onClick={(e) => {
                         e.stopPropagation();
-                        setExpandedEngine(side);
+                        setExpandedEngine(index);
                       }}
                       style={{
                         padding: '8px 20px',
                         borderRadius: 12,
-                        border: expandedEngine === side ? '1px solid rgba(212,175,101,0.5)' : '1px solid rgba(80,100,130,0.3)',
-                        background: expandedEngine === side ? 'rgba(212,175,101,0.15)' : 'rgba(40,50,60,0.3)',
-                        color: expandedEngine === side ? T.speedGold : T.textSecondary,
+                        border: expandedEngine === index ? '1px solid rgba(212,175,101,0.5)' : '1px solid rgba(80,100,130,0.3)',
+                        background: expandedEngine === index ? 'rgba(212,175,101,0.15)' : 'rgba(40,50,60,0.3)',
+                        color: expandedEngine === index ? T.speedGold : T.textSecondary,
                         fontSize: 13,
                         fontWeight: 500,
                         cursor: 'pointer',
                       }}
                     >
-                      {side === 'Left' ? 'Левый' : 'Правый'}
+                      {index === 0 ? 'Левый' : 'Правый'}
                     </button>
                   ))}
                 </div>
