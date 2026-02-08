@@ -19,17 +19,8 @@ export const EnginesPanel = memo(function EnginesPanel() {
 
       return (
         <div className="flex items-center justify-center gap-20">
-          {/* Left group - unified instrument with shared housing */}
-          <div
-            className="flex"
-            style={{
-              gap: 0,
-              padding: '12px',
-              borderRadius: '24px',
-              background: 'linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.8)',
-            }}
-          >
+          {/* Left group - unified instrument */}
+          <div className="flex" style={{ gap: 1 }}>
             {leftEngines.map((engine, index) => (
               <EngineCard
                 key={index}
@@ -40,17 +31,8 @@ export const EnginesPanel = memo(function EnginesPanel() {
             ))}
           </div>
 
-          {/* Right group - unified instrument with shared housing */}
-          <div
-            className="flex"
-            style={{
-              gap: 0,
-              padding: '12px',
-              borderRadius: '24px',
-              background: 'linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.8)',
-            }}
-          >
+          {/* Right group - unified instrument */}
+          <div className="flex" style={{ gap: 1 }}>
             {rightEngines.map((engine, index) => (
               <EngineCard
                 key={index + 2}
