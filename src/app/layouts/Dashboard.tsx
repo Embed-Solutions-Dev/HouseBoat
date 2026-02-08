@@ -20,14 +20,14 @@ export const Dashboard = memo(function Dashboard() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.2 }}
     >
-      {/* Top metrics bar */}
-      <div className="w-full max-w-[1048px] mb-5">
-        <TopBar />
-      </div>
-
       {/* Cameras - 2x2 grid */}
       <div className="w-full max-w-[1048px] mb-5">
         <CamerasPanel />
+      </div>
+
+      {/* Top metrics bar */}
+      <div className="w-full max-w-[1048px] mb-5">
+        <TopBar />
       </div>
 
       {/* Aviation Compass - Above Engines */}
