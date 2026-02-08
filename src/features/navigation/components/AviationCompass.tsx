@@ -24,7 +24,7 @@ export const AviationCompass = memo(function AviationCompass() {
         height: 240,
         borderRadius: '50%',
         background: 'linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)',
-        boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
+        boxShadow: '0 4px 16px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.8)',
         padding: 6,
         display: 'flex',
         alignItems: 'center',

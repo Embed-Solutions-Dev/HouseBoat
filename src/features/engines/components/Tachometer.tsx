@@ -56,6 +56,10 @@ export const Tachometer = memo(function Tachometer({
   const cy = size / 2;
   const r = size / 2 - 8;
 
+  // Non-linear font scaling for better readability at small sizes
+  // At 240px (scale=0.774), fonts will be ~85% instead of 77%
+  const fontScale = Math.max(scale, 0.85 * scale + 0.15);
+
   const majorStep = 500;
   const minorStep = 100;
   const ticks: Array<{
@@ -123,15 +127,15 @@ export const Tachometer = memo(function Tachometer({
           padding: 8 * scale,
         }}
       >
-        {/* Info button */}
+        {/* Info button - maintain minimum size for usability */}
         <button
           onClick={onToggleExpand}
           style={{
             position: 'absolute',
             top: 13 * scale,
             right: 13 * scale,
-            width: 32 * scale,
-            height: 32 * scale,
+            width: Math.max(28, 32 * scale),
+            height: Math.max(28, 32 * scale),
             background: hasFaults
               ? 'linear-gradient(145deg, rgba(224,64,80,0.5) 0%, rgba(180,40,60,0.4) 100%)'
               : 'linear-gradient(145deg, rgba(80,110,140,0.4) 0%, rgba(60,90,120,0.3) 100%)',
@@ -153,7 +157,7 @@ export const Tachometer = memo(function Tachometer({
           <span
             style={{
               color: hasFaults ? 'rgba(224,64,80,0.9)' : 'rgba(150,180,210,0.6)',
-              fontSize: 18 * scale,
+              fontSize: Math.max(16, 18 * scale),
               fontWeight: 600,
               fontStyle: 'italic',
               fontFamily: 'Georgia, serif',
@@ -230,7 +234,7 @@ export const Tachometer = memo(function Tachometer({
                     x={tick.labelX}
                     y={tick.labelY}
                     fill={tick.isRedZone ? T.gaugeRed : T.textPrimary}
-                    fontSize={24 * scale}
+                    fontSize={24 * fontScale}
                     fontWeight="600"
                     textAnchor="middle"
                     dominantBaseline="middle"
@@ -324,14 +328,14 @@ export const Tachometer = memo(function Tachometer({
 
           {/* Throttle - left of center */}
           <div style={{ position: 'absolute', top: cy, left: cx - 66 * scale, transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
-            <div style={{ fontSize: 9 * scale, color: T.textMuted }}>ГАЗ</div>
-            <div style={{ fontSize: 16 * scale, fontWeight: 600, color: T.textSecondary }}>{throttle}%</div>
+            <div style={{ fontSize: 9 * fontScale, color: T.textMuted }}>ГАЗ</div>
+            <div style={{ fontSize: 16 * fontScale, fontWeight: 600, color: T.textSecondary }}>{throttle}%</div>
           </div>
 
           {/* Motor hours - right of center */}
           <div style={{ position: 'absolute', top: cy, left: cx + 66 * scale, transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
-            <div style={{ fontSize: 9 * scale, color: T.textMuted }}>МОТОЧАСЫ</div>
-            <div style={{ fontSize: 16 * scale, fontWeight: 600, color: T.textSecondary, fontVariantNumeric: 'tabular-nums' }}>
+            <div style={{ fontSize: 9 * fontScale, color: T.textMuted }}>МОТОЧАСЫ</div>
+            <div style={{ fontSize: 16 * fontScale, fontWeight: 600, color: T.textSecondary, fontVariantNumeric: 'tabular-nums' }}>
               {motorHours.toLocaleString()}
             </div>
           </div>
@@ -348,15 +352,15 @@ export const Tachometer = memo(function Tachometer({
               </div>
             ) : (
               <>
-                <div style={{ fontSize: 11 * scale, color: T.textGreen }}>{tempText.split(' · ')[0]}</div>
-                <div style={{ fontSize: 11 * scale, color: T.textGreen, marginTop: 2 * scale }}>{tempText.split(' · ')[1]}</div>
+                <div style={{ fontSize: 11 * fontScale, color: T.textGreen }}>{tempText.split(' · ')[0]}</div>
+                <div style={{ fontSize: 11 * fontScale, color: T.textGreen, marginTop: 2 * scale }}>{tempText.split(' · ')[1]}</div>
               </>
             )}
           </div>
 
           {/* RPM multiplier label */}
           <div style={{ position: 'absolute', bottom: 102 * scale, left: '50%', transform: 'translateX(-50%)', textAlign: 'center' }}>
-            <div style={{ fontSize: 10 * scale, color: 'rgba(150,160,180,0.6)', fontWeight: 500 }}>×1000 об/мин</div>
+            <div style={{ fontSize: 10 * fontScale, color: 'rgba(150,160,180,0.6)', fontWeight: 500 }}>×1000 об/мин</div>
           </div>
 
           {/* Fuel pump icon */}
@@ -414,7 +418,7 @@ export const Tachometer = memo(function Tachometer({
                 }}
               >
               {/* Title */}
-              <div style={{ fontSize: 14 * scale, fontWeight: 500, color: T.textSecondary, letterSpacing: 0.5 * scale, marginBottom: 20 * scale }}>
+              <div style={{ fontSize: 14 * fontScale, fontWeight: 500, color: T.textSecondary, letterSpacing: 0.5 * scale, marginBottom: 20 * scale }}>
                 {side === 'Left' ? 'ЛЕВЫЙ' : side === 'Right' ? 'ПРАВЫЙ' : side.toUpperCase()} ДВИГАТЕЛЬ
               </div>
 
@@ -438,9 +442,9 @@ export const Tachometer = memo(function Tachometer({
                     textAlign: 'center',
                   }}
                 >
-                  <div style={{ fontSize: 10 * scale, color: T.textMuted, marginBottom: 4 * scale }}>ОБОРОТЫ</div>
-                  <div style={{ fontSize: 22 * scale, fontWeight: 600, color: T.textPrimary }}>{Math.round(rpm).toLocaleString()}</div>
-                  <div style={{ fontSize: 9 * scale, color: T.textMuted }}>об/мин</div>
+                  <div style={{ fontSize: 10 * fontScale, color: T.textMuted, marginBottom: 4 * scale }}>ОБОРОТЫ</div>
+                  <div style={{ fontSize: 22 * fontScale, fontWeight: 600, color: T.textPrimary }}>{Math.round(rpm).toLocaleString()}</div>
+                  <div style={{ fontSize: 9 * fontScale, color: T.textMuted }}>об/мин</div>
                 </div>
 
                 {/* Throttle */}
@@ -453,8 +457,8 @@ export const Tachometer = memo(function Tachometer({
                     textAlign: 'center',
                   }}
                 >
-                  <div style={{ fontSize: 10 * scale, color: T.textMuted, marginBottom: 4 * scale }}>ГАЗ</div>
-                  <div style={{ fontSize: 22 * scale, fontWeight: 600, color: T.textPrimary }}>{throttle}%</div>
+                  <div style={{ fontSize: 10 * fontScale, color: T.textMuted, marginBottom: 4 * scale }}>ГАЗ</div>
+                  <div style={{ fontSize: 22 * fontScale, fontWeight: 600, color: T.textPrimary }}>{throttle}%</div>
                 </div>
 
                 {/* Temperature */}
@@ -467,8 +471,8 @@ export const Tachometer = memo(function Tachometer({
                     textAlign: 'center',
                   }}
                 >
-                  <div style={{ fontSize: 10 * scale, color: T.textMuted, marginBottom: 4 * scale }}>ТЕМПЕРАТУРА</div>
-                  <div style={{ fontSize: 22 * scale, fontWeight: 600, color: temperature > 100 ? T.textRed : temperature > 90 ? T.textAmber : T.textGreen }}>
+                  <div style={{ fontSize: 10 * fontScale, color: T.textMuted, marginBottom: 4 * scale }}>ТЕМПЕРАТУРА</div>
+                  <div style={{ fontSize: 22 * fontScale, fontWeight: 600, color: temperature > 100 ? T.textRed : temperature > 90 ? T.textAmber : T.textGreen }}>
                     {temperature}°C
                   </div>
                 </div>
@@ -483,8 +487,8 @@ export const Tachometer = memo(function Tachometer({
                     textAlign: 'center',
                   }}
                 >
-                  <div style={{ fontSize: 10 * scale, color: T.textMuted, marginBottom: 4 * scale }}>ДАВЛ. МАСЛА</div>
-                  <div style={{ fontSize: 22 * scale, fontWeight: 600, color: oilPressure < 2 ? T.textRed : oilPressure < 3 ? T.textAmber : T.textGreen }}>
+                  <div style={{ fontSize: 10 * fontScale, color: T.textMuted, marginBottom: 4 * scale }}>ДАВЛ. МАСЛА</div>
+                  <div style={{ fontSize: 22 * fontScale, fontWeight: 600, color: oilPressure < 2 ? T.textRed : oilPressure < 3 ? T.textAmber : T.textGreen }}>
                     {oilPressure} бар
                   </div>
                 </div>
@@ -499,8 +503,8 @@ export const Tachometer = memo(function Tachometer({
                     textAlign: 'center',
                   }}
                 >
-                  <div style={{ fontSize: 10 * scale, color: T.textMuted, marginBottom: 4 * scale }}>МОТОЧАСЫ</div>
-                  <div style={{ fontSize: 22 * scale, fontWeight: 600, color: T.textPrimary }}>{motorHours.toLocaleString()}</div>
+                  <div style={{ fontSize: 10 * fontScale, color: T.textMuted, marginBottom: 4 * scale }}>МОТОЧАСЫ</div>
+                  <div style={{ fontSize: 22 * fontScale, fontWeight: 600, color: T.textPrimary }}>{motorHours.toLocaleString()}</div>
                 </div>
 
                 {/* Fuel Level */}
@@ -513,8 +517,8 @@ export const Tachometer = memo(function Tachometer({
                     textAlign: 'center',
                   }}
                 >
-                  <div style={{ fontSize: 10 * scale, color: T.textMuted, marginBottom: 4 * scale }}>ТОПЛИВО</div>
-                  <div style={{ fontSize: 22 * scale, fontWeight: 600, color: fuelColor }}>{fuelLevel}%</div>
+                  <div style={{ fontSize: 10 * fontScale, color: T.textMuted, marginBottom: 4 * scale }}>ТОПЛИВО</div>
+                  <div style={{ fontSize: 22 * fontScale, fontWeight: 600, color: fuelColor }}>{fuelLevel}%</div>
                 </div>
               </div>
             </div>

@@ -25,7 +25,7 @@ export const AviationRudder = memo(function AviationRudder() {
         height: 90,
         borderRadius: 8,
         background: 'linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)',
-        boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
+        boxShadow: '0 4px 16px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.8)',
         padding: 4,
         display: 'flex',
         flexDirection: 'column',
@@ -182,11 +182,11 @@ export const AviationRudder = memo(function AviationRudder() {
         <div
           style={{
             marginTop: 6,
-            background: 'rgba(10,15,25,0.8)',
-            border: '1px solid rgba(80,110,140,0.3)',
-            borderRadius: 4,
-            padding: '2px 12px',
-            boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
+            background: 'rgba(10,15,25,0.9)',
+            border: '1px solid rgba(80,110,140,0.4)',
+            borderRadius: 6,
+            padding: '4px 14px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.6)',
           }}
         >
           <motion.div
@@ -195,10 +195,10 @@ export const AviationRudder = memo(function AviationRudder() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.2 }}
             style={{
-              fontSize: 16,
+              fontSize: 18,
               fontWeight: 700,
               color: '#3dc88c',
-              textShadow: '0 0 6px rgba(61,200,140,0.5)',
+              textShadow: '0 0 8px rgba(61,200,140,0.6)',
               fontFamily: 'system-ui, -apple-system, sans-serif',
               letterSpacing: '0.05em',
             }}

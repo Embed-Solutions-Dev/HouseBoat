@@ -21,22 +21,22 @@ export const Dashboard = memo(function Dashboard() {
       transition={{ duration: 0.6, delay: 0.2 }}
     >
       {/* Top metrics bar */}
-      <div className="w-full max-w-[1048px] mb-4">
+      <div className="w-full max-w-[1048px] mb-5">
         <TopBar />
       </div>
 
       {/* Cameras - 2x2 grid */}
-      <div className="w-full max-w-[1048px] mb-4">
+      <div className="w-full max-w-[1048px] mb-5">
         <CamerasPanel />
       </div>
 
       {/* Aviation Compass - Above Engines */}
-      <div className="w-full max-w-[1048px] mb-4 flex justify-center">
+      <div className="w-full max-w-[1048px] mb-6 flex justify-center">
         <AviationCompass />
       </div>
 
       {/* Engines */}
-      <div className="w-full max-w-[1048px] mb-4 relative">
+      <div className="w-full max-w-[1048px] mb-6 relative">
         {/* Engines panel - handles all engines with dynamic layout */}
         <motion.div
           animate={{
@@ -54,17 +54,17 @@ export const Dashboard = memo(function Dashboard() {
       </div>
 
       {/* Aviation Rudder - Below Engines */}
-      <div className="w-full max-w-[1048px] mb-4 flex justify-center">
+      <div className="w-full max-w-[1048px] mb-6 flex justify-center">
         <AviationRudder />
       </div>
 
       {/* Navigation Overlay */}
-      <div className="w-full max-w-[1048px] mb-4">
+      <div className="w-full max-w-[1048px] mb-5">
         <NavigationOverlay />
       </div>
 
       {/* Controls */}
-      <div className="w-full max-w-[1048px]">
+      <div className="w-full max-w-[1048px] mb-4">
         <ControlsPanel />
       </div>
     </motion.div>
