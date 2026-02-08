@@ -40,15 +40,24 @@ export const EnginesPanel = memo(function EnginesPanel() {
             ))}
           </div>
 
-          {/* Right group - unified instrument */}
-          <div className="flex" style={{ gap: 1 }}>
+          {/* Right group - mirrored depth effect */}
+          <div className="flex items-center" style={{ gap: 1, position: 'relative' }}>
             {rightEngines.map((engine, index) => (
-              <EngineCard
+              <div
                 key={index + 2}
-                id={index + 2}
-                data={engine}
-                size={layout.tachometerSize}
-              />
+                style={{
+                  position: 'relative',
+                  zIndex: index === 1 ? 2 : 1, // Engine 3 in front
+                  transform: index === 0 ? 'scale(0.92) translateX(40px) translateY(10px)' : 'none', // Engine 2 behind
+                  opacity: index === 0 ? 0.95 : 1,
+                }}
+              >
+                <EngineCard
+                  id={index + 2}
+                  data={engine}
+                  size={index === 0 ? layout.tachometerSize * 1.012 : layout.tachometerSize * 1.1}
+                />
+              </div>
             ))}
           </div>
         </div>
