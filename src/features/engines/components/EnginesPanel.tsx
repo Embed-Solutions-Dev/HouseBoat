@@ -12,6 +12,41 @@ export const EnginesPanel = memo(function EnginesPanel() {
 
   // For single row layout (2-4 engines)
   if (layout.rows === 1) {
+    // Special case for 4 engines: group left (0,1) and right (2,3)
+    if (engineCount === 4) {
+      const leftEngines = engines.slice(0, 2);
+      const rightEngines = engines.slice(2, 4);
+
+      return (
+        <div className="flex items-center justify-center gap-12">
+          {/* Left group */}
+          <div className="flex gap-3">
+            {leftEngines.map((engine, index) => (
+              <EngineCard
+                key={index}
+                id={index}
+                data={engine}
+                size={layout.tachometerSize}
+              />
+            ))}
+          </div>
+
+          {/* Right group */}
+          <div className="flex gap-3">
+            {rightEngines.map((engine, index) => (
+              <EngineCard
+                key={index + 2}
+                id={index + 2}
+                data={engine}
+                size={layout.tachometerSize}
+              />
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // Default uniform grid for 2-3 engines
     return (
       <div
         className="grid gap-6 items-center justify-center"
