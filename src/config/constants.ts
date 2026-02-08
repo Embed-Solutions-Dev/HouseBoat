@@ -23,3 +23,9 @@ export const GEAR_LABELS: Record<string, string> = {
   F: 'Вперёд',
   R: 'Назад',
 };
+
+export const ENGINE_CONFIG = {
+  count: Number(import.meta.env.VITE_ENGINE_COUNT) || 2,
+  maxEngines: 6,
+  minEngines: 2,
+};
