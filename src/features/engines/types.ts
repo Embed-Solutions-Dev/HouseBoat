@@ -1,7 +1,7 @@
 import type { EngineData, EngineId } from '@/types';
 
 export interface TachometerProps {
-  side: 'Left' | 'Right';
+  side: 'Left' | 'Right' | string;  // Allow string for "Engine N"
   rpm: number;
   maxRpm: number;
   throttle: number;
@@ -13,6 +13,7 @@ export interface TachometerProps {
   isExpanded?: boolean;
   temperature?: number;
   oilPressure?: number;
+  size?: number;  // New: tachometer size (default 310)
 }
 
 export interface EngineCardProps {
