@@ -18,7 +18,7 @@ export const EnginesPanel = memo(function EnginesPanel() {
       const rightEngines = engines.slice(2, 4);
 
       return (
-        <div className="flex items-center justify-center gap-20">
+        <div className="flex items-center justify-center gap-8">
           {/* Left group - with depth effect */}
           <div className="flex items-center" style={{ gap: 1, position: 'relative' }}>
             {leftEngines.map((engine, index) => (
@@ -27,7 +27,7 @@ export const EnginesPanel = memo(function EnginesPanel() {
                 style={{
                   position: 'relative',
                   zIndex: index === 0 ? 2 : 1,
-                  transform: index === 1 ? 'scale(0.92) translateX(-40px) translateY(10px)' : 'none',
+                  transform: index === 1 ? 'scale(0.92) translateX(-30px) translateY(10px)' : 'none',
                   opacity: index === 1 ? 0.95 : 1,
                 }}
               >
@@ -48,7 +48,7 @@ export const EnginesPanel = memo(function EnginesPanel() {
                 style={{
                   position: 'relative',
                   zIndex: index === 1 ? 2 : 1, // Engine 3 in front
-                  transform: index === 0 ? 'scale(0.92) translateX(40px) translateY(10px)' : 'none', // Engine 2 behind
+                  transform: index === 0 ? 'scale(0.92) translateX(30px) translateY(10px)' : 'none', // Engine 2 behind
                   opacity: index === 0 ? 0.95 : 1,
                 }}
               >
