@@ -1,28 +1,75 @@
 import { memo } from 'react';
 import { useStore } from '@/stores';
 import { EngineCard } from './EngineCard';
+import { getEnginesLayout } from '@/utils/engineLayout';
 
-interface EnginesPanelProps {
-  side?: 'left' | 'right';
-}
-
-export const EnginesPanel = memo(function EnginesPanel({ side }: EnginesPanelProps) {
+export const EnginesPanel = memo(function EnginesPanel() {
   const engines = useStore((s) => s.engines);
+  const engineCount = useStore((s) => s.engineCount);
 
-  // If side is specified, render only that engine
-  if (side === 'left') {
-    return <EngineCard id="left" data={engines.left} />;
+  // Get layout configuration based on engine count
+  const layout = getEnginesLayout(engineCount);
+
+  // For single row layout (2-4 engines)
+  if (layout.rows === 1) {
+    return (
+      <div
+        className="grid gap-6 items-center justify-center"
+        style={{
+          gridTemplateColumns: `repeat(${layout.topRow}, 1fr)`,
+        }}
+      >
+        {engines.map((engine, index) => (
+          <EngineCard
+            key={index}
+            id={index}
+            data={engine}
+            size={layout.tachometerSize}
+          />
+        ))}
+      </div>
+    );
   }
 
-  if (side === 'right') {
-    return <EngineCard id="right" data={engines.right} />;
-  }
+  // For two-row layout (5-6 engines)
+  const topEngines = engines.slice(0, layout.topRow);
+  const bottomEngines = engines.slice(layout.topRow);
 
-  // Default: render both engines
   return (
-    <div className="flex items-center justify-center gap-8">
-      <EngineCard id="left" data={engines.left} />
-      <EngineCard id="right" data={engines.right} />
+    <div className="flex flex-col gap-6 items-center justify-center">
+      {/* Top row */}
+      <div
+        className="grid gap-6"
+        style={{
+          gridTemplateColumns: `repeat(${layout.topRow}, 1fr)`,
+        }}
+      >
+        {topEngines.map((engine, index) => (
+          <EngineCard
+            key={index}
+            id={index}
+            data={engine}
+            size={layout.tachometerSize}
+          />
+        ))}
+      </div>
+
+      {/* Bottom row */}
+      <div
+        className="grid gap-6"
+        style={{
+          gridTemplateColumns: `repeat(${layout.bottomRow}, 1fr)`,
+        }}
+      >
+        {bottomEngines.map((engine, index) => (
+          <EngineCard
+            key={index + layout.topRow}
+            id={index + layout.topRow}
+            data={engine}
+            size={layout.tachometerSize}
+          />
+        ))}
+      </div>
     </div>
   );
 });
