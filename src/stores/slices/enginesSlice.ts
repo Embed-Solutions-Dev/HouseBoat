@@ -1,18 +1,17 @@
 import type { StateCreator } from 'zustand';
 import type { EngineData, EngineId } from '@/types';
 
-export type ExpandedEngine = 'Left' | 'Right' | null;
+export type ExpandedEngine = number | null; // Engine index
 
 export interface EnginesSlice {
-  engines: {
-    left: EngineData;
-    right: EngineData;
-  };
+  engines: EngineData[];              // Changed from {left, right}
+  engineCount: number;                // New: 2-6
+  fuelMapping: Record<number, string>; // New: engineIndex → fuelTankId
   expandedEngine: ExpandedEngine;
-  updateEngine: (id: EngineId, data: Partial<EngineData>) => void;
-  setEngineGear: (id: EngineId, gear: EngineData['gear']) => void;
-  setExpandedEngine: (engine: ExpandedEngine) => void;
-  toggleExpandedEngine: (engine: 'Left' | 'Right') => void;
+  updateEngine: (index: number, data: Partial<EngineData>) => void;
+  setEngineGear: (index: number, gear: EngineData['gear']) => void;
+  setExpandedEngine: (index: number | null) => void;
+  toggleExpandedEngine: (index: number) => void;
 }
 
 const initialEngine: EngineData = {
