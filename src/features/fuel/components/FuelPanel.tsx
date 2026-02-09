@@ -14,10 +14,12 @@ export const FuelPanel = memo(function FuelPanel() {
   };
 
   const tanks = [
-    { label: 'Бензин Л', data: fuel.gasolineLeft },
-    { label: 'Бензин П', data: fuel.gasolineRight },
-    { label: 'Дизель', data: fuel.diesel },
-    { label: 'Вода', data: fuel.water },
+    { label: 'Лев. двиг. 1', data: { level: Math.round((fuel.engine0.level / fuel.engine0.capacity) * 100), capacity: 100 } },
+    { label: 'Лев. двиг. 2', data: { level: Math.round((fuel.engine1.level / fuel.engine1.capacity) * 100), capacity: 100 } },
+    { label: 'Прав. двиг. 1', data: { level: Math.round((fuel.engine2.level / fuel.engine2.capacity) * 100), capacity: 100 } },
+    { label: 'Прав. двиг. 2', data: { level: Math.round((fuel.engine3.level / fuel.engine3.capacity) * 100), capacity: 100 } },
+    { label: 'Дизель', data: { level: Math.round((fuel.diesel.level / fuel.diesel.capacity) * 100), capacity: 100 } },
+    { label: 'Вода', data: { level: Math.round((fuel.water.level / fuel.water.capacity) * 100), capacity: 100 } },
   ];
 
   return (

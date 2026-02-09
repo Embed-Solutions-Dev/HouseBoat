@@ -259,56 +259,6 @@ export const NavigationOverlay = memo(function NavigationOverlay() {
                   </div>
                 </div>
               </div>
-
-              {/* Scale - bottom left */}
-              <div
-                style={{
-                  position: 'absolute',
-                  bottom: 32,
-                  left: 32,
-                  zIndex: 10,
-                }}
-              >
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                  <div
-                    style={{
-                      width: 80,
-                      height: 4,
-                      background: 'rgba(150,180,210,0.6)',
-                      borderRadius: 2,
-                      position: 'relative',
-                    }}
-                  >
-                    <div style={{ position: 'absolute', left: 0, top: -2, width: 2, height: 8, background: 'rgba(150,180,210,0.6)' }} />
-                    <div style={{ position: 'absolute', right: 0, top: -2, width: 2, height: 8, background: 'rgba(150,180,210,0.6)' }} />
-                  </div>
-                  <span style={{ fontSize: 9, color: 'rgba(150,180,210,0.7)', fontWeight: 500 }}>500 м</span>
-                </div>
-              </div>
-
-              {/* Coordinates - bottom right */}
-              <div
-                style={{
-                  position: 'absolute',
-                  bottom: 32,
-                  right: 32,
-                  zIndex: 10,
-                  textAlign: 'right',
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: 10,
-                    fontFamily: 'monospace',
-                    color: 'rgba(150,180,210,0.7)',
-                    fontWeight: 500,
-                    lineHeight: 1.4,
-                  }}
-                >
-                  <div>52°22&apos;14.3&quot;N</div>
-                  <div>4°53&apos;28.7&quot;E</div>
-                </div>
-              </div>
             </div>
           </motion.div>
 
@@ -334,7 +284,7 @@ export const NavigationOverlay = memo(function NavigationOverlay() {
               style={{
                 position: 'absolute',
                 top: '50%',
-                right: 32,
+                right: 152,
                 transform: 'translateY(-50%)',
                 zIndex: 10,
                 pointerEvents: 'auto',

@@ -1,5 +1,6 @@
-import { memo, useEffect } from 'react';
-import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
+import { memo, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
 import { clamp } from '@/utils/math';
 import type { TachometerProps } from '../types';
 
@@ -47,11 +48,18 @@ export const Tachometer = memo(function Tachometer({
 
   const mv = useMotionValue(-startAngle);
   const spring = useSpring(mv, { stiffness: 80, damping: 15 });
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const targetAngle = -startAngle + ratio * sweep;
     mv.set(targetAngle);
   }, [ratio, mv]);
+
+  // Get container position for portal positioning
+  const getContainerRect = () => {
+    if (!containerRef.current) return null;
+    return containerRef.current.getBoundingClientRect();
+  };
 
   const scale = size / 310;
   const cx = size / 2;
@@ -111,7 +119,7 @@ export const Tachometer = memo(function Tachometer({
   const fuelColor = engineOff ? T.textMuted : lowFuel ? T.textRed : mediumFuel ? T.textAmber : T.gaugeActive;
 
   return (
-    <div style={{ position: 'relative', minHeight: 360 * scale, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'visible' }}>
+    <div ref={containerRef} style={{ position: 'relative', minHeight: 360 * scale, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'visible' }}>
       <div
         style={{
           position: 'relative',
@@ -119,13 +127,9 @@ export const Tachometer = memo(function Tachometer({
           height: size + 16 * scale,
           borderRadius: '50%',
           background: 'linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)',
-          boxShadow: hasFaults
+          boxShadow: (hasFaults || lowFuel)
             ? `0 ${8 * scale}px ${32 * scale}px rgba(0,0,0,0.5), 0 ${2 * scale}px ${8 * scale}px rgba(0,0,0,0.3), inset 0 ${1 * scale}px ${2 * scale}px rgba(255,255,255,0.8), 0 0 ${30 * scale}px rgba(224,64,80,0.6), 0 0 ${60 * scale}px rgba(224,64,80,0.3)`
-            : lowFuel
-              ? `0 ${8 * scale}px ${32 * scale}px rgba(0,0,0,0.5), 0 ${2 * scale}px ${8 * scale}px rgba(0,0,0,0.3), inset 0 ${1 * scale}px ${2 * scale}px rgba(255,255,255,0.8), 0 0 ${30 * scale}px rgba(224,64,80,0.5), 0 0 ${60 * scale}px rgba(224,64,80,0.25)`
-              : mediumFuel
-                ? `0 ${8 * scale}px ${32 * scale}px rgba(0,0,0,0.5), 0 ${2 * scale}px ${8 * scale}px rgba(0,0,0,0.3), inset 0 ${1 * scale}px ${2 * scale}px rgba(255,255,255,0.8), 0 0 ${30 * scale}px rgba(232,160,48,0.5), 0 0 ${60 * scale}px rgba(232,160,48,0.25)`
-                : `0 ${8 * scale}px ${32 * scale}px rgba(0,0,0,0.5), 0 ${2 * scale}px ${8 * scale}px rgba(0,0,0,0.3), inset 0 ${1 * scale}px ${2 * scale}px rgba(255,255,255,0.8)`,
+            : `0 ${8 * scale}px ${32 * scale}px rgba(0,0,0,0.5), 0 ${2 * scale}px ${8 * scale}px rgba(0,0,0,0.3), inset 0 ${1 * scale}px ${2 * scale}px rgba(255,255,255,0.8)`,
           padding: 8 * scale,
         }}
       >
@@ -135,7 +139,9 @@ export const Tachometer = memo(function Tachometer({
           style={{
             position: 'absolute',
             top: 13 * scale,
-            right: 13 * scale,
+            ...(side.includes('Правый') || side === 'Right'
+              ? { left: 13 * scale }
+              : { right: 13 * scale }),
             width: Math.max(28, 32 * scale),
             height: Math.max(28, 32 * scale),
             background: hasFaults
@@ -273,22 +279,18 @@ export const Tachometer = memo(function Tachometer({
                 filter: `drop-shadow(0 ${2 * scale}px ${4 * scale}px rgba(0,0,0,0.5))`,
               }}
             >
-              <defs>
-                <linearGradient id={`needleGrad${side}`} x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#ff5065" />
-                  <stop offset="50%" stopColor="#d42040" />
-                  <stop offset="100%" stopColor="#901030" />
-                </linearGradient>
-              </defs>
               {/* Shadow */}
               <path
                 d={`M 4 13 L ${needleLength - 10} 14 L ${needleLength} 15 L ${needleLength - 10} 16 L 4 17 Z`}
                 fill="rgba(0,0,0,0.3)"
               />
-              {/* Needle */}
+              {/* Needle - white with red border */}
               <path
                 d={`M 0 12 L ${needleLength - 10} 13 L ${needleLength} 15 L ${needleLength - 10} 17 L 0 18 Z`}
-                fill={`url(#needleGrad${side})`}
+                fill="#ffffff"
+                stroke="#e04050"
+                strokeWidth="1.5"
+                strokeLinejoin="miter"
               />
             </svg>
 
@@ -352,6 +354,8 @@ export const Tachometer = memo(function Tachometer({
                   <circle cx="12" cy="17" r="0.6" fill={T.textRed} />
                 </svg>
               </div>
+            ) : engineOff ? (
+              <div style={{ fontSize: 18 * fontScale, fontWeight: 600, color: T.textMuted }}>OFF</div>
             ) : (
               <>
                 <div style={{ fontSize: 11 * fontScale, color: T.textGreen }}>{tempText.split(' · ')[0]}</div>
@@ -374,39 +378,39 @@ export const Tachometer = memo(function Tachometer({
         </div>
       </div>
 
-      {/* Info panel popup - appears directly over the widget */}
-      <AnimatePresence>
-        {isExpanded && (
-          <>
-            {/* Full screen backdrop to catch clicks anywhere */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={onToggleExpand}
+      {/* Info panel popup - rendered in portal to avoid transform issues */}
+      {isExpanded && (() => {
+        const rect = getContainerRect();
+        if (!rect) return null;
+
+        return createPortal(
+          <div
+            onClick={onToggleExpand}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 9998,
+              background: 'rgba(0,0,0,0.75)',
+              cursor: 'pointer',
+            }}
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
               style={{
                 position: 'fixed',
-                inset: 0,
-                zIndex: 98,
-              }}
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.2 }}
-              style={{
-                position: 'absolute',
-                inset: 0,
+                left: rect.left,
+                top: rect.top,
+                width: rect.width,
+                height: rect.height,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                zIndex: 99,
                 background: 'linear-gradient(180deg, rgba(12,18,28,0.98) 0%, rgba(6,10,16,0.99) 100%)',
                 borderRadius: 20 * scale,
                 border: '1px solid rgba(60,80,100,0.3)',
                 boxShadow: `0 ${8 * scale}px ${32 * scale}px rgba(0,0,0,0.5), inset 0 ${1 * scale}px 0 rgba(100,130,160,0.1)`,
                 padding: 20 * scale,
+                cursor: 'default',
               }}
             >
               <div
@@ -421,7 +425,7 @@ export const Tachometer = memo(function Tachometer({
               >
               {/* Title */}
               <div style={{ fontSize: 14 * fontScale, fontWeight: 500, color: T.textSecondary, letterSpacing: 0.5 * scale, marginBottom: 20 * scale }}>
-                {side === 'Left' ? 'ЛЕВЫЙ' : side === 'Right' ? 'ПРАВЫЙ' : side.toUpperCase()} ДВИГАТЕЛЬ
+                {side === 'Left' ? 'ЛЕВЫЙ ДВИГАТЕЛЬ' : side === 'Right' ? 'ПРАВЫЙ ДВИГАТЕЛЬ' : side.toUpperCase()}
               </div>
 
               {/* Info grid */}
@@ -524,10 +528,11 @@ export const Tachometer = memo(function Tachometer({
                 </div>
               </div>
             </div>
-          </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+          </div>
+        </div>,
+        document.body
+      );
+      })()}
     </div>
   );
 });

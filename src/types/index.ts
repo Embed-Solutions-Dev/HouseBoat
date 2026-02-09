@@ -55,9 +55,11 @@ export interface FuelTank {
 }
 
 export interface FuelData {
-  gasolineLeft: FuelTank;
-  gasolineRight: FuelTank;
-  diesel: FuelTank;
+  engine0: FuelTank; // Левый двигатель 1
+  engine1: FuelTank; // Левый двигатель 2
+  engine2: FuelTank; // Правый двигатель 1
+  engine3: FuelTank; // Правый двигатель 2
+  diesel: FuelTank;  // Дизель
   water: FuelTank;
   consumption: number;
 }

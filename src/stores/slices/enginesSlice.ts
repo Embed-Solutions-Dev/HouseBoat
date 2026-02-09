@@ -55,17 +55,11 @@ const createEnginesArray = (count: number): EngineData[] => {
 };
 
 // Helper to create default fuel mapping
+// Each engine has its own dedicated fuel tank
 const createFuelMapping = (count: number): Record<number, string> => {
   const mapping: Record<number, string> = {};
   for (let i = 0; i < count; i++) {
-    // Engine 3 (Правый двигатель 2) uses diesel tank (set to 0%)
-    if (i === 3) {
-      mapping[i] = 'diesel';
-    } else if (i % 2 === 0) {
-      mapping[i] = 'gasolineLeft';
-    } else {
-      mapping[i] = 'gasolineRight';
-    }
+    mapping[i] = `engine${i}`;
   }
   return mapping;
 };

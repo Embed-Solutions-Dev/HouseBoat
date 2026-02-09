@@ -128,11 +128,13 @@ const getTankColor = (level: number) => {
   return T.textRed;
 };
 
-const getTankContainers = (fuel: { gasolineLeft: { level: number; capacity: number }; gasolineRight: { level: number; capacity: number }; diesel: { level: number; capacity: number }; water: { level: number; capacity: number } }) => [
-  { name: 'Бензин', subname: 'левый', level: Math.round((fuel.gasolineLeft.level / fuel.gasolineLeft.capacity) * 100) },
-  { name: 'Бензин', subname: 'правый', level: Math.round((fuel.gasolineRight.level / fuel.gasolineRight.capacity) * 100) },
-  { name: 'Дизель', subname: '', level: Math.round((fuel.diesel.level / fuel.diesel.capacity) * 100) },
-  { name: 'Вода', subname: '', level: Math.round((fuel.water.level / fuel.water.capacity) * 100) },
+const getTankContainers = (fuel: { engine0: { level: number; capacity: number }; engine1: { level: number; capacity: number }; engine2: { level: number; capacity: number }; engine3: { level: number; capacity: number }; diesel: { level: number; capacity: number }; water: { level: number; capacity: number } }) => [
+  { name: 'Двиг. 1', subname: 'левый', level: Math.round((fuel.engine0.level / fuel.engine0.capacity) * 100), showDefault: false },
+  { name: 'Двиг. 2', subname: 'левый', level: Math.round((fuel.engine1.level / fuel.engine1.capacity) * 100), showDefault: false },
+  { name: 'Двиг. 1', subname: 'правый', level: Math.round((fuel.engine2.level / fuel.engine2.capacity) * 100), showDefault: false },
+  { name: 'Двиг. 2', subname: 'правый', level: Math.round((fuel.engine3.level / fuel.engine3.capacity) * 100), showDefault: false },
+  { name: 'Дизель', subname: '', level: Math.round((fuel.diesel.level / fuel.diesel.capacity) * 100), showDefault: true },
+  { name: 'Вода', subname: '', level: Math.round((fuel.water.level / fuel.water.capacity) * 100), showDefault: true },
 ];
 
 const sectionKeys: SectionKey[] = ['weather', 'electric', 'speed', 'depth', 'tanks', 'safety'];
@@ -518,7 +520,7 @@ export const TopBar = memo(function TopBar() {
                       </div>
                       {key === 'tanks' ? (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 3, width: '80%' }}>
-                          {tankContainers.filter(tank => tank.name !== 'Бензин').map((tank, i) => (
+                          {tankContainers.filter(tank => tank.showDefault).map((tank, i) => (
                             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                               <div style={{ fontSize: 7, color: T.textMuted, width: 22, textAlign: 'right' }}>
                                 {tank.name === 'Дизель' ? 'ДТ' : 'H₂O'}
@@ -709,7 +711,7 @@ export const TopBar = memo(function TopBar() {
                     </div>
                   ) : key === 'tanks' ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 4, width: '85%' }}>
-                      {tankContainers.filter(tank => tank.name !== 'Бензин').map((tank, i) => (
+                      {tankContainers.filter(tank => tank.showDefault).map((tank, i) => (
                         <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                           <div style={{ fontSize: 8, color: T.textMuted, width: 28, textAlign: 'right' }}>
                             {tank.name === 'Дизель' ? 'ДТ' : 'H₂O'}

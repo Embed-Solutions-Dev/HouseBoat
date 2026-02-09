@@ -1,11 +1,14 @@
 import { memo } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '@/stores';
 
 export const AviationRudder = memo(function AviationRudder() {
   const rawRudderAngle = useStore((s) => s.navigation.rudderAngle);
   // Clamp rudder angle to valid range
   const rudderAngle = Math.max(-45, Math.min(45, rawRudderAngle));
+
+  // Check if rudder is centered (within ±2 degrees)
+  const isCentered = Math.abs(rudderAngle) < 2;
 
   // Tick marks configuration: -45 to +45 degrees
   const majorTicks = [-45, -30, -15, 0, 15, 30, 45];
@@ -143,6 +146,29 @@ export const AviationRudder = memo(function AviationRudder() {
               strokeWidth="0.5"
             />
           </svg>
+
+          {/* Center label */}
+          {isCentered && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.2 }}
+              style={{
+                marginTop: 2,
+                padding: '2px 8px',
+                background: 'rgba(224,64,80,0.9)',
+                borderRadius: 4,
+                fontSize: 10,
+                fontWeight: 700,
+                color: '#ffffff',
+                letterSpacing: 0.5,
+                boxShadow: '0 0 8px rgba(224,64,80,0.6)',
+              }}
+            >
+              ЦЕНТР
+            </motion.div>
+          )}
         </motion.div>
       </div>
     </div>
