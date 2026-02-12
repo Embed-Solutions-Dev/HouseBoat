@@ -25,6 +25,10 @@ const controlItems = [
 
 export const ControlsPanel = memo(function ControlsPanel() {
   const [anchorPopupOpen, setAnchorPopupOpen] = useState(false);
+  const [anchorArmed, setAnchorArmed] = useState(false);
+  const anchorArmedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [thrusterArmed, setThrusterArmed] = useState(false);
+  const thrusterArmedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const anchorButtonRef = useRef<HTMLButtonElement>(null);
 
   const controls = useStore((s) => s.controls);
@@ -51,13 +55,37 @@ export const ControlsPanel = memo(function ControlsPanel() {
         toggleNavigation();
         break;
       case 'thruster':
-        toggleBowThruster();
+        if (thrusterArmed) {
+          setThrusterArmed(false);
+          if (thrusterArmedTimer.current) clearTimeout(thrusterArmedTimer.current);
+          toggleBowThruster();
+        } else if (!controls.bowThruster) {
+          setThrusterArmed(true);
+          thrusterArmedTimer.current = setTimeout(() => {
+            setThrusterArmed(false);
+          }, 2000);
+        } else {
+          toggleBowThruster();
+        }
         break;
       case 'generator':
         toggleGenerator();
         break;
       case 'anchor':
-        setAnchorPopupOpen(!anchorPopupOpen);
+        if (anchorPopupOpen) {
+          setAnchorPopupOpen(false);
+          setAnchorArmed(false);
+          if (anchorArmedTimer.current) clearTimeout(anchorArmedTimer.current);
+        } else if (anchorArmed) {
+          setAnchorArmed(false);
+          if (anchorArmedTimer.current) clearTimeout(anchorArmedTimer.current);
+          setAnchorPopupOpen(true);
+        } else {
+          setAnchorArmed(true);
+          anchorArmedTimer.current = setTimeout(() => {
+            setAnchorArmed(false);
+          }, 2000);
+        }
         break;
     }
   };
@@ -92,6 +120,14 @@ export const ControlsPanel = memo(function ControlsPanel() {
     const newPos = Math.min(100, anchor.position + 10);
     setAnchorPosition(newPos);
   };
+
+  // Cleanup armed timers on unmount
+  useEffect(() => {
+    return () => {
+      if (anchorArmedTimer.current) clearTimeout(anchorArmedTimer.current);
+      if (thrusterArmedTimer.current) clearTimeout(thrusterArmedTimer.current);
+    };
+  }, []);
 
   // Close popup when clicking outside
   useEffect(() => {
@@ -139,7 +175,15 @@ export const ControlsPanel = memo(function ControlsPanel() {
           const isOn = getButtonState(key);
           const isNavigation = key === 'navigation';
           const isAnchor = key === 'anchor';
-          const buttonColor = isNavigation ? T.navBlue : isAnchor && isOn ? T.amber : T.textGreen;
+          const isThruster = key === 'thruster';
+          const anchorActive = isAnchor && (anchorArmed || anchorPopupOpen);
+          const thrusterActive = isThruster && thrusterArmed;
+          const buttonColor = isNavigation ? T.navBlue
+            : isAnchor && anchorArmed ? T.textRed
+            : isAnchor && anchorPopupOpen ? T.textGreen
+            : isAnchor && isOn ? T.amber
+            : isThruster && thrusterArmed ? T.textRed
+            : T.textGreen;
 
           return (
             <div key={key} style={{ display: 'flex', flex: 1, position: 'relative' }}>
@@ -156,19 +200,23 @@ export const ControlsPanel = memo(function ControlsPanel() {
                   justifyContent: 'center',
                   gap: 6,
                   border: 'none',
-                  background: isOn
-                    ? isNavigation
-                      ? 'linear-gradient(180deg, rgba(40,80,140,0.3) 0%, rgba(20,50,100,0.2) 100%)'
-                      : isAnchor
-                        ? 'linear-gradient(180deg, rgba(140,100,40,0.3) 0%, rgba(100,70,20,0.2) 100%)'
-                        : 'linear-gradient(180deg, rgba(40,100,80,0.3) 0%, rgba(20,60,50,0.2) 100%)'
-                    : 'transparent',
+                  background: (isAnchor && anchorArmed) || thrusterActive
+                    ? 'linear-gradient(180deg, rgba(224,64,80,0.3) 0%, rgba(140,30,40,0.2) 100%)'
+                    : isAnchor && anchorPopupOpen
+                      ? 'linear-gradient(180deg, rgba(40,140,80,0.3) 0%, rgba(20,80,50,0.2) 100%)'
+                    : isOn
+                      ? isNavigation
+                        ? 'linear-gradient(180deg, rgba(40,80,140,0.3) 0%, rgba(20,50,100,0.2) 100%)'
+                        : isAnchor
+                          ? 'linear-gradient(180deg, rgba(140,100,40,0.3) 0%, rgba(100,70,20,0.2) 100%)'
+                          : 'linear-gradient(180deg, rgba(40,100,80,0.3) 0%, rgba(20,60,50,0.2) 100%)'
+                      : 'transparent',
                   cursor: 'pointer',
                   position: 'relative',
                 }}
               >
                 {/* Active indicator line */}
-                {isOn && (
+                {(isOn || anchorActive || thrusterActive) && (
                   <div
                     style={{
                       position: 'absolute',
@@ -177,7 +225,7 @@ export const ControlsPanel = memo(function ControlsPanel() {
                       right: '20%',
                       height: 2,
                       background: buttonColor,
-                      boxShadow: `0 0 12px ${isNavigation ? 'rgba(80,160,255,0.8)' : isAnchor ? 'rgba(232,160,48,0.8)' : 'rgba(61,200,140,0.8)'}`,
+                      boxShadow: `0 0 12px ${(isAnchor && anchorArmed) || thrusterActive ? 'rgba(224,64,80,0.8)' : isAnchor && anchorPopupOpen ? 'rgba(61,200,140,0.8)' : isNavigation ? 'rgba(80,160,255,0.8)' : isAnchor ? 'rgba(232,160,48,0.8)' : 'rgba(61,200,140,0.8)'}`,
                       borderRadius: 1,
                     }}
                   />
@@ -187,14 +235,14 @@ export const ControlsPanel = memo(function ControlsPanel() {
                   style={{
                     width: 24,
                     height: 24,
-                    color: isOn ? buttonColor : T.textSecondary,
+                    color: (isOn || anchorActive || thrusterActive) ? buttonColor : T.textSecondary,
                   }}
                 />
 
                 <span
                   style={{
                     fontSize: 11,
-                    color: isOn ? buttonColor : T.textMuted,
+                    color: (isOn || anchorActive || thrusterActive) ? buttonColor : T.textMuted,
                     fontWeight: 500,
                     marginTop: -2,
                   }}

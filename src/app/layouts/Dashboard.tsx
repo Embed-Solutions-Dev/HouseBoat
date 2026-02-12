@@ -6,13 +6,14 @@ import { NavigationOverlay, AviationCompass, AviationRudder } from '@/features/n
 import { ControlsPanel } from '@/features/controls';
 import { TopBar } from '@/components/TopBar';
 import { useStore } from '@/stores';
-import { ENGINE_LABELS } from '@/config/constants';
+import { ENGINE_LABELS, ENGINE_CONFIG } from '@/config/constants';
 
 export const Dashboard = memo(function Dashboard() {
   const navMode = useStore((s) => s.controls.navigation);
   const engines = useStore((s) => s.engines);
   const fuel = useStore((s) => s.systems.fuel);
   const fuelMapping = useStore((s) => s.fuelMapping);
+  const engineCount = ENGINE_CONFIG.count;
 
   // Helper to get fuel level for engine
   const getFuelLevel = (engineIndex: number): number => {
@@ -25,35 +26,41 @@ export const Dashboard = memo(function Dashboard() {
 
   return (
     <motion.div
-      className="min-h-screen flex flex-col items-center justify-center p-4"
+      className="min-h-screen flex flex-col items-center justify-center"
       style={{
         background: 'radial-gradient(ellipse at 50% 30%, #0f1a25 0%, #080d12 50%, #000 100%)',
+        padding: 5,
       }}
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.2 }}
     >
       {/* Cameras - 2x2 grid */}
-      <div className="w-full max-w-[1048px] mb-5">
+      <div className="w-full max-w-[1070px]">
         <CamerasPanel />
       </div>
 
       {/* Top metrics bar */}
-      <div className="w-full max-w-[1048px] mb-5">
+      <div className="w-full max-w-[1070px]" style={{ marginTop: 4 }}>
         <TopBar />
       </div>
 
-      {/* Aviation Compass - Above Engines */}
-      <div className="w-full max-w-[1048px] mb-6 flex justify-center">
+      {/* Compass - centered, overlaps top of engines area */}
+      <motion.div
+        className="w-full max-w-[1070px] flex justify-center"
+        style={{ marginTop: 28, marginBottom: -158, position: 'relative', zIndex: 1 }}
+        animate={{ opacity: navMode ? 0 : 1 }}
+        transition={{ duration: 0.3 }}
+      >
         <AviationCompass />
-      </div>
+      </motion.div>
 
       {/* Engines with Navigation overlay */}
-      <div className="w-full max-w-[1400px] mb-6 relative">
+      <div className="w-full max-w-[1070px] relative" style={{ zIndex: 2 }}>
         {/* Navigation map overlay - behind engines */}
         <NavigationOverlay />
 
-        {/* Engines panel - handles all engines with dynamic layout */}
+        {/* Engines panel */}
         <motion.div
           animate={{
             opacity: navMode ? 0 : 1,
@@ -61,7 +68,6 @@ export const Dashboard = memo(function Dashboard() {
           }}
           transition={{ type: 'spring', stiffness: 200, damping: 25 }}
           style={{
-            paddingTop: 16,
             pointerEvents: navMode ? 'none' : 'auto',
             position: 'relative',
             zIndex: 2,
@@ -70,144 +76,149 @@ export const Dashboard = memo(function Dashboard() {
           <EnginesPanel />
         </motion.div>
 
-        {/* Mini engines in corners - appear in nav mode */}
+        {/* Houseboat Logo - centered over engines, hidden in nav mode */}
+        <motion.div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 1,
+            pointerEvents: 'none',
+          }}
+          animate={{ opacity: navMode ? 0 : 0.6 }}
+          transition={{ duration: 0.3 }}
+        >
+          <svg width="112" height="72" viewBox="600 -100 1620 750">
+            <path
+              fill="#2a3a4a"
+              d="M1798.09 319.87c-4.35,-12.65 -31.56,-22.61 -26.42,-5.52 2.53,29.43 7.74,74.72 -23.19,131.9 -34.39,29.27 5.18,34.93 43.53,16.19 64.03,-24.99 12.21,-119.88 6.08,-142.57zm-498.41 -195.06l0 0 -0.42 0 0 54.51 47.15 0c-0.78,-30.15 -21.5,-54.51 -46.73,-54.51zm-17.11 0.05l0 0c-24.28,1.3 -43.89,25.15 -44.65,54.46l44.65 0 0 -54.46zm-44.67 74.57l0 0 0 51 44.67 0 0 -51 -44.67 0zm61.36 51l0 0 47.17 0 0 -51 -47.17 0 0 51zm488.43 -118.7l0 0c-75.64,39.65 -105.96,79.31 -167.43,107.06 -14.5,6.53 -30.65,12.67 -48.33,18.34l0 -102.15c0,-34.71 -28.38,-63.1 -63.09,-63.1 -34.71,0 -63.1,28.39 -63.1,63.1l0 130.53c-114.9,17.14 -260.31,19.42 -421.05,-2.18 209.11,99.93 576.41,33.58 705.24,-76.57 38.48,-32.89 101.67,-75.25 149.43,-91.4 151.13,-55.09 221.23,-5.03 260.55,84.96 -7.9,31.59 -71.1,31.12 -109.89,46.44 -109.8,30.41 -134.33,31.14 -244.26,11.66 -12.86,-0.26 -32.74,10.03 -27.17,24.4 10.58,216.03 -71.36,208.7 -255.45,232.26 -61.99,2.97 -1.08,-78.65 13.4,-87.72 46.13,-48.5 75.84,-52.86 86.21,-69.64 14.88,-26.72 3.03,-38.46 -31.76,-15.84 -142.22,60.11 -308.64,63.74 -496.17,18.12 -193.15,147.77 -382.49,16.88 -304.72,-13.59 67.62,-23.73 138.17,-42.34 211.83,-55.51l-26.05 -41.91c50.95,-25.54 95,-62.9 135.37,-106.56 212.3,-195.78 446.39,-180.44 696.44,-10.7z"
+            />
+          </svg>
+        </motion.div>
+
+        {/* Nav mode instruments - compass, rudder, mini engines at corners */}
         <AnimatePresence>
-          {navMode && (
-            <>
-              {/* Left engines - stacked vertically */}
-              <motion.div
-                initial={{ opacity: 0, x: -100, y: 100 }}
-                animate={{ opacity: 1, x: 0, y: 0 }}
-                exit={{ opacity: 0, x: -100, y: 100 }}
-                transition={{ type: 'spring', stiffness: 200, damping: 25 }}
-                style={{
-                  position: 'absolute',
-                  bottom: -10,
-                  left: 179,
-                  zIndex: 50,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 8,
-                  transform: 'scale(0.9)',
-                }}
-              >
-                {/* Engine 0 - Левый двигатель 1 */}
-                <MiniEngineCard
-                  key="engine-0"
-                  side={ENGINE_LABELS[0] || 'Двигатель 1'}
-                  rpm={engines[0]?.rpm || 0}
-                  fuelLevel={getFuelLevel(0)}
-                  hasFaults={engines[0]?.errors.length > 0}
-                />
-                {/* Engine 1 - Левый двигатель 2 */}
-                <MiniEngineCard
-                  key="engine-1"
-                  side={ENGINE_LABELS[1] || 'Двигатель 2'}
-                  rpm={engines[1]?.rpm || 0}
-                  fuelLevel={getFuelLevel(1)}
-                  hasFaults={engines[1]?.errors.length > 0}
-                />
-              </motion.div>
-
-              {/* Right engines - stacked vertically */}
-              <motion.div
-                initial={{ opacity: 0, x: 100, y: 100 }}
-                animate={{ opacity: 1, x: 0, y: 0 }}
-                exit={{ opacity: 0, x: 100, y: 100 }}
-                transition={{ type: 'spring', stiffness: 200, damping: 25 }}
-                style={{
-                  position: 'absolute',
-                  bottom: -10,
-                  right: 179,
-                  zIndex: 50,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 8,
-                  transform: 'scale(0.9)',
-                }}
-              >
-                {/* Engine 2 - Правый двигатель 1 */}
-                <MiniEngineCard
-                  key="engine-2"
-                  side={ENGINE_LABELS[2] || 'Двигатель 3'}
-                  rpm={engines[2]?.rpm || 0}
-                  fuelLevel={getFuelLevel(2)}
-                  hasFaults={engines[2]?.errors.length > 0}
-                />
-                {/* Engine 3 - Правый двигатель 2 - OFF */}
-                <MiniEngineCard
-                  key="engine-3"
-                  side={ENGINE_LABELS[3] || 'Двигатель 4'}
-                  rpm={0}
-                  fuelLevel={0}
-                  hasFaults={false}
-                />
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
-      </div>
-
-      {/* Aviation Rudder with Scale and Coordinates - Below Engines */}
-      <div className="w-full max-w-[1048px] flex justify-center items-center" style={{ marginBottom: 1, position: 'relative' }}>
-        <AnimatePresence>
-          {navMode && (
-            <>
-              {/* Scale - left of rudder */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.3 }}
-                style={{ position: 'absolute', left: 16 }}
-              >
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                  <div
-                    style={{
-                      width: 80,
-                      height: 4,
-                      background: 'rgba(150,180,210,0.6)',
-                      borderRadius: 2,
-                      position: 'relative',
-                    }}
-                  >
-                    <div style={{ position: 'absolute', left: 0, top: -2, width: 2, height: 8, background: 'rgba(150,180,210,0.6)' }} />
-                    <div style={{ position: 'absolute', right: 0, top: -2, width: 2, height: 8, background: 'rgba(150,180,210,0.6)' }} />
-                  </div>
-                  <span style={{ fontSize: 9, color: 'rgba(150,180,210,0.7)', fontWeight: 500 }}>500 м</span>
-                </div>
-              </motion.div>
-
-              {/* Coordinates - right of rudder */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.3 }}
-                style={{ position: 'absolute', right: 16, textAlign: 'right' }}
-              >
-                <div
+          {navMode && (() => {
+            const half = Math.ceil(engineCount / 2);
+            const leftEngines = engines.slice(0, half);
+            const rightEngines = engines.slice(half);
+            return (
+              <>
+                {/* Compass - top left */}
+                <motion.div
+                  initial={{ opacity: 0, x: -50, y: -50 }}
+                  animate={{ opacity: 1, x: 0, y: 0 }}
+                  exit={{ opacity: 0, x: -50, y: -50 }}
+                  transition={{ type: 'spring', stiffness: 200, damping: 25 }}
                   style={{
-                    fontSize: 10,
-                    fontFamily: 'monospace',
-                    color: 'rgba(150,180,210,0.7)',
-                    fontWeight: 500,
-                    lineHeight: 1.4,
+                    position: 'absolute',
+                    top: 15,
+                    left: 15,
+                    zIndex: 50,
                   }}
                 >
-                  <div>52°22&apos;14.3&quot;N</div>
-                  <div>4°53&apos;28.7&quot;E</div>
-                </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
+                  <div style={{ transform: 'scale(0.65)', transformOrigin: 'top left' }}>
+                    <AviationCompass />
+                  </div>
+                </motion.div>
 
-        <AviationRudder />
+                {/* Rudder - top right */}
+                <motion.div
+                  initial={{ opacity: 0, x: 50, y: -50 }}
+                  animate={{ opacity: 1, x: 0, y: 0 }}
+                  exit={{ opacity: 0, x: 50, y: -50 }}
+                  transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+                  style={{
+                    position: 'absolute',
+                    top: 15,
+                    right: 15,
+                    zIndex: 50,
+                  }}
+                >
+                  <div style={{ transform: 'scale(0.65)', transformOrigin: 'top right' }}>
+                    <AviationRudder />
+                  </div>
+                </motion.div>
+
+                {/* Left engines - bottom left */}
+                <motion.div
+                  initial={{ opacity: 0, x: -50, y: 50 }}
+                  animate={{ opacity: 1, x: 0, y: 0 }}
+                  exit={{ opacity: 0, x: -50, y: 50 }}
+                  transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+                  style={{
+                    position: 'absolute',
+                    bottom: -10,
+                    left: 15,
+                    zIndex: 50,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 8,
+                    transform: 'scale(0.9)',
+                  }}
+                >
+                  {leftEngines.map((engine, i) => (
+                    <MiniEngineCard
+                      key={`engine-${i}`}
+                      side={ENGINE_LABELS[i] || `Двигатель ${i + 1}`}
+                      rpm={engine?.rpm || 0}
+                      throttle={engine?.throttle || 0}
+                      fuelLevel={getFuelLevel(i)}
+                      hasFaults={engine?.errors.length > 0}
+                    />
+                  ))}
+                </motion.div>
+
+                {/* Right engines - bottom right */}
+                <motion.div
+                  initial={{ opacity: 0, x: 50, y: 50 }}
+                  animate={{ opacity: 1, x: 0, y: 0 }}
+                  exit={{ opacity: 0, x: 50, y: 50 }}
+                  transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+                  style={{
+                    position: 'absolute',
+                    bottom: -10,
+                    right: 15,
+                    zIndex: 50,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 8,
+                    transform: 'scale(0.9)',
+                  }}
+                >
+                  {rightEngines.map((engine, i) => {
+                    const idx = half + i;
+                    return (
+                      <MiniEngineCard
+                        key={`engine-${idx}`}
+                        side={ENGINE_LABELS[idx] || `Двигатель ${idx + 1}`}
+                        rpm={engine?.rpm || 0}
+                        throttle={engine?.throttle || 0}
+                        fuelLevel={getFuelLevel(idx)}
+                        hasFaults={engine?.errors.length > 0}
+                      />
+                    );
+                  })}
+                </motion.div>
+              </>
+            );
+          })()}
+        </AnimatePresence>
       </div>
 
+      {/* Rudder - centered, overlaps bottom of engines area */}
+      <motion.div
+        className="w-full max-w-[1070px] flex justify-center"
+        style={{ marginTop: -158, marginBottom: 28, position: 'relative', zIndex: 1 }}
+        animate={{ opacity: navMode ? 0 : 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        <AviationRudder />
+      </motion.div>
+
       {/* Controls */}
-      <div className="w-full max-w-[1048px] mb-4">
+      <div className="w-full max-w-[1070px]">
         <ControlsPanel />
       </div>
     </motion.div>

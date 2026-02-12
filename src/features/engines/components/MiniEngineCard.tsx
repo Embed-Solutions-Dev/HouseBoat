@@ -13,6 +13,7 @@ const T = {
 interface MiniEngineCardProps {
   side: string;
   rpm: number;
+  throttle: number;
   fuelLevel: number;
   hasFaults: boolean;
 }
@@ -20,10 +21,11 @@ interface MiniEngineCardProps {
 export const MiniEngineCard = memo(function MiniEngineCard({
   side,
   rpm,
+  throttle,
   fuelLevel,
   hasFaults,
 }: MiniEngineCardProps) {
-  const engineOff = rpm === 0 && fuelLevel === 0;
+  const engineOff = rpm === 0 && throttle === 0;
   const lowFuel = !engineOff && fuelLevel < 25;
   const mediumFuel = !engineOff && fuelLevel >= 25 && fuelLevel < 50;
   const fuelColor = engineOff ? T.textMuted : lowFuel ? T.textRed : mediumFuel ? T.textAmber : T.gaugeActive;
@@ -32,45 +34,18 @@ export const MiniEngineCard = memo(function MiniEngineCard({
   const startAngle = 225;
   const sweep = 270;
 
-  const mv = useMotionValue(-startAngle);
+  const mv = useMotionValue(startAngle);
   const spring = useSpring(mv, { stiffness: 80, damping: 15 });
 
   useEffect(() => {
     const v = clamp(rpm, 0, max);
     const ratio = v / max;
-    const targetAngle = startAngle - ratio * sweep;
+    const targetAngle = startAngle + ratio * sweep;
     mv.set(targetAngle);
   }, [rpm, mv, max, startAngle, sweep]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18 }}>
-      {/* Fuel bar above widget */}
-      <div style={{ width: 135, display: 'flex', alignItems: 'center', gap: 6 }}>
-        <svg style={{ width: 14, height: 14, flexShrink: 0 }} viewBox="0 0 24 24" fill={fuelColor} stroke="none">
-          <path d="M19.77 7.23l.01-.01-3.72-3.72L15 4.56l2.11 2.11c-.94.36-1.61 1.26-1.61 2.33 0 1.38 1.12 2.5 2.5 2.5.36 0 .69-.08 1-.21v7.21c0 .55-.45 1-1 1s-1-.45-1-1V14c0-1.1-.9-2-2-2h-1V5c0-1.1-.9-2-2-2H6c-1.1 0-2 .9-2 2v16h10v-7.5h1.5v5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V9c0-.69-.28-1.32-.73-1.77zM12 10H6V5h6v5z" />
-        </svg>
-        <div
-          style={{
-            flex: 1,
-            height: 6,
-            borderRadius: 3,
-            background: 'rgba(30,45,60,0.6)',
-            border: '1px solid rgba(80,100,120,0.3)',
-            overflow: 'hidden',
-          }}
-        >
-          <div
-            style={{
-              width: `${fuelLevel}%`,
-              height: '100%',
-              background: `linear-gradient(90deg, ${fuelColor} 0%, ${fuelColor}88 100%)`,
-              borderRadius: 2,
-            }}
-          />
-        </div>
-        <div style={{ fontSize: 10, color: fuelColor, width: 28, textAlign: 'right' }}>{fuelLevel}%</div>
-      </div>
-
       {/* Mini tachometer */}
       <div
         style={{
@@ -219,6 +194,33 @@ export const MiniEngineCard = memo(function MiniEngineCard({
             </div>
           )}
         </div>
+      </div>
+
+      {/* Fuel bar below widget */}
+      <div style={{ width: 135, display: 'flex', alignItems: 'center', gap: 6 }}>
+        <svg style={{ width: 14, height: 14, flexShrink: 0 }} viewBox="0 0 24 24" fill={fuelColor} stroke="none">
+          <path d="M19.77 7.23l.01-.01-3.72-3.72L15 4.56l2.11 2.11c-.94.36-1.61 1.26-1.61 2.33 0 1.38 1.12 2.5 2.5 2.5.36 0 .69-.08 1-.21v7.21c0 .55-.45 1-1 1s-1-.45-1-1V14c0-1.1-.9-2-2-2h-1V5c0-1.1-.9-2-2-2H6c-1.1 0-2 .9-2 2v16h10v-7.5h1.5v5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V9c0-.69-.28-1.32-.73-1.77zM12 10H6V5h6v5z" />
+        </svg>
+        <div
+          style={{
+            flex: 1,
+            height: 6,
+            borderRadius: 3,
+            background: 'rgba(30,45,60,0.6)',
+            border: '1px solid rgba(80,100,120,0.3)',
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              width: `${fuelLevel}%`,
+              height: '100%',
+              background: `linear-gradient(90deg, ${fuelColor} 0%, ${fuelColor}88 100%)`,
+              borderRadius: 2,
+            }}
+          />
+        </div>
+        <div style={{ fontSize: 10, color: fuelColor, width: 28, textAlign: 'right' }}>{fuelLevel}%</div>
       </div>
     </div>
   );

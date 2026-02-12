@@ -22,24 +22,22 @@ export const NavigationOverlay = memo(function NavigationOverlay() {
             transition={{ duration: 0.3 }}
             style={{
               position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: '100%',
-              maxWidth: 1048,
-              height: 650,
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
               zIndex: 1,
               pointerEvents: 'none',
             }}
           >
-            <div style={{ width: '100%', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
               <div
                 style={{
                   overflow: 'hidden',
-                  height: 650,
+                  height: '100%',
                   position: 'relative',
-                  WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 70%)',
-                  maskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 70%)',
+                  WebkitMaskImage: 'radial-gradient(ellipse 70% 70% at 50% 50%, black 30%, transparent 70%)',
+                  maskImage: 'radial-gradient(ellipse 70% 70% at 50% 50%, black 30%, transparent 70%)',
                 }}
               >
                 {/* Scaled map container */}
@@ -61,10 +59,10 @@ export const NavigationOverlay = memo(function NavigationOverlay() {
                     transition={{ duration: 80, repeat: Infinity, ease: 'linear' }}
                     style={{
                       position: 'absolute',
-                      top: -300,
+                      top: -200,
                       left: -200,
                       width: 'calc(100% + 400px)',
-                      height: 'calc(100% + 650px)',
+                      height: 'calc(100% + 400px)',
                     }}
                   >
                     <svg width="100%" height="100%" style={{ position: 'absolute', top: 0, left: 0 }}>
@@ -270,12 +268,10 @@ export const NavigationOverlay = memo(function NavigationOverlay() {
             transition={{ duration: 0.3 }}
             style={{
               position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: '100%',
-              maxWidth: 1048,
-              height: 650,
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
               zIndex: 2,
               pointerEvents: 'none',
             }}
@@ -283,9 +279,9 @@ export const NavigationOverlay = memo(function NavigationOverlay() {
             <div
               style={{
                 position: 'absolute',
-                top: '50%',
-                right: 152,
-                transform: 'translateY(-50%)',
+                bottom: -35,
+                left: '50%',
+                transform: 'translateX(-50%)',
                 zIndex: 10,
                 pointerEvents: 'auto',
               }}
@@ -293,64 +289,15 @@ export const NavigationOverlay = memo(function NavigationOverlay() {
               <div
                 style={{
                   display: 'flex',
-                  flexDirection: 'column',
+                  flexDirection: 'row',
                   alignItems: 'center',
                   gap: 8,
-                  padding: '12px 8px',
+                  padding: '8px 12px',
                   background: 'rgba(12,18,28,0.85)',
                   borderRadius: 12,
                   border: '1px solid rgba(80,100,120,0.3)',
                 }}
               >
-                {/* Zoom in button */}
-                <button
-                  onClick={() => setMapZoom(mapZoom + 10)}
-                  style={{
-                    width: 28,
-                    height: 28,
-                    borderRadius: 6,
-                    border: '1px solid rgba(80,100,120,0.4)',
-                    background: 'rgba(40,60,80,0.5)',
-                    color: 'rgba(150,180,210,0.9)',
-                    fontSize: 18,
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  +
-                </button>
-
-                {/* Slider track */}
-                <div
-                  style={{
-                    width: 4,
-                    height: 160,
-                    background: 'rgba(60,80,100,0.4)',
-                    borderRadius: 2,
-                    position: 'relative',
-                  }}
-                >
-                  {/* Slider thumb - position based on zoom (100% at top, 0% at bottom) */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: `${100 - mapZoom}%`,
-                      left: '50%',
-                      transform: 'translate(-50%, -50%)',
-                      width: 12,
-                      height: 12,
-                      borderRadius: '50%',
-                      background: 'linear-gradient(180deg, rgba(100,160,220,0.9) 0%, rgba(60,120,180,0.8) 100%)',
-                      border: '2px solid rgba(150,200,255,0.6)',
-                      boxShadow: '0 0 8px rgba(100,160,220,0.5)',
-                      transition: 'top 0.2s ease-out',
-                    }}
-                  />
-                </div>
-
                 {/* Zoom out button */}
                 <button
                   onClick={() => setMapZoom(mapZoom - 10)}
@@ -370,6 +317,55 @@ export const NavigationOverlay = memo(function NavigationOverlay() {
                   }}
                 >
                   −
+                </button>
+
+                {/* Slider track */}
+                <div
+                  style={{
+                    height: 4,
+                    width: 240,
+                    background: 'rgba(60,80,100,0.4)',
+                    borderRadius: 2,
+                    position: 'relative',
+                  }}
+                >
+                  {/* Slider thumb - position based on zoom (0% at left, 100% at right) */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      left: `${mapZoom}%`,
+                      top: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      width: 12,
+                      height: 12,
+                      borderRadius: '50%',
+                      background: 'linear-gradient(180deg, rgba(100,160,220,0.9) 0%, rgba(60,120,180,0.8) 100%)',
+                      border: '2px solid rgba(150,200,255,0.6)',
+                      boxShadow: '0 0 8px rgba(100,160,220,0.5)',
+                      transition: 'left 0.2s ease-out',
+                    }}
+                  />
+                </div>
+
+                {/* Zoom in button */}
+                <button
+                  onClick={() => setMapZoom(mapZoom + 10)}
+                  style={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: 6,
+                    border: '1px solid rgba(80,100,120,0.4)',
+                    background: 'rgba(40,60,80,0.5)',
+                    color: 'rgba(150,180,210,0.9)',
+                    fontSize: 18,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  +
                 </button>
               </div>
             </div>

@@ -55,8 +55,7 @@ export const CamerasPanel = memo(function CamerasPanel() {
     <div
       style={{
         position: 'relative',
-        // Fixed aspect ratio container to prevent size changes
-        aspectRatio: '2.1 / 1',
+        height: 715,
         width: '100%',
       }}
     >

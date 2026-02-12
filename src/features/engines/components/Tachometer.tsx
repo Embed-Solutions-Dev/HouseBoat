@@ -140,8 +140,8 @@ export const Tachometer = memo(function Tachometer({
             position: 'absolute',
             top: 13 * scale,
             ...(side.includes('Правый') || side === 'Right'
-              ? { left: 13 * scale }
-              : { right: 13 * scale }),
+              ? { right: 13 * scale }
+              : { left: 13 * scale }),
             width: Math.max(28, 32 * scale),
             height: Math.max(28, 32 * scale),
             background: hasFaults
@@ -215,7 +215,7 @@ export const Tachometer = memo(function Tachometer({
             />
 
             {/* Fuel arc filled */}
-            {fuelRatio > 0 && (
+            {fuelRatio > 0 && !engineOff && (
               <path
                 d={`M ${cx + fuelArcR * Math.cos((fuelStartAngle * Math.PI) / 180)} ${cy - fuelArcR * Math.sin((fuelStartAngle * Math.PI) / 180)} A ${fuelArcR} ${fuelArcR} 0 0 0 ${cx + fuelArcR * Math.cos((fuelFilledAngle * Math.PI) / 180)} ${cy - fuelArcR * Math.sin((fuelFilledAngle * Math.PI) / 180)}`}
                 fill="none"
@@ -224,6 +224,27 @@ export const Tachometer = memo(function Tachometer({
                 strokeLinecap="round"
               />
             )}
+
+            {/* Fuel arc tick marks at 25% intervals */}
+            {[0, 25, 50, 75, 100].map((pct) => {
+              const t = pct / 100;
+              const angle = ((fuelStartAngle + t * fuelSweep) * Math.PI) / 180;
+              const isMajor = pct === 0 || pct === 50 || pct === 100;
+              const outerR = fuelArcR + 5;
+              const innerR = isMajor ? fuelArcR - 9 : fuelArcR - 6;
+              return (
+                <line
+                  key={`fuel-tick-${pct}`}
+                  x1={cx + innerR * Math.cos(angle)}
+                  y1={cy - innerR * Math.sin(angle)}
+                  x2={cx + outerR * Math.cos(angle)}
+                  y2={cy - outerR * Math.sin(angle)}
+                  stroke={isMajor ? T.tickMajor : T.tickMinor}
+                  strokeWidth={isMajor ? 2 * scale : 1 * scale}
+                  strokeLinecap="round"
+                />
+              );
+            })}
 
             {/* Tick marks */}
             {ticks.map((tick, i) => (

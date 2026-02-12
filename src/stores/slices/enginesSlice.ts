@@ -29,10 +29,17 @@ const initialEngine: EngineData = {
 };
 
 // Helper to create default engines array
+// Indices of engines that should be OFF by default
+const getOffEngines = (count: number): Set<number> => {
+  if (count === 2) return new Set([1]);       // Right engine off
+  if (count === 4) return new Set([3]);       // Правый 2 off
+  return new Set();
+};
+
 const createEnginesArray = (count: number): EngineData[] => {
+  const offEngines = getOffEngines(count);
   return Array.from({ length: count }, (_, i) => {
-    // Engine 3 (Правый двигатель 2) is turned off
-    if (i === 3) {
+    if (offEngines.has(i)) {
       return {
         ...initialEngine,
         rpm: 0,
