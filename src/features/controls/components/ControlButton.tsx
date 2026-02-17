@@ -26,7 +26,7 @@ export const ControlButton = memo(function ControlButton({
         active
           ? variant === 'danger'
             ? 'bg-yacht-red/20 text-yacht-red shadow-glow-red'
-            : 'bg-yacht-green/20 text-yacht-green shadow-glow-green'
+            : 'bg-yacht-green/30 text-yacht-green shadow-glow-green'
           : 'bg-yacht-card text-yacht-secondary hover:bg-yacht-card-light'
       )}
     >

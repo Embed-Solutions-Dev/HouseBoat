@@ -13,7 +13,7 @@ const config: Config = {
           primary: '#e8f4ff',
           secondary: '#7a95a8',
           muted: '#4a6070',
-          green: '#3dc88c',
+          green: '#20f090',
           amber: '#e8a030',
           red: '#e04050',
           yellow: '#e8c820',
@@ -22,7 +22,7 @@ const config: Config = {
       boxShadow: {
         card: '0 12px 40px rgba(0,0,0,0.5), 0 4px 12px rgba(0,0,0,0.3)',
         'card-inset': 'inset 0 6px 20px rgba(0,0,0,0.4), inset 0 -2px 10px rgba(0,0,0,0.2)',
-        'glow-green': '0 0 20px rgba(61,200,140,0.3)',
+        'glow-green': '0 0 30px rgba(32,240,144,0.6), 0 0 60px rgba(32,240,144,0.3)',
         'glow-red': '0 0 20px rgba(224,64,80,0.3)',
         'glow-amber': '0 0 20px rgba(232,160,48,0.3)',
       },

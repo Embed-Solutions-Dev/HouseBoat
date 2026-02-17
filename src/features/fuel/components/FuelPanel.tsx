@@ -3,6 +3,7 @@ import { useStore } from '@/stores';
 import { Card } from '@/components/ui/Card';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { Fuel } from '@/components/icons';
+import { ENGINE_CONFIG, ENGINE_LABELS } from '@/config/constants';
 
 export const FuelPanel = memo(function FuelPanel() {
   const fuel = useStore((s) => s.systems.fuel);
@@ -13,13 +14,22 @@ export const FuelPanel = memo(function FuelPanel() {
     return 'green';
   };
 
+  const getTankLevel = (key: string) => {
+    const tank = fuel[key as keyof typeof fuel];
+    if (!tank || typeof tank !== 'object' || !('level' in tank) || !('capacity' in tank)) return 0;
+    return Math.round((tank.level / tank.capacity) * 100);
+  };
+
+  // Engine tanks based on actual engine count
+  const engineTanks = Array.from({ length: ENGINE_CONFIG.count }, (_, i) => ({
+    label: ENGINE_LABELS[i] || `Двигатель ${i + 1}`,
+    level: getTankLevel(`engine${i}`),
+  }));
+
   const tanks = [
-    { label: 'Лев. двиг. 1', data: { level: Math.round((fuel.engine0.level / fuel.engine0.capacity) * 100), capacity: 100 } },
-    { label: 'Лев. двиг. 2', data: { level: Math.round((fuel.engine1.level / fuel.engine1.capacity) * 100), capacity: 100 } },
-    { label: 'Прав. двиг. 1', data: { level: Math.round((fuel.engine2.level / fuel.engine2.capacity) * 100), capacity: 100 } },
-    { label: 'Прав. двиг. 2', data: { level: Math.round((fuel.engine3.level / fuel.engine3.capacity) * 100), capacity: 100 } },
-    { label: 'Дизель', data: { level: Math.round((fuel.diesel.level / fuel.diesel.capacity) * 100), capacity: 100 } },
-    { label: 'Вода', data: { level: Math.round((fuel.water.level / fuel.water.capacity) * 100), capacity: 100 } },
+    ...engineTanks,
+    { label: 'Дизель', level: getTankLevel('diesel') },
+    { label: 'Вода', level: getTankLevel('water') },
   ];
 
   return (
@@ -34,11 +44,11 @@ export const FuelPanel = memo(function FuelPanel() {
           <div key={i}>
             <div className="flex justify-between text-xs mb-1">
               <span className="text-yacht-secondary">{tank.label}</span>
-              <span className="text-yacht-primary">{tank.data.level}%</span>
+              <span className="text-yacht-primary">{tank.level}%</span>
             </div>
             <ProgressBar
-              value={tank.data.level}
-              color={getColor(tank.data.level)}
+              value={tank.level}
+              color={getColor(tank.level)}
               size="sm"
             />
           </div>

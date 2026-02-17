@@ -6,4 +6,6 @@ export { NavigationPanel } from './components/NavigationPanel';
 export { NavigationOverlay } from './components/NavigationOverlay';
 export { AviationCompass } from './components/AviationCompass';
 export { AviationRudder } from './components/AviationRudder';
+export { AviationCompassV1 } from './components/AviationCompassV1';
+export { AviationRudderV1 } from './components/AviationRudderV1';
 export type * from './types';

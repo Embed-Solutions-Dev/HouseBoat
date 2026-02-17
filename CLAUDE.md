@@ -190,6 +190,37 @@ npm install
 npm run dev      # Запуск на http://localhost:3000
 ```
 
+### Dev-сервер с автоперезапуском (daemon mode)
+
+**Рекомендуется для продакшн-разработки** — сервер автоматически перезапускается при крашах:
+
+```bash
+npm run dev:daemon
+```
+
+**Возможности:**
+- ✅ Автоматический перезапуск при крашах
+- ✅ Hot Module Replacement (HMR) от Vite
+- ✅ Логирование с timestamp
+- ✅ Защита от бесконечных перезапусков (макс. 10 попыток)
+- ✅ Задержка 3 секунды между перезапусками
+
+**Скрипт:** `/workspace/start-dev.sh`
+
+**Запуск в фоне (tmux/screen):**
+```bash
+# В tmux
+tmux new -s dev
+npm run dev:daemon
+# Ctrl+B, затем D для detach
+
+# Вернуться к сессии
+tmux attach -t dev
+
+# Остановить
+tmux kill-session -t dev
+```
+
 ### Изменение количества двигателей
 
 ```bash
@@ -201,6 +232,9 @@ VITE_ENGINE_COUNT=4 npm run dev
 
 # Для 6 двигателей
 VITE_ENGINE_COUNT=6 npm run dev
+
+# С daemon mode
+VITE_ENGINE_COUNT=4 npm run dev:daemon
 ```
 
 ### Production сборка

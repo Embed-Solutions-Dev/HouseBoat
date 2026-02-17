@@ -3,7 +3,7 @@ import { useStore } from '@/stores';
 import { EngineCard } from './EngineCard';
 import { getEnginesLayout } from '@/utils/engineLayout';
 
-export const EnginesPanel = memo(function EnginesPanel() {
+export const EnginesPanel = memo(function EnginesPanel({ screenMode = 'S1' }: { screenMode?: 'S1' | 'S2' | 'S3' }) {
   const engines = useStore((s) => s.engines);
   const engineCount = useStore((s) => s.engineCount);
   const expandedEngine = useStore((s) => s.expandedEngine);
@@ -38,6 +38,7 @@ export const EnginesPanel = memo(function EnginesPanel() {
                   <EngineCard
                     id={engineId}
                     data={engine}
+                    screenMode={screenMode}
                     size={index === 1 ? layout.tachometerSize * 0.97 : layout.tachometerSize * 1.05}
                   />
                 </div>
@@ -67,6 +68,7 @@ export const EnginesPanel = memo(function EnginesPanel() {
                   <EngineCard
                     id={engineId}
                     data={engine}
+                    screenMode={screenMode}
                     size={index === 0 ? layout.tachometerSize * 0.97 : layout.tachometerSize * 1.05}
                   />
                 </div>
@@ -82,8 +84,8 @@ export const EnginesPanel = memo(function EnginesPanel() {
     if (engineCount === 2) {
       return (
         <div className="flex items-center justify-between w-full" style={{ padding: '0 35px' }}>
-          <EngineCard id={0} data={engines[0]} size={layout.tachometerSize} />
-          <EngineCard id={1} data={engines[1]} size={layout.tachometerSize} />
+          <EngineCard id={0} data={engines[0]} size={layout.tachometerSize} screenMode={screenMode} />
+          <EngineCard id={1} data={engines[1]} size={layout.tachometerSize} screenMode={screenMode} />
         </div>
       );
     }
@@ -102,6 +104,7 @@ export const EnginesPanel = memo(function EnginesPanel() {
             id={index}
             data={engine}
             size={layout.tachometerSize}
+            screenMode={screenMode}
           />
         ))}
       </div>
@@ -127,6 +130,7 @@ export const EnginesPanel = memo(function EnginesPanel() {
             id={index}
             data={engine}
             size={layout.tachometerSize}
+            screenMode={screenMode}
           />
         ))}
       </div>
@@ -144,6 +148,7 @@ export const EnginesPanel = memo(function EnginesPanel() {
             id={index + layout.topRow}
             data={engine}
             size={layout.tachometerSize}
+            screenMode={screenMode}
           />
         ))}
       </div>

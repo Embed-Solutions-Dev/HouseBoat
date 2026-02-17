@@ -4,7 +4,7 @@ import { Tachometer } from './Tachometer';
 import type { EngineCardProps } from '../types';
 import { ENGINE_LABELS } from '@/config/constants';
 
-export const EngineCard = memo(function EngineCard({ id, data, size = 310 }: EngineCardProps) {
+export const EngineCard = memo(function EngineCard({ id, data, size = 310, screenMode = 'S1' }: EngineCardProps) {
   const fuel = useStore((s) => s.systems.fuel);
   const fuelMapping = useStore((s) => s.fuelMapping);
   const toggleExpandedEngine = useStore((s) => s.toggleExpandedEngine);
@@ -50,6 +50,7 @@ export const EngineCard = memo(function EngineCard({ id, data, size = 310 }: Eng
       temperature={data.temperature}
       oilPressure={data.oilPressure}
       size={size}
+      screenMode={screenMode}
     />
   );
 });

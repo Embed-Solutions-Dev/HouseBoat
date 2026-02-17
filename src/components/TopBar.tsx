@@ -1,6 +1,7 @@
 import { memo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '@/stores';
+import { ENGINE_CONFIG, ENGINE_LABELS } from '@/config/constants';
 
 // Weather icons
 const WeatherIcons = {
@@ -128,14 +129,20 @@ const getTankColor = (level: number) => {
   return T.textRed;
 };
 
-const getTankContainers = (fuel: { engine0: { level: number; capacity: number }; engine1: { level: number; capacity: number }; engine2: { level: number; capacity: number }; engine3: { level: number; capacity: number }; diesel: { level: number; capacity: number }; water: { level: number; capacity: number } }) => [
-  { name: 'Двиг. 1', subname: 'левый', level: Math.round((fuel.engine0.level / fuel.engine0.capacity) * 100), showDefault: false },
-  { name: 'Двиг. 2', subname: 'левый', level: Math.round((fuel.engine1.level / fuel.engine1.capacity) * 100), showDefault: false },
-  { name: 'Двиг. 1', subname: 'правый', level: Math.round((fuel.engine2.level / fuel.engine2.capacity) * 100), showDefault: false },
-  { name: 'Двиг. 2', subname: 'правый', level: Math.round((fuel.engine3.level / fuel.engine3.capacity) * 100), showDefault: false },
-  { name: 'Дизель', subname: '', level: Math.round((fuel.diesel.level / fuel.diesel.capacity) * 100), showDefault: true },
-  { name: 'Вода', subname: '', level: Math.round((fuel.water.level / fuel.water.capacity) * 100), showDefault: true },
-];
+const getTankContainers = (fuel: Record<string, { level: number; capacity: number } | number>) => {
+  const engineTanks = Array.from({ length: ENGINE_CONFIG.count }, (_, i) => {
+    const tank = fuel[`engine${i}`];
+    if (!tank || typeof tank !== 'object' || !('level' in tank)) return { name: ENGINE_LABELS[i] || `Двиг. ${i + 1}`, subname: '', level: 0, showDefault: false };
+    return { name: ENGINE_LABELS[i] || `Двиг. ${i + 1}`, subname: '', level: Math.round((tank.level / tank.capacity) * 100), showDefault: false };
+  });
+  const diesel = fuel.diesel;
+  const water = fuel.water;
+  return [
+    ...engineTanks,
+    { name: 'Дизель', subname: '', level: diesel && typeof diesel === 'object' && 'level' in diesel ? Math.round((diesel.level / diesel.capacity) * 100) : 0, showDefault: true },
+    { name: 'Вода', subname: '', level: water && typeof water === 'object' && 'level' in water ? Math.round((water.level / water.capacity) * 100) : 0, showDefault: true },
+  ];
+};
 
 const sectionKeys: SectionKey[] = ['weather', 'electric', 'speed', 'depth', 'tanks', 'safety'];
 
@@ -155,7 +162,7 @@ const defaultSafetyMetrics = [
   { label: 'Дым Отсек 4', value: 'Норма', unit: '', status: 'ok' },
 ];
 
-export const TopBar = memo(function TopBar() {
+export const TopBar = memo(function TopBar({ screenMode = 'S1' }: { screenMode?: 'S1' | 'S2' | 'S3' }) {
   const [expandedSection, setExpandedSection] = useState<SectionKey | null>(null);
   const [weatherIndex, setWeatherIndex] = useState(0);
   const [windIndex, setWindIndex] = useState(0);
@@ -285,12 +292,12 @@ export const TopBar = memo(function TopBar() {
         animate={{ height: expandedSection ? 380 : 88 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         style={{
-          background: 'linear-gradient(180deg, rgba(12,18,28,0.95) 0%, rgba(6,10,18,0.98) 100%)',
+          background: screenMode === 'S2' ? '#000000' : screenMode === 'S3' ? 'linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 100%)' : 'linear-gradient(180deg, rgba(12,18,28,0.95) 0%, rgba(6,10,18,0.98) 100%)',
           borderRadius: 20,
-          border: '1px solid rgba(60,80,100,0.2)',
+          border: screenMode === 'S2' ? '1px solid rgba(120,140,160,0.5)' : screenMode === 'S3' ? '1px solid rgba(0,0,0,0.25)' : '1px solid rgba(60,80,100,0.2)',
           boxShadow: expandedSection
-            ? '0 16px 64px rgba(0,0,0,0.6), inset 0 1px 0 rgba(100,130,160,0.08)'
-            : '0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(100,130,160,0.08)',
+            ? (screenMode === 'S3' ? '0 16px 64px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.5)' : '0 16px 64px rgba(0,0,0,0.6), inset 0 1px 0 rgba(100,130,160,0.08)')
+            : (screenMode === 'S3' ? '0 4px 16px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.5)' : '0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(100,130,160,0.08)'),
           overflow: 'hidden',
           position: 'absolute',
           top: 0,
@@ -303,7 +310,7 @@ export const TopBar = memo(function TopBar() {
         <div
           style={{
             height: 1,
-            background: 'linear-gradient(90deg, transparent 10%, rgba(120,150,180,0.15) 50%, transparent 90%)',
+            background: screenMode === 'S3' ? 'linear-gradient(90deg, transparent 10%, rgba(0,0,0,0.04) 50%, transparent 90%)' : 'linear-gradient(90deg, transparent 10%, rgba(120,150,180,0.15) 50%, transparent 90%)',
           }}
         />
 
@@ -320,11 +327,11 @@ export const TopBar = memo(function TopBar() {
                 padding: 24,
                 display: 'flex',
                 flexDirection: 'column',
-                borderRight: '1px solid rgba(80,100,120,0.2)',
+                borderRight: screenMode === 'S3' ? '1px solid rgba(0,0,0,0.18)' : '1px solid rgba(80,100,120,0.2)',
               }}
             >
               <div style={{ marginBottom: 20 }}>
-                <div style={{ fontSize: 14, color: T.textSecondary, letterSpacing: 0.5, fontWeight: 500 }}>
+                <div style={{ fontSize: 14, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? '#000000' : T.textSecondary, letterSpacing: 0.5, fontWeight: 500 }}>
                   {sectionData[expandedSection]?.title}
                 </div>
               </div>
@@ -350,11 +357,11 @@ export const TopBar = memo(function TopBar() {
                             width: 56,
                             height: 160,
                             borderRadius: 12,
-                            background: 'rgba(20,30,45,0.8)',
-                            border: '1px solid rgba(80,100,120,0.3)',
+                            background: screenMode === 'S3' ? 'rgba(200,210,225,0.8)' : 'rgba(20,30,45,0.8)',
+                            border: screenMode === 'S3' ? '1px solid rgba(0,0,0,0.2)' : '1px solid rgba(80,100,120,0.3)',
                             position: 'relative',
                             overflow: 'hidden',
-                            boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.3)',
+                            boxShadow: screenMode === 'S3' ? 'inset 0 2px 8px rgba(0,0,0,0.15)' : 'inset 0 2px 8px rgba(0,0,0,0.3)',
                           }}
                         >
                           <motion.div
@@ -379,7 +386,7 @@ export const TopBar = memo(function TopBar() {
                       </motion.div>
                     ))}
                   </div>
-                  <div style={{ width: 1, background: 'linear-gradient(180deg, transparent 5%, rgba(80,100,120,0.3) 50%, transparent 95%)' }} />
+                  <div style={{ width: 1, background: screenMode === 'S2' ? 'linear-gradient(180deg, transparent 5%, rgba(120,140,160,0.5) 50%, transparent 95%)' : screenMode === 'S3' ? 'linear-gradient(180deg, transparent 5%, rgba(0,0,0,0.20) 50%, transparent 95%)' : 'linear-gradient(180deg, transparent 5%, rgba(80,100,120,0.3) 50%, transparent 95%)' }} />
                   <div style={{ display: 'flex', flexDirection: 'column', flex: 1, paddingTop: 8 }}>
                     <div style={{ height: 34 }} />
                     <div style={{ height: 160, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
@@ -391,8 +398,8 @@ export const TopBar = memo(function TopBar() {
                           transition={{ delay: 0.15 + 0.05 * idx }}
                           style={{
                             padding: '12px 14px',
-                            background: 'rgba(30,45,60,0.4)',
-                            border: '1px solid rgba(80,100,120,0.3)',
+                            background: screenMode === 'S3' ? 'rgba(220,228,240,0.6)' : 'rgba(30,45,60,0.4)',
+                            border: screenMode === 'S3' ? '1px solid rgba(0,0,0,0.2)' : '1px solid rgba(80,100,120,0.3)',
                             borderRadius: 12,
                           }}
                         >
@@ -435,9 +442,15 @@ export const TopBar = memo(function TopBar() {
                       transition={{ delay: 0.05 * idx }}
                       style={{
                         padding: '14px 16px',
-                        background: isAlert ? 'rgba(224,64,80,0.15)' : 'rgba(30,45,60,0.4)',
+                        background: isAlert
+                          ? (screenMode === 'S3' ? 'rgba(192,53,74,0.1)' : 'rgba(224,64,80,0.15)')
+                          : (screenMode === 'S3' ? 'rgba(220,228,240,0.6)' : 'rgba(30,45,60,0.4)'),
                         border: `1px solid ${
-                          isAlert ? 'rgba(224,64,80,0.5)' : metric.status === 'ok' ? 'rgba(61,200,140,0.3)' : 'rgba(80,100,120,0.3)'
+                          isAlert
+                            ? (screenMode === 'S3' ? 'rgba(192,53,74,0.4)' : 'rgba(224,64,80,0.5)')
+                            : metric.status === 'ok'
+                              ? (screenMode === 'S3' ? 'rgba(45,160,110,0.3)' : 'rgba(61,200,140,0.3)')
+                              : (screenMode === 'S3' ? 'rgba(0,0,0,0.2)' : 'rgba(80,100,120,0.3)')
                         }`,
                         borderRadius: 12,
                         textAlign: (expandedSection === 'weather' || expandedSection === 'electric' || expandedSection === 'safety') ? 'center' : 'left',
@@ -491,9 +504,11 @@ export const TopBar = memo(function TopBar() {
                           right: 4,
                           bottom: 4,
                           borderRadius: 10,
-                          border: '1px solid rgba(224,64,80,0.6)',
-                          boxShadow: '0 0 12px rgba(224,64,80,0.4), inset 0 0 8px rgba(224,64,80,0.1)',
-                          background: 'rgba(224,64,80,0.08)',
+                          border: screenMode === 'S3' ? '2px solid rgba(224,64,80,1)' : '1px solid rgba(224,64,80,0.9)',
+                          boxShadow: screenMode === 'S3'
+                            ? '0 0 30px rgba(224,64,80,0.9), 0 0 60px rgba(224,64,80,0.6), inset 0 0 12px rgba(224,64,80,0.2)'
+                            : '0 0 20px rgba(224,64,80,0.7), inset 0 0 8px rgba(224,64,80,0.15)',
+                          background: screenMode === 'S3' ? 'rgba(224,64,80,0.18)' : 'rgba(224,64,80,0.12)',
                           pointerEvents: 'none',
                         }}
                       />
@@ -515,17 +530,17 @@ export const TopBar = memo(function TopBar() {
                         border: 'none',
                       }}
                     >
-                      <div style={{ fontSize: 9, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 6 }}>
+                      <div style={{ fontSize: 9, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? 'rgba(0,0,0,0.7)' : T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 6 }}>
                         {getSectionTitle(key)}
                       </div>
                       {key === 'tanks' ? (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 3, width: '80%' }}>
                           {tankContainers.filter(tank => tank.showDefault).map((tank, i) => (
                             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                              <div style={{ fontSize: 7, color: T.textMuted, width: 22, textAlign: 'right' }}>
+                              <div style={{ fontSize: 7, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? 'rgba(0,0,0,0.7)' : T.textMuted, width: 22, textAlign: 'right' }}>
                                 {tank.name === 'Дизель' ? 'ДТ' : 'H₂O'}
                               </div>
-                              <div style={{ flex: 1, height: 5, borderRadius: 2, background: 'rgba(30,45,60,0.6)', overflow: 'hidden' }}>
+                              <div style={{ flex: 1, height: 5, borderRadius: 2, background: screenMode === 'S3' ? 'rgba(200,210,225,0.6)' : 'rgba(30,45,60,0.6)', overflow: 'hidden' }}>
                                 <div style={{
                                   width: `${tank.level}%`,
                                   height: '100%',
@@ -559,12 +574,12 @@ export const TopBar = memo(function TopBar() {
                           </div>
                           <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                             <div style={{ textAlign: 'center' }}>
-                              <div style={{ fontSize: 11, fontWeight: 500, color: T.textSecondary }}>22°</div>
-                              <div style={{ fontSize: 7, color: T.textMuted }}>воздух</div>
+                              <div style={{ fontSize: 11, fontWeight: 500, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? '#000000' : T.textSecondary }}>22°</div>
+                              <div style={{ fontSize: 7, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? 'rgba(0,0,0,0.7)' : T.textMuted }}>воздух</div>
                             </div>
                             <div style={{ textAlign: 'center' }}>
-                              <div style={{ fontSize: 11, fontWeight: 500, color: T.textSecondary }}>18°</div>
-                              <div style={{ fontSize: 7, color: T.textMuted }}>вода</div>
+                              <div style={{ fontSize: 11, fontWeight: 500, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? '#000000' : T.textSecondary }}>18°</div>
+                              <div style={{ fontSize: 7, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? 'rgba(0,0,0,0.7)' : T.textMuted }}>вода</div>
                             </div>
                           </div>
                         </div>
@@ -580,18 +595,18 @@ export const TopBar = memo(function TopBar() {
                               style={{ display: 'flex', gap: 8, alignItems: 'center' }}
                             >
                               <div style={{ textAlign: 'center' }}>
-                                <div style={{ fontSize: 11, fontWeight: 500, color: T.textSecondary }}>
+                                <div style={{ fontSize: 11, fontWeight: 500, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? '#000000' : T.textSecondary }}>
                                   {electricPairs[electricIndex][0]?.value}{electricPairs[electricIndex][0]?.unit}
                                 </div>
-                                <div style={{ fontSize: 7, color: T.textMuted }}>
+                                <div style={{ fontSize: 7, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? 'rgba(0,0,0,0.7)' : T.textMuted }}>
                                   {electricPairs[electricIndex][0]?.label.split(' ')[0]}
                                 </div>
                               </div>
                               <div style={{ textAlign: 'center' }}>
-                                <div style={{ fontSize: 11, fontWeight: 500, color: T.textSecondary }}>
+                                <div style={{ fontSize: 11, fontWeight: 500, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? '#000000' : T.textSecondary }}>
                                   {electricPairs[electricIndex][1]?.value}{electricPairs[electricIndex][1]?.unit}
                                 </div>
-                                <div style={{ fontSize: 7, color: T.textMuted }}>
+                                <div style={{ fontSize: 7, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? 'rgba(0,0,0,0.7)' : T.textMuted }}>
                                   {electricPairs[electricIndex][1]?.label.split(' ')[0]}
                                 </div>
                               </div>
@@ -614,7 +629,7 @@ export const TopBar = memo(function TopBar() {
                                   {safetyPairs[safetyIndex][0]?.value}
                                   {safetyPairs[safetyIndex][0]?.unit}
                                 </div>
-                                <div style={{ fontSize: 7, color: T.textMuted }}>
+                                <div style={{ fontSize: 7, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? 'rgba(0,0,0,0.7)' : T.textMuted }}>
                                   {safetyPairs[safetyIndex][0]?.label.replace('Темп. ', '').replace('Затопл. ', '').replace('Дым ', '')}
                                 </div>
                               </div>
@@ -623,7 +638,7 @@ export const TopBar = memo(function TopBar() {
                                   {safetyPairs[safetyIndex][1]?.value}
                                   {safetyPairs[safetyIndex][1]?.unit}
                                 </div>
-                                <div style={{ fontSize: 7, color: T.textMuted }}>
+                                <div style={{ fontSize: 7, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? 'rgba(0,0,0,0.7)' : T.textMuted }}>
                                   {safetyPairs[safetyIndex][1]?.label.replace('Темп. ', '').replace('Затопл. ', '').replace('Дым ', '')}
                                 </div>
                               </div>
@@ -636,7 +651,7 @@ export const TopBar = memo(function TopBar() {
                       <div
                         style={{
                           height: 1,
-                          background: 'linear-gradient(90deg, transparent 15%, rgba(80,100,120,0.3) 50%, transparent 85%)',
+                          background: screenMode === 'S2' ? 'linear-gradient(90deg, transparent 15%, rgba(120,140,160,0.5) 50%, transparent 85%)' : screenMode === 'S3' ? 'linear-gradient(90deg, transparent 15%, rgba(0,0,0,0.20) 50%, transparent 85%)' : 'linear-gradient(90deg, transparent 15%, rgba(80,100,120,0.3) 50%, transparent 85%)',
                         }}
                       />
                     )}
@@ -671,9 +686,11 @@ export const TopBar = memo(function TopBar() {
                       right: 4,
                       bottom: 6,
                       borderRadius: 12,
-                      border: '1px solid rgba(224,64,80,0.6)',
-                      boxShadow: '0 0 15px rgba(224,64,80,0.4), inset 0 0 10px rgba(224,64,80,0.1)',
-                      background: 'rgba(224,64,80,0.08)',
+                      border: screenMode === 'S3' ? '2px solid rgba(224,64,80,1)' : '1px solid rgba(224,64,80,0.9)',
+                      boxShadow: screenMode === 'S3'
+                        ? '0 0 35px rgba(224,64,80,0.9), 0 0 70px rgba(224,64,80,0.6), inset 0 0 14px rgba(224,64,80,0.2)'
+                        : '0 0 24px rgba(224,64,80,0.7), inset 0 0 10px rgba(224,64,80,0.15)',
+                      background: screenMode === 'S3' ? 'rgba(224,64,80,0.18)' : 'rgba(224,64,80,0.12)',
                       pointerEvents: 'none',
                     }}
                   />
@@ -692,28 +709,28 @@ export const TopBar = memo(function TopBar() {
                     border: 'none',
                   }}
                 >
-                  <div style={{ fontSize: 9, color: T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 6 }}>
+                  <div style={{ fontSize: 9, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? 'rgba(0,0,0,0.7)' : T.textMuted, letterSpacing: 0.5, fontWeight: 500, marginBottom: 6 }}>
                     {getSectionTitle(key)}
                   </div>
                   {key === 'speed' ? (
                     <div style={{ textAlign: 'center' }}>
-                      <div style={{ fontSize: 24, fontWeight: 600, color: T.speedGold }}>
+                      <div style={{ fontSize: 24, fontWeight: 600, color: screenMode === 'S2' ? '#ffffff' : screenMode === 'S3' ? '#000000' : T.speedGold }}>
                         {speed.toFixed(1)}
                       </div>
-                      <div style={{ fontSize: 8, color: T.textMuted }}>км/ч</div>
+                      <div style={{ fontSize: 8, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? 'rgba(0,0,0,0.7)' : T.textMuted }}>км/ч</div>
                     </div>
                   ) : key === 'depth' ? (
                     <div style={{ textAlign: 'center' }}>
-                      <div style={{ fontSize: 24, fontWeight: 600, color: depthColor }}>
+                      <div style={{ fontSize: 24, fontWeight: 600, color: screenMode === 'S2' ? (depth < 2 ? T.textRed : '#ffffff') : screenMode === 'S3' ? (depth < 2 ? '#c0354a' : '#000000') : depthColor }}>
                         {depth.toFixed(1)}
                       </div>
-                      <div style={{ fontSize: 8, color: T.textMuted }}>м</div>
+                      <div style={{ fontSize: 8, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? 'rgba(0,0,0,0.7)' : T.textMuted }}>м</div>
                     </div>
                   ) : key === 'tanks' ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 4, width: '85%' }}>
                       {tankContainers.filter(tank => tank.showDefault).map((tank, i) => (
                         <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                          <div style={{ fontSize: 8, color: T.textMuted, width: 28, textAlign: 'right' }}>
+                          <div style={{ fontSize: 8, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? 'rgba(0,0,0,0.7)' : T.textMuted, width: 28, textAlign: 'right' }}>
                             {tank.name === 'Дизель' ? 'ДТ' : 'H₂O'}
                           </div>
                           <div
@@ -721,7 +738,7 @@ export const TopBar = memo(function TopBar() {
                               flex: 1,
                               height: 6,
                               borderRadius: 3,
-                              background: 'rgba(30,45,60,0.6)',
+                              background: screenMode === 'S3' ? 'rgba(200,210,225,0.6)' : 'rgba(30,45,60,0.6)',
                               overflow: 'hidden',
                             }}
                           >
@@ -761,16 +778,16 @@ export const TopBar = memo(function TopBar() {
                       </div>
                       <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                         <div style={{ textAlign: 'center' }}>
-                          <div style={{ fontSize: 13, fontWeight: 500, color: T.textSecondary }}>22°</div>
-                          <div style={{ fontSize: 8, color: T.textMuted }}>воздух</div>
+                          <div style={{ fontSize: 13, fontWeight: 500, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? '#000000' : T.textSecondary }}>22°</div>
+                          <div style={{ fontSize: 8, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? 'rgba(0,0,0,0.7)' : T.textMuted }}>воздух</div>
                         </div>
                         <div style={{ textAlign: 'center' }}>
-                          <div style={{ fontSize: 13, fontWeight: 500, color: T.textSecondary }}>18°</div>
-                          <div style={{ fontSize: 8, color: T.textMuted }}>вода</div>
+                          <div style={{ fontSize: 13, fontWeight: 500, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? '#000000' : T.textSecondary }}>18°</div>
+                          <div style={{ fontSize: 8, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? 'rgba(0,0,0,0.7)' : T.textMuted }}>вода</div>
                         </div>
                         <div style={{ textAlign: 'center' }}>
-                          <div style={{ fontSize: 13, fontWeight: 500, color: T.textSecondary }}>5</div>
-                          <div style={{ fontSize: 8, color: T.textMuted }}>м/с</div>
+                          <div style={{ fontSize: 13, fontWeight: 500, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? '#000000' : T.textSecondary }}>5</div>
+                          <div style={{ fontSize: 8, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? 'rgba(0,0,0,0.7)' : T.textMuted }}>м/с</div>
                         </div>
                       </div>
                     </div>
@@ -786,20 +803,20 @@ export const TopBar = memo(function TopBar() {
                           style={{ display: 'flex', gap: 12, alignItems: 'center' }}
                         >
                           <div style={{ textAlign: 'center' }}>
-                            <div style={{ fontSize: 13, fontWeight: 500, color: T.textSecondary }}>
+                            <div style={{ fontSize: 13, fontWeight: 500, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? '#000000' : T.textSecondary }}>
                               {electricPairs[electricIndex][0]?.value}
                               {electricPairs[electricIndex][0]?.unit}
                             </div>
-                            <div style={{ fontSize: 8, color: T.textMuted }}>
+                            <div style={{ fontSize: 8, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? 'rgba(0,0,0,0.7)' : T.textMuted }}>
                               {electricPairs[electricIndex][0]?.label.split(' ')[0]}
                             </div>
                           </div>
                           <div style={{ textAlign: 'center' }}>
-                            <div style={{ fontSize: 13, fontWeight: 500, color: T.textSecondary }}>
+                            <div style={{ fontSize: 13, fontWeight: 500, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? '#000000' : T.textSecondary }}>
                               {electricPairs[electricIndex][1]?.value}
                               {electricPairs[electricIndex][1]?.unit}
                             </div>
-                            <div style={{ fontSize: 8, color: T.textMuted }}>
+                            <div style={{ fontSize: 8, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? 'rgba(0,0,0,0.7)' : T.textMuted }}>
                               {electricPairs[electricIndex][1]?.label.split(' ')[0]}
                             </div>
                           </div>
@@ -822,7 +839,7 @@ export const TopBar = memo(function TopBar() {
                               {safetyPairs[safetyIndex][0]?.value}
                               {safetyPairs[safetyIndex][0]?.unit}
                             </div>
-                            <div style={{ fontSize: 8, color: T.textMuted }}>
+                            <div style={{ fontSize: 8, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? 'rgba(0,0,0,0.7)' : T.textMuted }}>
                               {safetyPairs[safetyIndex][0]?.label.replace('Темп. ', '').replace('Затопл. ', '').replace('Дым ', '')}
                             </div>
                           </div>
@@ -831,7 +848,7 @@ export const TopBar = memo(function TopBar() {
                               {safetyPairs[safetyIndex][1]?.value}
                               {safetyPairs[safetyIndex][1]?.unit}
                             </div>
-                            <div style={{ fontSize: 8, color: T.textMuted }}>
+                            <div style={{ fontSize: 8, color: screenMode === 'S2' ? '#e8f4ff' : screenMode === 'S3' ? 'rgba(0,0,0,0.7)' : T.textMuted }}>
                               {safetyPairs[safetyIndex][1]?.label.replace('Темп. ', '').replace('Затопл. ', '').replace('Дым ', '')}
                             </div>
                           </div>
@@ -841,7 +858,7 @@ export const TopBar = memo(function TopBar() {
                   )}
                 </button>
                 {idx < sectionKeys.length - 1 && (
-                  <div style={{ width: 1, background: 'linear-gradient(180deg, transparent 10%, rgba(80,100,120,0.3) 50%, transparent 90%)' }} />
+                  <div style={{ width: 1, background: screenMode === 'S2' ? 'linear-gradient(180deg, transparent 10%, rgba(120,140,160,0.5) 50%, transparent 90%)' : screenMode === 'S3' ? 'linear-gradient(180deg, transparent 10%, rgba(0,0,0,0.20) 50%, transparent 90%)' : 'linear-gradient(180deg, transparent 10%, rgba(80,100,120,0.3) 50%, transparent 90%)' }} />
                 )}
               </div>
             );

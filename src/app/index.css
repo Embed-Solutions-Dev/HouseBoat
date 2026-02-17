@@ -17,4 +17,10 @@
   .glass-shine {
     @apply absolute top-0 left-5 right-5 h-10 bg-glass-shine rounded-b-[50%] pointer-events-none;
   }
+
+  /* Hide shine and highlights in monochrome mode */
+  .monochrome-mode .glass-shine,
+  .monochrome-mode .instrument-highlight {
+    display: none;
+  }
 }

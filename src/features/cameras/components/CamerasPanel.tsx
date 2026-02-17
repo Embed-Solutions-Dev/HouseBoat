@@ -6,7 +6,7 @@ import type { CameraId } from '@/types';
 
 const cameraOrder: CameraId[] = ['bow', 'starboard', 'stern', 'port'];
 
-export const CamerasPanel = memo(function CamerasPanel() {
+export const CamerasPanel = memo(function CamerasPanel({ screenMode = 'S1' }: { screenMode?: 'S1' | 'S2' | 'S3' }) {
   const { feeds } = useStore((s) => s.cameras);
   const [selectedCamera, setSelectedCamera] = useState<number | null>(null);
   const [fullscreenCamera, setFullscreenCamera] = useState<number | null>(null);
@@ -87,6 +87,7 @@ export const CamerasPanel = memo(function CamerasPanel() {
                 selected={false}
                 onClick={() => handleCameraClick(idx)}
                 isEnlarged
+                screenMode={screenMode}
               />
             ))}
           </motion.div>
@@ -121,6 +122,7 @@ export const CamerasPanel = memo(function CamerasPanel() {
                 selected={true}
                 onClick={() => handleCameraClick(selectedCamera)}
                 isEnlarged
+                screenMode={screenMode}
               />
             </div>
 
@@ -132,6 +134,7 @@ export const CamerasPanel = memo(function CamerasPanel() {
                 selected={false}
                 onClick={() => handleCameraClick(idx)}
                 isEnlarged
+                screenMode={screenMode}
               />
             ))}
           </motion.div>
@@ -161,6 +164,7 @@ export const CamerasPanel = memo(function CamerasPanel() {
               selected={false}
               onClick={handleFullscreenClick}
               isExpanded
+              screenMode={screenMode}
             />
           </motion.div>
         )}

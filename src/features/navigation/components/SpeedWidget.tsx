@@ -11,7 +11,7 @@ const T = {
   speedGold: '#d4af65',
 };
 
-export const SpeedWidget = memo(function SpeedWidget() {
+export const SpeedWidget = memo(function SpeedWidget({ screenMode = 'S1' }: { screenMode?: 'S1' | 'S2' | 'S3' }) {
   const speed = useStore((s) => s.navigation.speed);
   const navMode = useStore((s) => s.controls.navigation);
   const expandedEngine = useStore((s) => s.expandedEngine);
@@ -62,9 +62,9 @@ export const SpeedWidget = memo(function SpeedWidget() {
           width: collapsedWidth,
           height: collapsedHeight,
           borderRadius: 28,
-          background: 'linear-gradient(145deg, rgba(15,22,35,0.97) 0%, rgba(8,12,22,0.98) 50%, rgba(5,8,15,1) 100%)',
-          boxShadow: '0 12px 40px rgba(0,0,0,0.6), 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 1px rgba(100,140,200,0.1), inset 0 -2px 10px rgba(0,0,0,0.5)',
-          border: '1px solid rgba(80,100,130,0.2)',
+          background: screenMode === 'S3' ? 'linear-gradient(145deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,1) 100%)' : 'linear-gradient(145deg, rgba(15,22,35,0.97) 0%, rgba(8,12,22,0.98) 50%, rgba(5,8,15,1) 100%)',
+          boxShadow: screenMode === 'S3' ? '0 4px 16px rgba(0,0,0,0.12), inset 0 1px 1px rgba(255,255,255,0.5)' : '0 12px 40px rgba(0,0,0,0.6), 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 1px rgba(100,140,200,0.1), inset 0 -2px 10px rgba(0,0,0,0.5)',
+          border: screenMode === 'S3' ? '1px solid rgba(0,0,0,0.2)' : '1px solid rgba(80,100,130,0.2)',
           overflow: 'hidden',
           zIndex: expandedEngine !== null ? 30 : 2,
           cursor: 'pointer',
@@ -208,8 +208,8 @@ export const SpeedWidget = memo(function SpeedWidget() {
                   style={{
                     fontSize: 56,
                     fontWeight: 400,
-                    color: T.speedGold,
-                    textShadow: '0 0 30px rgba(212,175,101,0.4), 0 0 60px rgba(212,175,101,0.2)',
+                    color: screenMode === 'S2' ? '#ffffff' : screenMode === 'S3' ? '#000000' : T.speedGold,
+                    textShadow: screenMode === 'S2' ? '0 0 30px rgba(255,255,255,0.4)' : screenMode === 'S3' ? 'none' : '0 0 30px rgba(212,175,101,0.4), 0 0 60px rgba(212,175,101,0.2)',
                     letterSpacing: -2,
                     fontVariantNumeric: 'tabular-nums',
                   }}
@@ -219,7 +219,7 @@ export const SpeedWidget = memo(function SpeedWidget() {
                 <div
                   style={{
                     fontSize: 12,
-                    color: 'rgba(212,175,101,0.5)',
+                    color: screenMode === 'S2' ? 'rgba(255,255,255,0.7)' : screenMode === 'S3' ? 'rgba(0,0,0,0.6)' : 'rgba(212,175,101,0.5)',
                     letterSpacing: 3,
                     marginTop: 2,
                   }}
@@ -257,7 +257,7 @@ export const SpeedWidget = memo(function SpeedWidget() {
       >
         <svg width="75" height="48" viewBox="600 -100 1620 750" style={{ opacity: 0.6 }}>
           <path
-            fill="#2a3a4a"
+            fill={screenMode === 'S2' ? '#c0c8d0' : screenMode === 'S3' ? '#1a1a2e' : '#2a3a4a'}
             d="M1798.09 319.87c-4.35,-12.65 -31.56,-22.61 -26.42,-5.52 2.53,29.43 7.74,74.72 -23.19,131.9 -34.39,29.27 5.18,34.93 43.53,16.19 64.03,-24.99 12.21,-119.88 6.08,-142.57zm-498.41 -195.06l0 0 -0.42 0 0 54.51 47.15 0c-0.78,-30.15 -21.5,-54.51 -46.73,-54.51zm-17.11 0.05l0 0c-24.28,1.3 -43.89,25.15 -44.65,54.46l44.65 0 0 -54.46zm-44.67 74.57l0 0 0 51 44.67 0 0 -51 -44.67 0zm61.36 51l0 0 47.17 0 0 -51 -47.17 0 0 51zm488.43 -118.7l0 0c-75.64,39.65 -105.96,79.31 -167.43,107.06 -14.5,6.53 -30.65,12.67 -48.33,18.34l0 -102.15c0,-34.71 -28.38,-63.1 -63.09,-63.1 -34.71,0 -63.1,28.39 -63.1,63.1l0 130.53c-114.9,17.14 -260.31,19.42 -421.05,-2.18 209.11,99.93 576.41,33.58 705.24,-76.57 38.48,-32.89 101.67,-75.25 149.43,-91.4 151.13,-55.09 221.23,-5.03 260.55,84.96 -7.9,31.59 -71.1,31.12 -109.89,46.44 -109.8,30.41 -134.33,31.14 -244.26,11.66 -12.86,-0.26 -32.74,10.03 -27.17,24.4 10.58,216.03 -71.36,208.7 -255.45,232.26 -61.99,2.97 -1.08,-78.65 13.4,-87.72 46.13,-48.5 75.84,-52.86 86.21,-69.64 14.88,-26.72 3.03,-38.46 -31.76,-15.84 -142.22,60.11 -308.64,63.74 -496.17,18.12 -193.15,147.77 -382.49,16.88 -304.72,-13.59 67.62,-23.73 138.17,-42.34 211.83,-55.51l-26.05 -41.91c50.95,-25.54 95,-62.9 135.37,-106.56 212.3,-195.78 446.39,-180.44 696.44,-10.7z"
           />
         </svg>

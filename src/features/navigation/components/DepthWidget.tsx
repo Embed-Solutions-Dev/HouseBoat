@@ -1,7 +1,7 @@
 import { memo, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
-export const DepthWidget = memo(function DepthWidget() {
+export const DepthWidget = memo(function DepthWidget({ screenMode = 'S1' }: { screenMode?: 'S1' | 'S2' | 'S3' }) {
   // Depth history for sonar chart
   const [depthHistory, setDepthHistory] = useState<number[]>(() => {
     const initial: number[] = [];
@@ -42,9 +42,9 @@ export const DepthWidget = memo(function DepthWidget() {
         width: 138,
         height: 76,
         borderRadius: 16,
-        background: 'linear-gradient(145deg, rgba(15,22,35,0.97) 0%, rgba(8,12,22,0.98) 50%, rgba(5,8,15,1) 100%)',
-        boxShadow: '0 8px 24px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 1px rgba(100,140,200,0.1)',
-        border: '1px solid rgba(80,100,130,0.2)',
+        background: screenMode === 'S3' ? 'linear-gradient(145deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,1) 100%)' : 'linear-gradient(145deg, rgba(15,22,35,0.97) 0%, rgba(8,12,22,0.98) 50%, rgba(5,8,15,1) 100%)',
+        boxShadow: screenMode === 'S3' ? '0 4px 16px rgba(0,0,0,0.12), inset 0 1px 1px rgba(255,255,255,0.5)' : '0 8px 24px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 1px rgba(100,140,200,0.1)',
+        border: screenMode === 'S3' ? '1px solid rgba(0,0,0,0.2)' : '1px solid rgba(80,100,130,0.2)',
         overflow: 'hidden',
         zIndex: 3,
       }}
@@ -69,7 +69,7 @@ export const DepthWidget = memo(function DepthWidget() {
           right: 0,
           textAlign: 'center',
           fontSize: 8,
-          color: 'rgba(150,180,210,0.6)',
+          color: screenMode === 'S3' ? 'rgba(60,80,110,0.7)' : 'rgba(150,180,210,0.6)',
           letterSpacing: 1,
         }}
       >
@@ -91,14 +91,14 @@ export const DepthWidget = memo(function DepthWidget() {
           style={{
             fontSize: 22,
             fontWeight: 600,
-            color: '#50a0ff',
-            textShadow: '0 0 15px rgba(80,160,255,0.5)',
+            color: screenMode === 'S2' ? '#ffffff' : screenMode === 'S3' ? '#3070b0' : '#50a0ff',
+            textShadow: screenMode === 'S2' ? '0 0 15px rgba(255,255,255,0.5)' : screenMode === 'S3' ? '0 0 10px rgba(48,112,176,0.3)' : '0 0 15px rgba(80,160,255,0.5)',
             fontVariantNumeric: 'tabular-nums',
           }}
         >
           {currentDepth.toFixed(1)}
         </span>
-        <span style={{ fontSize: 10, color: 'rgba(80,160,255,0.6)' }}>м</span>
+        <span style={{ fontSize: 10, color: screenMode === 'S2' ? 'rgba(255,255,255,0.7)' : screenMode === 'S3' ? 'rgba(48,112,176,0.7)' : 'rgba(80,160,255,0.6)' }}>м</span>
       </div>
 
       {/* Depth chart */}
@@ -110,15 +110,15 @@ export const DepthWidget = memo(function DepthWidget() {
           right: 6,
           height: 28,
           borderRadius: 6,
-          background: 'rgba(0,0,0,0.3)',
+          background: screenMode === 'S3' ? 'rgba(220,230,240,0.4)' : 'rgba(0,0,0,0.3)',
           overflow: 'hidden',
         }}
       >
         <svg width="126" height="28" viewBox="0 0 126 28" style={{ display: 'block' }}>
           <defs>
             <linearGradient id="depthGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="rgba(80,160,255,0.4)" />
-              <stop offset="100%" stopColor="rgba(40,100,180,0.1)" />
+              <stop offset="0%" stopColor={screenMode === 'S3' ? 'rgba(48,112,176,0.3)' : 'rgba(80,160,255,0.4)'} />
+              <stop offset="100%" stopColor={screenMode === 'S3' ? 'rgba(30,80,150,0.1)' : 'rgba(40,100,180,0.1)'} />
             </linearGradient>
           </defs>
           {/* Filled area */}
@@ -134,7 +134,7 @@ export const DepthWidget = memo(function DepthWidget() {
               .map((d, i) => `L ${(i / (depthHistory.length - 1)) * 126} ${((d - 2) / 13) * 28}`)
               .join(' ')}`}
             fill="none"
-            stroke="rgba(80,160,255,0.8)"
+            stroke={screenMode === 'S3' ? 'rgba(48,112,176,0.7)' : 'rgba(80,160,255,0.8)'}
             strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"

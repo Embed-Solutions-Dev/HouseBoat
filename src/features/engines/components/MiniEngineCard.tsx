@@ -16,6 +16,7 @@ interface MiniEngineCardProps {
   throttle: number;
   fuelLevel: number;
   hasFaults: boolean;
+  screenMode?: 'S1' | 'S2' | 'S3';
 }
 
 export const MiniEngineCard = memo(function MiniEngineCard({
@@ -24,6 +25,7 @@ export const MiniEngineCard = memo(function MiniEngineCard({
   throttle,
   fuelLevel,
   hasFaults,
+  screenMode = 'S1',
 }: MiniEngineCardProps) {
   const engineOff = rpm === 0 && throttle === 0;
   const lowFuel = !engineOff && fuelLevel < 25;
@@ -52,11 +54,16 @@ export const MiniEngineCard = memo(function MiniEngineCard({
           width: 135,
           height: 135,
           borderRadius: '50%',
-          background:
-            'linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)',
+          background: screenMode === 'S3'
+            ? 'linear-gradient(165deg, #909090 0%, #787878 15%, #606060 30%, #505050 50%, #606060 70%, #787878 85%, #6a6a6a 100%)'
+            : 'linear-gradient(165deg, #e8e8e8 0%, #b8b8b8 15%, #909090 30%, #707070 50%, #909090 70%, #b8b8b8 85%, #a0a0a0 100%)',
           boxShadow: (hasFaults || lowFuel)
-            ? '0 4px 16px rgba(0,0,0,0.5), 0 0 20px rgba(224,64,80,0.7), 0 0 40px rgba(224,64,80,0.4)'
-            : '0 4px 16px rgba(0,0,0,0.5)',
+            ? (screenMode === 'S3'
+              ? '0 2px 8px rgba(0,0,0,0.2), 0 0 20px rgba(192,53,74,0.4), 0 0 40px rgba(192,53,74,0.2)'
+              : '0 4px 16px rgba(0,0,0,0.5), 0 0 20px rgba(224,64,80,0.7), 0 0 40px rgba(224,64,80,0.4)')
+            : (screenMode === 'S3'
+              ? '0 2px 8px rgba(0,0,0,0.2)'
+              : '0 4px 16px rgba(0,0,0,0.5)'),
           padding: 5,
           display: 'flex',
           alignItems: 'center',
@@ -68,11 +75,25 @@ export const MiniEngineCard = memo(function MiniEngineCard({
             width: '100%',
             height: '100%',
             borderRadius: '50%',
-            background: 'linear-gradient(145deg, rgba(10,15,25,0.98) 0%, rgba(5,8,15,1) 100%)',
+            background: screenMode === 'S2' ? '#000000' : screenMode === 'S3' ? 'radial-gradient(circle at 35% 35%, rgba(230,235,240,0.9) 0%, rgba(220,228,238,0.98) 30%, rgba(210,218,228,1) 70%, rgba(200,208,218,1) 100%)' : 'radial-gradient(circle at 35% 35%, rgba(25,35,50,0.9) 0%, rgba(15,22,35,0.98) 30%, rgba(8,12,20,1) 70%, rgba(5,8,12,1) 100%)',
+            boxShadow: screenMode === 'S3' ? 'inset 0 1px 6px rgba(0,0,0,0.12)' : 'inset 0 2px 10px rgba(0,0,0,0.7), inset 0 -1px 4px rgba(255,255,255,0.03)',
             position: 'relative',
             overflow: 'hidden',
           }}
         >
+          {/* Inner highlight for depth */}
+          <div
+            style={{
+              position: 'absolute',
+              top: '10%',
+              left: '10%',
+              width: '35%',
+              height: '35%',
+              borderRadius: '50%',
+              background: screenMode === 'S3' ? 'radial-gradient(circle at center, rgba(255,255,255,0.3) 0%, transparent 70%)' : 'radial-gradient(circle at center, rgba(80,100,130,0.12) 0%, transparent 70%)',
+              pointerEvents: 'none',
+            }}
+          />
           {/* Scale */}
           <svg viewBox="0 0 100 100" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
             {/* Tick marks every 100 RPM */}
@@ -99,6 +120,8 @@ export const MiniEngineCard = memo(function MiniEngineCard({
                         : isMedium
                           ? 'rgba(224,80,96,0.85)'
                           : 'rgba(224,80,96,0.6)'
+                      : screenMode === 'S3'
+                      ? '#000000'
                       : isMajor
                         ? 'rgba(200,210,230,0.9)'
                         : isMedium
@@ -120,7 +143,7 @@ export const MiniEngineCard = memo(function MiniEngineCard({
                   key={num}
                   x={50 + 35 * Math.cos(angle)}
                   y={50 - 35 * Math.sin(angle)}
-                  fill={isRedZone ? 'rgba(224,80,96,0.9)' : 'rgba(200,210,230,0.9)'}
+                  fill={isRedZone ? 'rgba(224,80,96,0.9)' : screenMode === 'S3' ? '#000000' : 'rgba(200,210,230,0.9)'}
                   fontSize="9"
                   fontWeight="600"
                   textAnchor="middle"
@@ -131,12 +154,12 @@ export const MiniEngineCard = memo(function MiniEngineCard({
               );
             })}
             {/* x1000 label */}
-            <text x="50" y="66" fill="rgba(150,160,180,0.6)" fontSize="6" fontWeight="500" textAnchor="middle">
+            <text x="50" y="66" fill={screenMode === 'S3' ? 'rgba(30,40,60,0.8)' : 'rgba(150,160,180,0.6)'} fontSize="6" fontWeight="500" textAnchor="middle">
               ×1000 об/м
             </text>
           </svg>
 
-          {/* Needle */}
+          {/* Needle with metallic look */}
           <motion.div
             style={{
               position: 'absolute',
@@ -146,28 +169,55 @@ export const MiniEngineCard = memo(function MiniEngineCard({
               height: 35,
               marginLeft: -1.5,
               marginTop: -35,
-              background: 'linear-gradient(180deg, #e04050 0%, #c03040 100%)',
+              background: screenMode === 'S3' ? 'linear-gradient(180deg, #d04050 0%, #c0354a 50%, #a02838 100%)' : 'linear-gradient(180deg, #ff6070 0%, #e04050 50%, #c03040 100%)',
               borderRadius: 2,
               transformOrigin: 'center bottom',
-              boxShadow: '0 0 6px rgba(224,64,80,0.6)',
+              boxShadow: screenMode === 'S3' ? '0 0 6px rgba(192,53,74,0.5), 0 1px 3px rgba(0,0,0,0.3)' : '0 0 8px rgba(224,64,80,0.7), 0 1px 3px rgba(0,0,0,0.5)',
               rotate: spring,
             }}
-          />
+          >
+            {/* Needle highlight */}
+            <div
+              style={{
+                position: 'absolute',
+                left: 0.5,
+                top: 2,
+                width: 1,
+                height: 25,
+                background: screenMode === 'S3' ? 'linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 80%)' : 'linear-gradient(180deg, rgba(255,255,255,0.4) 0%, transparent 80%)',
+                borderRadius: 1,
+              }}
+            />
+          </motion.div>
 
-          {/* Center hub */}
+          {/* Center hub with depth */}
           <div
             style={{
               position: 'absolute',
               top: '50%',
               left: '50%',
               transform: 'translate(-50%, -50%)',
-              width: 12,
-              height: 12,
+              width: 14,
+              height: 14,
               borderRadius: '50%',
-              background: 'radial-gradient(circle at 35% 35%, #ffffff 0%, #d0d0d0 30%, #909090 70%, #606060 100%)',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.4)',
+              background: screenMode === 'S3' ? 'radial-gradient(circle at 30% 30%, #e8e8e8 0%, #d0d0d0 35%, #b0b0b0 70%, #909090 100%)' : 'radial-gradient(circle at 30% 30%, #f0f0f0 0%, #c0c0c0 35%, #808080 70%, #505050 100%)',
+              boxShadow: screenMode === 'S3' ? '0 1px 3px rgba(0,0,0,0.2), inset 0 1px 2px rgba(255,255,255,0.5)' : '0 2px 5px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.3)',
             }}
-          />
+          >
+            {/* Inner dark circle */}
+            <div
+              style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 8,
+                height: 8,
+                borderRadius: '50%',
+                background: screenMode === 'S3' ? 'radial-gradient(circle at 30% 30%, #c0c5cc 0%, #b0b5bc 50%, #a0a5ac 100%)' : 'radial-gradient(circle at 30% 30%, #202830 0%, #101820 50%, #080c10 100%)',
+              }}
+            />
+          </div>
 
           {/* Status at bottom */}
           {hasFaults ? (
@@ -187,7 +237,7 @@ export const MiniEngineCard = memo(function MiniEngineCard({
                 transform: 'translateX(-50%)',
                 fontSize: 11,
                 fontWeight: 600,
-                color: engineOff ? T.textMuted : T.textGreen,
+                color: engineOff ? (screenMode === 'S3' ? '#3a4a5a' : T.textMuted) : (screenMode === 'S3' ? '#2da06e' : T.textGreen),
               }}
             >
               {engineOff ? 'OFF' : 'ОК'}
@@ -198,7 +248,7 @@ export const MiniEngineCard = memo(function MiniEngineCard({
 
       {/* Fuel bar below widget */}
       <div style={{ width: 135, display: 'flex', alignItems: 'center', gap: 6 }}>
-        <svg style={{ width: 14, height: 14, flexShrink: 0 }} viewBox="0 0 24 24" fill={fuelColor} stroke="none">
+        <svg style={{ width: 14, height: 14, flexShrink: 0 }} viewBox="0 0 24 24" fill={screenMode === 'S3' ? (engineOff ? '#3a4a5a' : fuelColor) : fuelColor} stroke="#000000" strokeWidth="0.5">
           <path d="M19.77 7.23l.01-.01-3.72-3.72L15 4.56l2.11 2.11c-.94.36-1.61 1.26-1.61 2.33 0 1.38 1.12 2.5 2.5 2.5.36 0 .69-.08 1-.21v7.21c0 .55-.45 1-1 1s-1-.45-1-1V14c0-1.1-.9-2-2-2h-1V5c0-1.1-.9-2-2-2H6c-1.1 0-2 .9-2 2v16h10v-7.5h1.5v5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V9c0-.69-.28-1.32-.73-1.77zM12 10H6V5h6v5z" />
         </svg>
         <div
@@ -206,8 +256,8 @@ export const MiniEngineCard = memo(function MiniEngineCard({
             flex: 1,
             height: 6,
             borderRadius: 3,
-            background: 'rgba(30,45,60,0.6)',
-            border: '1px solid rgba(80,100,120,0.3)',
+            background: screenMode === 'S3' ? 'rgba(200,210,225,0.6)' : 'rgba(30,45,60,0.6)',
+            border: screenMode === 'S3' ? '1px solid rgba(0,0,0,0.2)' : '1px solid rgba(80,100,120,0.3)',
             overflow: 'hidden',
           }}
         >

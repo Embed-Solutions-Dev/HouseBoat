@@ -14,10 +14,12 @@ export interface TachometerProps {
   temperature?: number;
   oilPressure?: number;
   size?: number;  // New: tachometer size (default 310)
+  screenMode?: 'S1' | 'S2' | 'S3';  // New: screen mode for black background in S2
 }
 
 export interface EngineCardProps {
   id: EngineId;      // Now number instead of 'left' | 'right'
   data: EngineData;
   size?: number;     // New: optional tachometer size
+  screenMode?: 'S1' | 'S2' | 'S3';  // New: screen mode for black background in S2
 }

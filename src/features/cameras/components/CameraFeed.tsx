@@ -8,6 +8,7 @@ export const CameraFeed = memo(function CameraFeed({
   selected,
   isExpanded = false,
   isEnlarged = false,
+  screenMode = 'S1',
 }: CameraFeedProps & { isExpanded?: boolean; isEnlarged?: boolean }) {
   const [time, setTime] = useState(new Date());
 
@@ -26,11 +27,11 @@ export const CameraFeed = memo(function CameraFeed({
         onClick?.();
       }}
       style={{
-        background: 'linear-gradient(180deg, rgba(12,18,28,0.95) 0%, rgba(6,10,18,0.98) 100%)',
+        background: screenMode === 'S2' ? '#000000' : screenMode === 'S3' ? 'rgba(245,247,250,0.95)' : 'linear-gradient(180deg, rgba(12,18,28,0.95) 0%, rgba(6,10,18,0.98) 100%)',
         borderRadius: isExpanded ? 24 : isEnlarged ? 20 : 16,
         border: selected
           ? '2px solid rgba(61,200,140,0.6)'
-          : '1px solid rgba(60,80,100,0.2)',
+          : screenMode === 'S3' ? '1px solid rgba(0,0,0,0.2)' : '1px solid rgba(60,80,100,0.2)',
         boxShadow: isExpanded
           ? '0 20px 60px rgba(0,0,0,0.8), inset 0 1px 0 rgba(100,130,160,0.08)'
           : isEnlarged
@@ -52,7 +53,11 @@ export const CameraFeed = memo(function CameraFeed({
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'linear-gradient(135deg, rgba(20,30,45,1) 0%, rgba(15,22,35,1) 100%)',
+          background: screenMode === 'S2'
+            ? 'linear-gradient(135deg, rgba(10,10,12,1) 0%, rgba(5,5,8,1) 100%)'
+            : screenMode === 'S3'
+            ? 'linear-gradient(135deg, rgba(200,210,225,1) 0%, rgba(185,195,210,1) 100%)'
+            : 'linear-gradient(135deg, rgba(20,30,45,1) 0%, rgba(15,22,35,1) 100%)',
           pointerEvents: 'none',
         }}
       >
@@ -64,7 +69,11 @@ export const CameraFeed = memo(function CameraFeed({
             left: 0,
             right: 0,
             bottom: 0,
-            background: 'linear-gradient(180deg, rgba(25,40,60,0.8) 0%, rgba(15,25,40,0.9) 100%)',
+            background: screenMode === 'S2'
+              ? 'linear-gradient(180deg, rgba(8,8,10,0.9) 0%, rgba(5,5,8,1) 100%)'
+              : screenMode === 'S3'
+              ? 'linear-gradient(180deg, rgba(170,190,210,0.9) 0%, rgba(150,175,200,1) 100%)'
+              : 'linear-gradient(180deg, rgba(25,40,60,0.8) 0%, rgba(15,25,40,0.9) 100%)',
           }}
         />
 
@@ -78,7 +87,7 @@ export const CameraFeed = memo(function CameraFeed({
             left: 0,
             right: 0,
             height: isLarge ? 3 : 2,
-            background: 'rgba(60,100,140,0.3)',
+            background: screenMode === 'S2' ? 'rgba(40,40,45,0.2)' : screenMode === 'S3' ? 'rgba(120,150,180,0.3)' : 'rgba(60,100,140,0.3)',
             filter: 'blur(1px)',
           }}
         />
@@ -91,7 +100,7 @@ export const CameraFeed = memo(function CameraFeed({
             left: 0,
             right: 0,
             height: isLarge ? 2 : 1,
-            background: 'rgba(60,100,140,0.25)',
+            background: screenMode === 'S2' ? 'rgba(35,35,40,0.15)' : screenMode === 'S3' ? 'rgba(120,150,180,0.3)' : 'rgba(60,100,140,0.25)',
             filter: 'blur(1px)',
           }}
         />
@@ -104,7 +113,7 @@ export const CameraFeed = memo(function CameraFeed({
             left: 0,
             right: 0,
             height: isLarge ? 2 : 1,
-            background: 'rgba(60,100,140,0.2)',
+            background: screenMode === 'S2' ? 'rgba(30,30,35,0.12)' : screenMode === 'S3' ? 'rgba(120,150,180,0.3)' : 'rgba(60,100,140,0.2)',
             filter: 'blur(1px)',
           }}
         />
@@ -119,7 +128,11 @@ export const CameraFeed = memo(function CameraFeed({
             left: '30%',
             width: isLarge ? 80 : 40,
             height: isLarge ? 16 : 8,
-            background: 'radial-gradient(ellipse, rgba(100,150,200,0.3) 0%, transparent 70%)',
+            background: screenMode === 'S2'
+              ? 'radial-gradient(ellipse, rgba(50,50,55,0.2) 0%, transparent 70%)'
+              : screenMode === 'S3'
+              ? 'radial-gradient(ellipse, rgba(100,140,180,0.25) 0%, transparent 70%)'
+              : 'radial-gradient(ellipse, rgba(100,150,200,0.3) 0%, transparent 70%)',
             filter: 'blur(2px)',
           }}
         />
@@ -132,7 +145,11 @@ export const CameraFeed = memo(function CameraFeed({
             left: '60%',
             width: isLarge ? 60 : 30,
             height: isLarge ? 12 : 6,
-            background: 'radial-gradient(ellipse, rgba(100,150,200,0.25) 0%, transparent 70%)',
+            background: screenMode === 'S2'
+              ? 'radial-gradient(ellipse, rgba(45,45,50,0.15) 0%, transparent 70%)'
+              : screenMode === 'S3'
+              ? 'radial-gradient(ellipse, rgba(100,140,180,0.25) 0%, transparent 70%)'
+              : 'radial-gradient(ellipse, rgba(100,150,200,0.25) 0%, transparent 70%)',
             filter: 'blur(2px)',
           }}
         />
@@ -187,8 +204,8 @@ export const CameraFeed = memo(function CameraFeed({
           style={{
             fontSize: isLarge ? 14 : 9,
             fontWeight: 600,
-            color: 'rgba(255,255,255,0.7)',
-            textShadow: '0 1px 2px rgba(0,0,0,0.8)',
+            color: screenMode === 'S2' ? '#ffffff' : screenMode === 'S3' ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.7)',
+            textShadow: screenMode === 'S3' ? '0 1px 2px rgba(255,255,255,0.5)' : '0 1px 2px rgba(0,0,0,0.8)',
             letterSpacing: '0.5px',
           }}
         >
@@ -204,8 +221,8 @@ export const CameraFeed = memo(function CameraFeed({
           left: isLarge ? 20 : 10,
           fontSize: isLarge ? 16 : 10,
           fontWeight: 600,
-          color: 'rgba(255,255,255,0.6)',
-          textShadow: '0 1px 3px rgba(0,0,0,0.9)',
+          color: screenMode === 'S2' ? '#ffffff' : screenMode === 'S3' ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.6)',
+          textShadow: screenMode === 'S3' ? '0 1px 2px rgba(255,255,255,0.5)' : '0 1px 3px rgba(0,0,0,0.9)',
           letterSpacing: '0.5px',
           pointerEvents: 'none',
         }}
@@ -221,8 +238,8 @@ export const CameraFeed = memo(function CameraFeed({
           right: isLarge ? 20 : 10,
           fontSize: isLarge ? 14 : 9,
           fontFamily: 'monospace',
-          color: 'rgba(255,255,255,0.5)',
-          textShadow: '0 1px 3px rgba(0,0,0,0.9)',
+          color: screenMode === 'S2' ? '#ffffff' : screenMode === 'S3' ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.5)',
+          textShadow: screenMode === 'S3' ? '0 1px 2px rgba(255,255,255,0.5)' : '0 1px 3px rgba(0,0,0,0.9)',
           pointerEvents: 'none',
         }}
       >
@@ -238,15 +255,15 @@ export const CameraFeed = memo(function CameraFeed({
           transform: 'translate(-50%, -50%)',
           width: isLarge ? 120 : 50,
           height: isLarge ? 120 : 50,
-          border: '1px solid rgba(255,255,255,0.15)',
+          border: screenMode === 'S3' ? '1px solid rgba(0,0,0,0.30)' : '1px solid rgba(255,255,255,0.15)',
           borderRadius: 2,
           pointerEvents: 'none',
         }}
       >
-        <div style={{ position: 'absolute', top: -1, left: -1, width: isLarge ? 16 : 8, height: isLarge ? 16 : 8, borderTop: '2px solid rgba(255,255,255,0.4)', borderLeft: '2px solid rgba(255,255,255,0.4)' }} />
-        <div style={{ position: 'absolute', top: -1, right: -1, width: isLarge ? 16 : 8, height: isLarge ? 16 : 8, borderTop: '2px solid rgba(255,255,255,0.4)', borderRight: '2px solid rgba(255,255,255,0.4)' }} />
-        <div style={{ position: 'absolute', bottom: -1, left: -1, width: isLarge ? 16 : 8, height: isLarge ? 16 : 8, borderBottom: '2px solid rgba(255,255,255,0.4)', borderLeft: '2px solid rgba(255,255,255,0.4)' }} />
-        <div style={{ position: 'absolute', bottom: -1, right: -1, width: isLarge ? 16 : 8, height: isLarge ? 16 : 8, borderBottom: '2px solid rgba(255,255,255,0.4)', borderRight: '2px solid rgba(255,255,255,0.4)' }} />
+        <div style={{ position: 'absolute', top: -1, left: -1, width: isLarge ? 16 : 8, height: isLarge ? 16 : 8, borderTop: screenMode === 'S3' ? '2px solid rgba(0,0,0,0.3)' : '2px solid rgba(255,255,255,0.4)', borderLeft: screenMode === 'S3' ? '2px solid rgba(0,0,0,0.3)' : '2px solid rgba(255,255,255,0.4)' }} />
+        <div style={{ position: 'absolute', top: -1, right: -1, width: isLarge ? 16 : 8, height: isLarge ? 16 : 8, borderTop: screenMode === 'S3' ? '2px solid rgba(0,0,0,0.3)' : '2px solid rgba(255,255,255,0.4)', borderRight: screenMode === 'S3' ? '2px solid rgba(0,0,0,0.3)' : '2px solid rgba(255,255,255,0.4)' }} />
+        <div style={{ position: 'absolute', bottom: -1, left: -1, width: isLarge ? 16 : 8, height: isLarge ? 16 : 8, borderBottom: screenMode === 'S3' ? '2px solid rgba(0,0,0,0.3)' : '2px solid rgba(255,255,255,0.4)', borderLeft: screenMode === 'S3' ? '2px solid rgba(0,0,0,0.3)' : '2px solid rgba(255,255,255,0.4)' }} />
+        <div style={{ position: 'absolute', bottom: -1, right: -1, width: isLarge ? 16 : 8, height: isLarge ? 16 : 8, borderBottom: screenMode === 'S3' ? '2px solid rgba(0,0,0,0.3)' : '2px solid rgba(255,255,255,0.4)', borderRight: screenMode === 'S3' ? '2px solid rgba(0,0,0,0.3)' : '2px solid rgba(255,255,255,0.4)' }} />
       </div>
     </div>
   );
